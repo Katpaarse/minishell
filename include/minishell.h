@@ -1,0 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
+/*   Updated: 2025/08/11 16:05:42 by jukerste         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef MINISHELL_H
+# define MINISHELL_H
+
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <string.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+typedef struct s_cmd
+{
+	char			**argv; //command and arguments
+	char			*infile; // < file
+	char			*outfile; // > file or >> file
+	struct s_cmd	*next; //linked list to next command
+}	t_cmd;
+
+typedef struct s_minishell
+{
+	t_cmd	*cmds; // linked list of parsed commands
+	char	**env; // environments variables
+	int		exit_code; // last command exit code
+}	t_minishell;
+
+# endif
