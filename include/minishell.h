@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/11 16:05:42 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/12 16:01:08 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,18 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+# define SUCCES 0
+# define FAILURE 0
+
+# define TRUE 1
+# define FALSE 0
+
 typedef struct s_cmd
 {
 	char			**argv; //command and arguments
 	char			*infile; // < file
 	char			*outfile; // > file or >> file
+	int				append; // 1 if >> append mode 
 	struct s_cmd	*next; //linked list to next command
 }	t_cmd;
 
