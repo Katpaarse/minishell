@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/14 17:10:47 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/14 19:33:35 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,7 @@ typedef struct s_minishell
 	char	**envp; // environments variables
 	int		exit_code; // last command exit code
 }	t_minishell;
+
+char	**tokenize_input(char *input);
 
 # endif

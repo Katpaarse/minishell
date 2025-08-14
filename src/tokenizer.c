@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:19:46 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/14 18:20:05 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/14 19:33:53 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,8 @@ static int	count_tokens(char *input)
 		}
 	}
 	return (count);
+}
+char	**tokenize_input(char *input)
+{
+	
 }
