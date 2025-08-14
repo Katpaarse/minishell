@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:19:46 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/14 20:26:47 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/14 20:55:30 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char	**tokenize_input(char *input)
 	if (tokens == NULL)
 		return (NULL);
 	i = 0;
-	to = 0;
+	ti = 0;
 	while (input[i])
 	{
 		while (input[i] && is_space(input[i]))
