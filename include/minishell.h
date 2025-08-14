@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/13 15:30:02 by lavan-de         ###   ########.fr       */
+/*   Updated: 2025/08/14 19:33:35 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,6 @@ int	builtin_env(void);
 int	builtin_export(void);
 int	builtin_unset(void);
 int	builtin_exit(void);
+char	**tokenize_input(char *input);
 
 # endif
