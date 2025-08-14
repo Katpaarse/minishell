@@ -25,7 +25,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-# define SUCCES 0
+# define SUCCESS 0
 # define FAILURE 1
 
 # define TRUE 1
@@ -46,5 +46,19 @@ typedef struct s_minishell
 	char	**envp; // environments variables
 	int		exit_code; // last command exit code
 }	t_minishell;
+
+// Executor functions
+int	execute_command(char **argv, char **envp);
+
+// Builtin functions
+int	is_builtin(char **argv);
+int	run_builtin(char **argv, char **envp);
+int	builtin_cd(void);
+int	builtin_pwd(void);
+int	builtin_echo(void);
+int	builtin_env(void);
+int	builtin_export(void);
+int	builtin_unset(void);
+int	builtin_exit(void);
 
 # endif

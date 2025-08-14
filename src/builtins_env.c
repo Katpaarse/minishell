@@ -1,20 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   builtins_env.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lavan-de <lavan-de@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/08/13 15:27:16 by lavan-de         ###   ########.fr       */
+/*   Created: 2025/08/14 18:17:21 by lavan-de          #+#    #+#             */
+/*   Updated: 2025/08/14 18:17:22 by lavan-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../include/minishell.h"
 
-int main(int argc, char **argv, char **envp)
+... builtin_cd()
+{}
+
+... builtin_env()
+{}
+
+... builtin_export()
+{}
+
+... builtin_unset()
+{}
+
+... copy_envp()
 {
-    char    *cmd[] = {"/bin/ls", "-l", NULL};
-    execute_command(cmd, envp);
-    return 0;
+/*
+FUNCTION TO COPY THE ENVP LIST FROM THE PARENT SHELL, SO I CAN MODIFY IT
+*/
 }
