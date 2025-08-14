@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:19:46 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/14 19:33:53 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/14 20:26:47 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,41 @@ static int	count_tokens(char *input)
 }
 char	**tokenize_input(char *input)
 {
+	int		i;
+	int		ti; // token output || token index
+	int		start;
+	int		num_tokens;
+	char	**tokens;
 	
+	num_tokens = count_tokens(input);
+	tokens = malloc(sizeof(char *) * (num_tokens + 1));
+	if (tokens == NULL)
+		return (NULL);
+	i = 0;
+	to = 0;
+	while (input[i])
+	{
+		while (input[i] && is_space(input[i]))
+			i++;
+		if (input[i] == '\0')
+			break;
+		start = i;
+		if (is_special_op(input[i]))
+		{
+			if ((input[i] == '>' && input[i + 1] == '>') ||
+				(input[i] == '<' && input[i + 1] == '<'))
+				i = i + 2;
+			else
+				i++;
+		}
+		else
+		{
+			while (input[i] && !is_space(input[i]) && !is_special_op(input[i]))
+				i++;
+		}
+		tokens[ti] = ft_strndup(input + start, i - start);
+		ti++;
+	}
+	tokens[ti] = NULL;
+	return (tokens);
 }

@@ -9,7 +9,7 @@ OBJ_DIR     = obj
 
 LIBFT_A     = $(LIBFT_DIR)/libft.a
 
-SRC_FILES   = main.c parser.c executor.c builtins.c signals.c utils.c tokenizer.c
+SRC_FILES   = builtins_env.c builtins.c executor.c main.c parser.c signals.c tokenizer.c utils.c
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
 OBJS        = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))
