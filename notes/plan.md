@@ -87,7 +87,7 @@ Day 2 – Agree on Internal Data Structure
 
     Work together to define the command node struct that the parser will output and the executor will consume.
     Example:
-
+```C
     typedef struct s_cmd
     {
         char **argv;
@@ -97,7 +97,7 @@ Day 2 – Agree on Internal Data Structure
         int pipe_to_next;
         struct s_cmd *next;
     } t_cmd;
-
+```
     Decide what info is stored here and how heredocs will be represented.
 
     Add a dummy parser that returns a hardcoded t_cmd list for testing.

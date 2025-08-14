@@ -6,13 +6,14 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/12 16:01:08 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/13 15:30:02 by lavan-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+#include "../src/libft/libft.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -25,7 +26,7 @@
 #include <readline/history.h>
 
 # define SUCCES 0
-# define FAILURE 0
+# define FAILURE 1
 
 # define TRUE 1
 # define FALSE 0
@@ -42,7 +43,7 @@ typedef struct s_cmd
 typedef struct s_minishell
 {
 	t_cmd	*cmds; // linked list of parsed commands
-	char	**env; // environments variables
+	char	**envp; // environments variables
 	int		exit_code; // last command exit code
 }	t_minishell;
 
