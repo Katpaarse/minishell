@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/14 19:33:35 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/15 19:51:55 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 typedef struct s_cmd
 {
-	char			**argv; //command and arguments
+	char			**args; //command and arguments
 	char			*infile; // < file
 	char			*outfile; // > file or >> file
 	int				append; // 1 if >> append mode 
@@ -51,15 +51,18 @@ typedef struct s_minishell
 int	execute_command(char **argv, char **envp);
 
 // Builtin functions
-int	is_builtin(char **argv);
-int	run_builtin(char **argv, char **envp);
-int	builtin_cd(void);
-int	builtin_pwd(void);
-int	builtin_echo(void);
-int	builtin_env(void);
-int	builtin_export(void);
-int	builtin_unset(void);
-int	builtin_exit(void);
+int		is_builtin(char **argv);
+int		run_builtin(char **argv, char **envp);
+int		builtin_cd(void);
+int		builtin_pwd(void);
+int		builtin_echo(void);
+int		builtin_env(void);
+int		builtin_export(void);
+int		builtin_unset(void);
+int		builtin_exit(void);
+
 char	**tokenize_input(char *input);
+t_cmd	*cmd_into_new_node(void);
+char	**add_argument(char **args, char *arg);
 
 # endif
