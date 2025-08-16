@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/15 19:51:55 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/16 13:27:09 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,10 @@ int		builtin_export(void);
 int		builtin_unset(void);
 int		builtin_exit(void);
 
+//parsing functions
 char	**tokenize_input(char *input);
 t_cmd	*cmd_into_new_node(void);
 char	**add_argument(char **args, char *arg);
+t_cmd	*tokens_into_cmds(char **tokens);
 
 # endif
