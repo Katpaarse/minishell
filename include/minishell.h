@@ -53,13 +53,14 @@ int	execute_command(char **argv, char **envp);
 // Builtin functions
 int		is_builtin(char **argv);
 int		run_builtin(char **argv, char **envp);
-int		builtin_cd(void);
-int		builtin_pwd(void);
-int		builtin_echo(void);
-int		builtin_env(void);
-int		builtin_export(void);
-int		builtin_unset(void);
-int		builtin_exit(void);
+int		builtin_cd(t_cmd *cmd, t_minishell *shell);
+int		builtin_pwd(t_cmd *cmd, t_minishell *shell);
+int		builtin_echo(t_cmd *cmd, t_minishell *shell);
+int		builtin_env(t_cmd *cmd, t_minishell *shell);
+int		builtin_export(t_cmd *cmd, t_minishell *shell);
+int		builtin_unset(t_cmd *cmd, t_minishell *shell);
+int		builtin_exit(t_cmd *cmd, t_minishell *shell);
+void	copy_envp(t_minishell *shell, char **envp);
 
 //parsing functions
 char	**tokenize_input(char *input);
