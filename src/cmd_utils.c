@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/15 19:51:46 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/17 14:14:15 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_cmd	*cmd_into_new_node(void)
 	return (cmd);
 }
 
-char	**add_argument(char **args, char *arg)
+char	**add_argument(char **args, char *new_arg)
 {
 	int		i;
 	int		count;
@@ -42,9 +42,11 @@ char	**add_argument(char **args, char *arg)
 	i = 0;
 	while (i < count)
 	{
-		new_args[i] = arg;
-		new_args [i + 1] = NULL;
-		free(args);
-		return (new_args);
+		new_args[i] = args[i];
+		i++;
 	}
+	new_args[i] = new_arg;
+	new_args [i + 1] = NULL;
+	free(args);
+	return (new_args);
 }
