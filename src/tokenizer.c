@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:19:46 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/17 14:43:09 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:31:15 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static int	is_special_op(char c)
 	return (c == '|' || c == '>' || c == '<');
 }
 
+// count how many tokens are in the input string, and it treats special operators (>, >>, <, <<, etc.) as separate tokens
 static int	count_tokens(char *input)
 {
 	int	i;
@@ -52,6 +53,8 @@ static int	count_tokens(char *input)
 	}
 	return (count);
 }
+
+// splits the input string into an array of strings
 char	**tokenize_input(char *input)
 {
 	int		i;

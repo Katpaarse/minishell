@@ -6,12 +6,13 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/17 14:48:29 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:29:11 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// takes an array of tokens (strings) and converts them into a linked list of t_cmd structures, where each node represents a single command, with its arguments and redirections
 t_cmd	*tokens_into_cmds(char **tokens)
 {
 	int		i;

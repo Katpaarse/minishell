@@ -6,12 +6,13 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/17 14:14:15 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:27:59 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// creates a new t_cmd node and initializes all its fields to default values
 t_cmd	*cmd_into_new_node(void)
 {
 	t_cmd	*cmd;
@@ -19,14 +20,15 @@ t_cmd	*cmd_into_new_node(void)
 	cmd = malloc(sizeof(t_cmd));
 	if (cmd == NULL)
 		return (NULL);
-	cmd->args = NULL;
-	cmd->infile = NULL;
-	cmd->outfile = NULL;
-	cmd->append = FALSE;
-	cmd->next = NULL;
+	cmd->args = NULL; // no argument yet and sets it to NULL
+	cmd->infile = NULL; // no input redirection yet
+	cmd->outfile = NULL; // no output redirection yet
+	cmd->append = FALSE; // not appending by default
+	cmd->next = NULL; // no next command yet
 	return (cmd);
 }
 
+// add a new argument to a commands argument array (args) in t_cmd struct
 char	**add_argument(char **args, char *new_arg)
 {
 	int		i;
