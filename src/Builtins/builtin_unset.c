@@ -20,7 +20,6 @@
 int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 {
 	int i;
-	(void)cmd;
 
 	i = 1;
 	while (cmd->args[i] != NULL)
