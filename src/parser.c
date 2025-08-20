@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/17 15:29:11 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/20 18:23:05 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@ t_cmd	*tokens_into_cmds(char **tokens)
 		{
 			current->next = cmd_into_new_node();
 			current = current->next;
+		}
+		else if (tokens[i][0] == '<' && tokens[i][1] == '<' && tokens[i][2] == '\0')
+		{
+			i++;
+			current->heredoc_delim = ft_strdup(tokens[i]); // store delimiter "EOF"
 		}
 		else if (tokens[i][0] == '<' && tokens[i][1] == '\0')
 		{

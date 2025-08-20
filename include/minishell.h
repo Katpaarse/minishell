@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/17 14:11:22 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/20 18:19:39 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ typedef struct s_cmd
 	char			**args; //command and arguments
 	char			*infile; // < file
 	char			*outfile; // > file or >> file
-	int				append; // 1 if >> append mode 
+	int				append; // 1 if >> append mode
+	char			*heredoc_delim; // looks for "EOF" when << redirection is called in shell to tell the shell to stop reading from input
 	struct s_cmd	*next; //linked list to next command
 }	t_cmd;
 
@@ -67,6 +68,7 @@ char	**tokenize_input(char *input);
 t_cmd	*cmd_into_new_node(void);
 char	**add_argument(char **args, char *arg);
 t_cmd	*tokens_into_cmds(char **tokens);
+char	*ft_strjoin_and_free(char *s1, char *s2);
 
 //debug parsing functions
 void	print_debug_cmds(t_cmd *cmds);
