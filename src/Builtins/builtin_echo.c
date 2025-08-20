@@ -20,7 +20,6 @@
 
 int	builtin_echo(t_cmd *cmd, t_minishell *shell)
 {
-	int	fd;
 	int i;
 	int nl;
 	char **args;
@@ -35,8 +34,7 @@ int	builtin_echo(t_cmd *cmd, t_minishell *shell)
 	// If no arguments are provided, print a newline
 	if (!args || !args[0])
 	{
-		printf("\n");
-		printf("Echo command executed\n");
+		write(STDOUT_FILENO, "\n", 1); // Print newline
 		return (SUCCESS); // If no arguments, just print newline
 	}
 
@@ -55,34 +53,18 @@ int	builtin_echo(t_cmd *cmd, t_minishell *shell)
 	// If infile or outfile are set, we should not print anything
 	// to stdout, but redirect the output to the specified file.
 	// >, <, >>, <<.
-
-	if (cmd->outfile)
+	// Print arguments
+	while (args[i] != NULL)
 	{
-		if (cmd->append == TRUE)
-			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0666); // '>>' APPEND mode
-		else
-			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666); // '>' REDIRECT mode
-
-		if (fd < 0)
-		{
-			perror("Error opening outfile");
-			return (FAILURE);
-		}
-		dup2(fd, STDOUT_FILENO); // Redirect stdout to outfile
-		close(fd);
-
-		// Print arguments
-		while (args[i] != NULL)
-		{
-			if (!first_word)
-				printf(" ");
-			printf("%s", args[i]);
-			first_word = FALSE;
-			i++;
-		}
-		if (nl == TRUE)
-			printf("\n");
+		if (!first_word)
+			write(STDOUT_FILENO, " ", 1);
+		write(STDOUT_FILENO, args[i], strlen(args[i]));
+		// printf("%s", args[i]);
+		first_word = FALSE;
+		i++;
 	}
-	printf("Echo command executed\n");
+	if (nl == TRUE)
+		write(STDOUT_FILENO, "\n", 1);
+
 	return (SUCCESS);
 }

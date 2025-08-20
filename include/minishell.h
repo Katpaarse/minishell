@@ -33,11 +33,11 @@
 
 typedef struct s_cmd
 {
-	char			**args; //command and arguments
-	char			*infile; // < file
-	char			*outfile; // > file or >> file
-	int				append; // 1 if >> append mode 
-	struct s_cmd	*next; //linked list to next command
+	char			**args; 	// command and arguments
+	char			*infile; 	// < file
+	char			*outfile; 	// > file or >> file
+	int				append; 	// 1 if >> append mode
+	struct s_cmd	*next; 		// linked list to next command
 }	t_cmd;
 
 typedef struct s_minishell

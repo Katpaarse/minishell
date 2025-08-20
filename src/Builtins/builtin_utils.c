@@ -70,6 +70,46 @@ exit		❌				❌
 }
 */
 
+int	is_redirect(t_cmd *cmd, t_minishell *shell)
+{
+	int fd;
+	if (!cmd || !shell)
+		return (FAILURE);
+
+	if (cmd->outfile)
+	{
+		if (cmd->append == TRUE)
+			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0666); // '>>' APPEND mode
+		else
+			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666); // '>' REDIRECT mode
+		dup2(fd, STDOUT_FILENO); // Redirect stdout to outfile
+	}
+	else if (cmd->infile)
+	{
+		if (cmd->heredoc == TRUE)
+		{
+			return (FAILURE);
+		}
+		else
+		{
+			fd = open(cmd->infile, O_RDONLY);
+		}
+		dup2(fd, STDIN_FILENO); // Redirect stdin to infile
+	}
+	else
+		return (FAILURE);
+
+	close(fd);
+
+	if (fd < 0)
+	{
+		perror("Error opening infile/outfile");
+		return (FAILURE);
+	}
+
+	return (SUCCESS);
+}
+
 void	copy_envp(t_minishell *shell, char **envp)
 {
 	int i;
