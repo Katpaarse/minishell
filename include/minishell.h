@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/21 16:45:38 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/21 23:34:38 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,10 @@ t_cmd	*cmd_into_new_node(void);
 char	**add_argument(char **args, char *arg);
 t_cmd	*tokens_into_cmds(char **tokens);
 char	*ft_strjoin_and_free(char *s1, char *s2);
-char 	*get_value_env(char const *name, char **envp);
+char 	*get_env_value(char const *name, char **envp);
+size_t  count_env(char **envp);
+int 	cmp_env_names(char const *s1, char const *s2);
+char    *get_var_name_end(char *ptr);
 
 //debug parsing functions
 void	print_debug_cmds(t_cmd *cmds);
