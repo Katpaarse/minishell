@@ -34,54 +34,24 @@ int	builtin_pwd(t_cmd *cmd, t_minishell *shell)
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
-		perror("getcwd() error");
+		//error
 		return (FAILURE);
 	}
 
-	if (cmd->outfile != NULL)
+	int len;
+	len = strlen(cwd);
+
+	if (write(STDOUT_FILENO, cwd, len) < 0)
 	{
-		int fd;
-		int len;
-	
-		if (cmd->append)
-			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0666); // '>>' append mode
-		else
-			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666); // '>' redirect mode
-
-		if (fd < 0)
-		{
-			perror("Error opening outfile");
-			free(cwd);
-			return (FAILURE);
-		}
-
-		len = strlen(cwd);
-
-		if (write(fd, cwd, len) < 0)
-		{
-			perror("Error writing to outfile");
-			free(cwd);
-		}
-		if (write(fd, "\n", 1) < 0)
-		{
-			perror("Error writing newline to outfile");
-			free(cwd);
-		}
-
+		//error
+		free(cwd);
+	}
+	if (write(STDOUT_FILENO, "\n", 1) < 0)
+	{
+		//error
+		free(cwd);
+	}
+	if (cwd)
 		free(cwd); // Free the allocated memory for cwd
-
-		if (close(fd) < 0)
-		{
-			perror("Error closing outfile");
-			return (FAILURE);
-		}
-		return (SUCCESS);
-	}
-	else
-	{
-		printf("%s\n", cwd);
-		if (cwd)
-			free(cwd); // Free the allocated memory for cwd
-		return (SUCCESS);
-	}
+	return (SUCCESS);
 }

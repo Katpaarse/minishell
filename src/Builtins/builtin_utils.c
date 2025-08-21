@@ -86,7 +86,7 @@ int	is_redirect(t_cmd *cmd, t_minishell *shell)
 	}
 	else if (cmd->infile)
 	{
-		if (cmd->heredoc == TRUE)
+		if (cmd->heredoc_delim == TRUE)
 		{
 			return (FAILURE);
 		}
@@ -99,9 +99,9 @@ int	is_redirect(t_cmd *cmd, t_minishell *shell)
 	else
 		return (FAILURE);
 
-	close(fd);
-
-	if (fd < 0)
+	if (fd > 0)
+		close(fd);
+	else if (fd < 0)
 	{
 		perror("Error opening infile/outfile");
 		return (FAILURE);

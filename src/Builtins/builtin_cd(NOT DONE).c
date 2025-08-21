@@ -12,16 +12,51 @@
 
 #include "../../include/minishell.h"
 
+// chdir
+// getcwd
+// write
+// strerror
+// malloc/free
+
 /*
     cd: cd with a relative or absolute path requires exactly 1 argument. 
 	The path is that argument.
         Example: cd /home, cd ../documents
 */
 
-int	builtin_cd(t_cmd *cmd, t_minishell *shell)
+int	builtin_cd(t_cmd *cmd, t_minishell *shell, int fd)
 {
-	// This function should implement the cd command
-	// For now, we will just print a placeholder message
-	printf("CD command executed\n");
+	char *path;
+	char *oldpwd;
+
+	if (!cmd || !cmd->args || !shell)
+		return (FAILURE);
+
+	if (cmd->args[2] != NULL)
+	{
+		write(fd, "cd: too many arguments\n", 24);
+		return (FAILURE);
+	}
+
+	oldpwd = getcwd(NULL, 0);
+	if (!oldpwd)
+		return (FAILURE);
+
+	if (cmd->args[1] == NULL)
+		path = getenv("HOME");
+	else if (cmd->args[1] == "-")
+		path = getenv("OLDPWD");
+	else if (cmd->args[1] == "..")
+		chdir("..");
+	else if (cmd->args[1] == '.')
+		chdir(".");
+	else if (cmd->args[1] && cmd->args[1][0] == '/' && cmd->args[2] == NULL)
+		path = cmd->args[1];
+
+	if (path)
+		chdir(path);
+
+	// Update PWD and OLDPWD environment variables
+
 	return (SUCCESS);
 }
