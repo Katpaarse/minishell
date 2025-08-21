@@ -12,6 +12,10 @@
 
 #include "../../include/minishell.h"
 
+// ft_strncmp
+// ft_strlen
+// malloc/free
+// write
 /*
     export: export with no options requires 0 arguments.
         Example: export
@@ -19,7 +23,6 @@
 
 int	builtin_export(t_cmd *cmd, t_minishell *shell)
 {
-	getenv("PATH"); // Example usage of getenv, not necessary for export
 	// This function should implement the export command
 	// For now, we will just print a placeholder message
 	printf("EXPORT command executed\n");

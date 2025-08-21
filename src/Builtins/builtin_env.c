@@ -17,15 +17,16 @@
         Example: env
 */
 
-int	builtin_env(t_minishell *shell)
+int	builtin_env(t_minishell *shell, int fd)
 {
 	int	i;
 
 	i = 0;
 	while (shell->envp[i] != NULL)
 	{
-		printf("%s\n", shell->envp[i]);
+		write(fd, shell->envp[i], ft_strlen(shell->envp[i]));
+		write(fd, "\n", 1); // Print newline after each
 		i++;
 	}
-	return (SUCCESS);
+	return (0);
 }
