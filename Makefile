@@ -1,7 +1,7 @@
 NAME        = minishell
 
 CC          = cc
-CFLAGS      = -Wall -Wextra -Werror -g
+CFLAGS      = -Wall -Wextra -Werror -g -Iinclude
 
 SRC_DIR     = src
 LIBFT_DIR   = $(SRC_DIR)/libft
