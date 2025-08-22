@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 16:26:06 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/21 23:37:03 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/22 15:10:25 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ size_t  count_env(char **envp)
     return (i);
 }
 
-// function the get the value from the environment depending on search. Like "HOME" "USER" "PATH" etc
+// function to get the value from the environment depending on search. Like "HOME" "USER" "PATH" etc
 char    *get_env_value(char const *name, char **envp)
 {
     int i;

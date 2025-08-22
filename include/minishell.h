@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/21 23:34:38 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/22 15:41:26 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,10 @@ t_cmd	*tokens_into_cmds(char **tokens);
 char	*ft_strjoin_and_free(char *s1, char *s2);
 char 	*get_env_value(char const *name, char **envp);
 size_t  count_env(char **envp);
+char    *get_env_name(char const *name, char **envp);
 int 	cmp_env_names(char const *s1, char const *s2);
 char    *get_var_name_end(char *ptr);
+char	*expand_exit_code(char *result, int exit_code);
 
 //debug parsing functions
 void	print_debug_cmds(t_cmd *cmds);
