@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:19:46 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/18 16:00:54 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/25 17:14:16 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,17 +88,17 @@ char	**tokenize_input(char *input)
 			i++;
 		if (input[i] == '\0')
 			break;
-		if (input[i] == '\'' || input[i] == '"')
+		else if (input[i] == '\'' || input[i] == '"')
 		{
 			quote = input[i];
-			i++;
 			start = i;
+			i++;
 			while (input[i] && input[i] != quote)
+				i++;
+			if (input[i] == quote)
 				i++;
 			tokens[ti] = ft_strndup(input + start, i - start);
 			ti++;
-			if (input[i] == quote)
-				i++;
 		}
 		else if (is_special_op(input[i]))
 		{

@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/23 18:37:11 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/25 16:19:53 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int 	cmp_env_names(char const *s1, char const *s2);
 char    *get_var_name_end(char *ptr);
 char	*expand_exit_code(char *result, int exit_code);
 char	*expand_variable(char const *input, int *i, char **envp, char *result);
-char	*expand_literal_char(char const *input, int *i, char *result);
+char	*expand_normal_char(char const *input, int *i, char *result);
 char    *expand_variables(const char *input, t_minishell *shell);
 
 //debug parsing functions

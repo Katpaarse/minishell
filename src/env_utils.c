@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 16:26:06 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/22 15:10:25 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/25 16:00:26 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char    *get_env_value(char const *name, char **envp)
             return (ft_strdup(envp[i] + len + 1)); // return value after the '=' char
         i++;
     }
-    return (ft_strdup("")); // variable not found → empty string
+    return (ft_strdup("")); // variable not found -> empty string
 }
 
 // return a strdup of the full "VAR=value" string, if found
