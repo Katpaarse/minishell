@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 15:27:24 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/26 14:10:16 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/26 18:07:24 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ char    *expand_variables(const char *input, t_minishell *shell)
                 result = ft_strjoin_and_free(result, ft_strdup("$"));
         }
         else
-            result = expand_literal_char(input, &i, result);
+            result = expand_normal_char(input, &i, result);
     }
     return (result);
 }
