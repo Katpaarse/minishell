@@ -54,7 +54,7 @@ int	execute_command(char **argv, char **envp);
 // Builtin functions
 int		is_builtin(char **argv);
 int		run_builtin(char **argv, char **envp);
-int		builtin_cd(t_cmd *cmd, t_minishell *shell);
+int		builtin_cd(t_cmd *cmd, t_minishell *shell, int fd);
 int		builtin_pwd(t_cmd *cmd, t_minishell *shell);
 int		builtin_echo(t_cmd *cmd, t_minishell *shell);
 int		builtin_env(t_minishell *shell);
