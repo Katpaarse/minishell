@@ -38,25 +38,52 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell, int fd)
 		return (FAILURE);
 	}
 
-	oldpwd = getcwd(NULL, 0);
+	oldpwd = getcwd(NULL, 0); // MALLOC so free it later
 	if (!oldpwd)
 		return (FAILURE);
 
 	if (cmd->args[1] == NULL)
 		path = getenv("HOME");
-	else if (cmd->args[1] == "-")
+	else if (ft_strncmp(cmd->args[1], "-", 2) == 0)
 		path = getenv("OLDPWD");
-	else if (cmd->args[1] == "..")
-		chdir("..");
-	else if (cmd->args[1] == '.')
-		chdir(".");
-	else if (cmd->args[1] && cmd->args[1][0] == '/' && cmd->args[2] == NULL)
+	else
 		path = cmd->args[1];
 
-	if (path)
-		chdir(path);
+	if (!path)
+	{
+		write(fd, "cd: HOME not set\n", 17);
+		free(oldpwd);
+		return (FAILURE);
+	}
+
+	if (path && chdir(path) == 0)
+	{
+		write(fd, path, ft_strlen(path));
+		write(fd, "\n", 1);
+	}
+	else if (path && chdir(path) != 0)
+	{
+		write(fd, "cd: no such file or directory\n", 31);
+		free(oldpwd);
+		return (FAILURE);
+	}
+	else
+		return (FAILURE);
 
 	// Update PWD and OLDPWD environment variables
+	if (setenv("PWD", path, 1) == -1)
+	{
+		write(fd, "cd: failed to set PWD\n", 23);
+		free(oldpwd);
+		return (FAILURE);
+	}
+	if (setenv("OLDPWD", oldpwd, 1) == -1)
+	{
+		write(fd, "cd: failed to set OLDPWD\n", 26);
+		free(oldpwd);
+		return (FAILURE);
+	}
+	free(oldpwd);
 
 	return (SUCCESS);
 }
