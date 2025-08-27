@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 16:26:06 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/25 16:00:26 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/27 19:43:12 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ size_t  count_env(char **envp)
 {
     size_t  i;
 
-    if (envp == 0)
+    if (envp == NULL) // checks if the environment pointer array is NULL. If it is, there are 0 environment variables.
         return (0);
     i = 0;
-    while (envp[i])
+    while (envp[i]) // iterates through the envp array until it reaches the NULL terminator. Each envp[i] is a string like "HOME=/Users/jukerste"
         i++;
-    return (i);
+    return (i); // returns the total count of environment variables
 }
 
 // function to get the value from the environment depending on search. Like "HOME" "USER" "PATH" etc
@@ -33,12 +33,12 @@ char    *get_env_value(char const *name, char **envp)
 
     if (name == NULL || envp == NULL)
         return (NULL);
-    len = ft_strlen(name);
+    len = ft_strlen(name); // length of the variable name we’re searching for. Example: "HOME" → len = 4
     i = 0;
-    while (envp[i])
+    while (envp[i]) // loop through each environment variable string
     {
-        if (ft_strncmp(envp[i], name, len) == SUCCESS && envp[i][len] == '=')
-            return (ft_strdup(envp[i] + len + 1)); // return value after the '=' char
+        if (ft_strncmp(envp[i], name, len) == SUCCESS && envp[i][len] == '=') // checks if the first len characters match the variable name and the next character is '='. Example: For "HOME=/Users/jukerste", if name = "HOME", it matches
+            return (ft_strdup(envp[i] + len + 1)); // Returns a new string with only the value of the variable. "HOME=/Users/jukerste" -> " /Users/jukerste"
         i++;
     }
     return (ft_strdup("")); // variable not found -> empty string
@@ -56,13 +56,13 @@ char    *get_env_name(char const *name, char **envp)
     i = 0;
     while (envp[i])
     {
-        if (ft_strncmp(envp[i], name, len) == SUCCESS && (envp[i][len] == '=' || envp[i][len] == '\0'))
-            return (ft_strdup(envp[i]));
+        if (ft_strncmp(envp[i], name, len) == SUCCESS && (envp[i][len] == '=' || envp[i][len] == '\0')) // checks if the string starts with the variable name. Then makes sure its either followed by '=' (normal variable) or '\0' (variable exists but no value)
+            return (ft_strdup(envp[i])); // returns a full copy of the "VAR=value" string
         i++;
     }
     return (NULL);
 }
-// compare environment variables by name ("PATH=...") by name only 
+// compare environment variables by name ("PATH=...") by name only. Stops when a '=' char is found
 int cmp_env_names(char const *s1, char const *s2)
 {
     while (*s1 && *s2 && *s1 != '=' && *s2 != '=' && *s1 == *s2)
@@ -72,14 +72,14 @@ int cmp_env_names(char const *s1, char const *s2)
     }
     return (*s1 - *s2);
 }
-// find the end of a valid variable name in a string
+// find the end of a valid variable name in a string. Helps extract variable names from strings
 char    *get_var_name_end(char *ptr)
 {
     if (ptr == NULL)
         return (NULL);
-    if (!ft_isalpha(*ptr) && *ptr != '_')
+    if (!ft_isalpha(*ptr) && *ptr != '_') // checks if the first character is valid for a variable name: letter or underscore. $1VAR is invalid; stops immediately
         return (ptr);
-    while (ft_isalnum(*ptr) || *ptr == '_')
+    while (ft_isalnum(*ptr) || *ptr == '_') // loops until the character is no longer alphanumeric or underscore
         ptr++;
-    return (ptr);
+    return (ptr); // Returns the pointer to the first invalid character. Example: "HOME=/Users" -> returns pointer to '='
 }

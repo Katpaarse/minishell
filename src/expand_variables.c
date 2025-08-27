@@ -6,23 +6,23 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 15:27:24 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/26 18:07:24 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/27 19:35:57 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// join exit code into result string
+// join exit code into result string. Handles this for $? as input in the shell
 char	*expand_exit_code(char *result, int exit_code)
 {
 	char	*code;
 	
-	code = ft_itoa(exit_code);
+	code = ft_itoa(exit_code); // converts the integer exit_code (from your shell struct) to a string
 	if (code == NULL)
 		return (result);
-	result = ft_strjoin_and_free(result, code);
-	free(code);
-	return (result);
+	result = ft_strjoin_and_free(result, code); // append it to the new string. And frees the old string
+	free(code); // free the temporary string
+	return (result); // returns the updated string with the exit code appended
 }
 
 // starting at input[*i] (right after $), read a valid variable name and append its value
@@ -32,35 +32,35 @@ char	*expand_variable(char const *input, int *i, char **envp, char *result)
 	char	*name;
 	char	*value;
 	
-	start = *i;
-	while (ft_isalnum(input[*i]) || input[*i] == '_')
+	start = *i; // stores the current index in the input string, right after $    Example: for $HOME, *i points to 'H'.
+	while (ft_isalnum(input[*i]) || input[*i] == '_') // moves the pointer forward to read the full variable name. Stops when it hits a character that isn’t alphanumeric or underscore
 		(*i)++;
-	name = ft_substr(input, start, *i - start);
+	name = ft_substr(input, start, *i - start); // extract the variable name. Example: HOME from $HOME
 	if (name == NULL)
 		return (result);
-	value = get_env_value(name, envp);
+	value = get_env_value(name, envp); // looks up the environment variable. Returns an empty string or new string depending on the result
 	free(name);
 	if (value == NULL)
 		return (result);
-	result = ft_strjoin_and_free(result, value);
+	result = ft_strjoin_and_free(result, value); // appends the variable value to the current result string
 	free(value);
 	return (result);
 }
-// copy one normal character (not part of $…) into result
+// copy one normal character (not part of $…) into result string
 char	*expand_normal_char(char const *input, int *i, char *result)
 {
 	char 	buffer[2];
 	char	*dup;
 
-	buffer[0] = input[*i];
-	buffer[1] = '\0';
-	dup = ft_strdup(buffer);
-	result = ft_strjoin_and_free(result, dup);
+	buffer[0] = input[*i]; // stores the single character at the current index in a temporary string
+	buffer[1] = '\0'; // null terminate the string with a single char
+	dup = ft_strdup(buffer); // store the terminated string with a single char
+	result = ft_strjoin_and_free(result, dup); // append the char to the result string
 	free(dup);
-	(*i)++;
+	(*i)++; // move to the next char in the input
 	return (result);
 }
-// It scans input left-to-right and decides what to do for each character
+// It scans input left to right and decides what to do for each character
 char    *expand_variables(const char *input, t_minishell *shell)
 {
     char    *result;
