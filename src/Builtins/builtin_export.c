@@ -44,19 +44,21 @@ hello  # now the child process sees it
 int	builtin_export(t_cmd *cmd, t_minishell *shell)
 {
 	int i;
+	int j;
+	int check;
 	char *var_name;
 	char *var_value;
 
 	if (!cmd || !shell)
 		return (FAILURE);
 
-	i = 0;
+	i = 1;
 	if (cmd->args[1] == NULL)
 	{
 		// print all env variables in shell->envp
 		// each variable should be prefixed with "declare -x "
 		// Example: declare -x PATH="/usr/bin:/bin"
-		int j = 0;
+		j = 0;
 		while (shell->envp[j])
 		{
 			write(1, "declare -x ", 11);
@@ -67,28 +69,58 @@ int	builtin_export(t_cmd *cmd, t_minishell *shell)
 		return (SUCCESS);
 	}
 	else
-		while (cmd->args[++i] && (cmd->args[i][0] == '_' || ft_isalpha(cmd->args[i][0]) == 0))
+	{
+		while (cmd->args[i])
 		{
-			if (ft_strchr(cmd->args[i], '=') == NULL)
+			j = 0;
+			if (cmd->args[i][0] == '_' || ft_isalpha(cmd->args[i][0]) == 1)
 			{
-				write(2, "export: not a valid identifier\n", 31);
-				return (FAILURE);
-			}
-			else
-			{
-				var_name = ft_strjoin_and_free(ft_strndup(cmd->args[i], ft_strchr(cmd->args[i], '=') - cmd->args[i]), "=");
-				var_value = ft_strdup(ft_strchr(cmd->args[i], '=') + 1);
-
-				if (setenv(var_name, var_value, 1) == -1)
+				if (ft_strchr(cmd->args[i], '=') != NULL)
 				{
-					free(var_name);
-					free(var_value);
-					return (FAILURE);
+					// handle 'space' values in var_value
+					// Example: export VAR="value with spaces"
+					// should be in " " quotes when printed with export
+					// example: export VAR=" "
+					while (cmd->args[i][j] && cmd->args[i][j] != '=')
+						j++;
+					if (cmd->args[i][j + 1] != '\0') // there is a value after '='
+					{
+						var_name = ft_strndup(cmd->args[i], j + 1); // include '='
+						var_value = ft_strdup(&cmd->args[i][j + 1]);
+						check = 0;
+					}
+					else // no value after '='
+					{
+						var_name = ft_strndup(cmd->args[i], j + 1); // include '='
+						var_value = ft_strdup("");
+						check = 1;
+					}
 				}
-				free(var_name);
-				free(var_value);
+				else // no '=' in argument, just a variable name
+				{
+					var_name = ft_strdup(cmd->args[i]);
+					var_value = NULL;
+					check = 2;
+				}
 			}
+			i++;
 		}
-	
+	}
+
+	if (check == 0)
+	{
+		// add or update var_name with var_value in shell->envp
+		// also add to shell->exp_list if not already present
+	}
+	else if (check == 1)
+	{
+		// add or update var_name with empty value in shell->envp
+		// also add to shell->exp_list if not already present
+	}
+	else if (check == 2)
+	{
+		// just add var_name to shell->exp_list if not already present
+	}
+
 	return (SUCCESS);
 }

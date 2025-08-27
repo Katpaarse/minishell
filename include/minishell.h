@@ -45,6 +45,7 @@ typedef struct s_minishell
 {
 	t_cmd	*cmds; // linked list of parsed commands
 	char	**envp; // environments variables
+	char	**exp_list; // exported variables list
 	int		exit_code; // last command exit code
 }	t_minishell;
 
