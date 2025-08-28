@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 15:27:24 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/27 19:35:57 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/28 18:46:51 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,21 +68,19 @@ char    *expand_variables(const char *input, t_minishell *shell)
 
     if (input == NULL)
         return (NULL);
-    result = ft_strdup("");
-    if (result == NULL)
-        return (NULL);
+    result = ft_strdup(""); // initialize result as an empty string
     i = 0;
     while (input[i])
     {
-        if (input[i] == '$')
+        if (input[i] == '$') // if $ char is found. Variable expansion is needed
         {
-            i++;
-            if (input[i] == '?')
+			i++; // skip $ char first then check for ? or another char
+            if (input[i] == '?') 
             {
-                result = expand_exit_code(result, shell->exit_code);
+                result = expand_exit_code(result, shell->exit_code); // If next character is ? -> append last exit code using expand_exit_code
                 i++;
             }
-            else if (ft_isalpha(input[i]) || input[i] == '_')
+            else if (ft_isalpha(input[i]) || input[i] == '_') // If next character is a letter/underscore -> expand variable using expand_variable. Otherwise -> just copy $ literally
                 result = expand_variable(input, &i, shell->envp, result);
             else
                 result = ft_strjoin_and_free(result, ft_strdup("$"));
