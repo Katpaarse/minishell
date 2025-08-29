@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/17 15:27:59 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/29 15:52:41 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ t_cmd	*cmd_into_new_node(void)
 	cmd->outfile = NULL; // no output redirection yet
 	cmd->append = FALSE; // not appending by default
 	cmd->next = NULL; // no next command yet
+	cmd->heredoc_delim = NULL; // set to NULL because not EOF yet
 	return (cmd);
 }
 
