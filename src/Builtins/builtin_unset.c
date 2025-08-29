@@ -23,7 +23,6 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 	int j;
 	int var_len;
 	int unset_check;
-	(void)shell; // Unused parameter, can be removed if not needed
 
 	if (!cmd || !cmd->args || !shell)
 		return (FAILURE);

@@ -70,6 +70,56 @@ exit		❌				❌
 }
 */
 
+int is_builtin(char **argv)
+{
+    if (argv[0])
+    {
+        if (ft_strncmp(argv[0], "cd", 3) == 0)
+            return (SUCCESS);
+		else if (ft_strncmp(argv[0], "echo", 5) == 0)
+			return (SUCCESS);
+        else if (ft_strncmp(argv[0], "pwd", 4) == 0)
+			return (SUCCESS);
+		else if (ft_strncmp(argv[0], "env", 4) == 0)
+			return (SUCCESS);
+        else if (ft_strncmp(argv[0], "export", 7) == 0)
+            return (SUCCESS);
+        else if (ft_strncmp(argv[0], "unset", 6) == 0)
+            return (SUCCESS);
+        else if (ft_strncmp(argv[0], "exit", 5) == 0)
+            return (SUCCESS);
+        else
+            return (FAILURE);
+    }
+    else
+        return (FAILURE);
+}
+
+int run_builtin(char **argv, t_minishell *shell, t_cmd *cmd)
+{
+    if (argv[0])
+    {
+        if (ft_strncmp(argv[0], "cd", 3) == 0)
+            return (builtin_cd(cmd, shell, /*fd*/));
+		else if (ft_strncmp(argv[0], "echo", 5) == 0)
+			return (builtin_echo(cmd));
+        else if (ft_strncmp(argv[0], "pwd", 4) == 0)
+			return (builtin_pwd());
+		else if (ft_strncmp(argv[0], "env", 4) == 0)
+			return (builtin_env(shell, /*fd*/));
+        else if (ft_strncmp(argv[0], "export", 7) == 0)
+            return (builtin_export(cmd, shell));
+        else if (ft_strncmp(argv[0], "unset", 6) == 0)
+            return (builtin_unset(cmd, shell));
+        else if (ft_strncmp(argv[0], "exit", 5) == 0)
+            return (builtin_exit(cmd, shell));
+        else
+            return (FAILURE);
+    }
+    else
+        return (FAILURE);
+}
+
 int	is_redirect(t_cmd *cmd, t_minishell *shell)
 {
 	int fd;
@@ -82,7 +132,7 @@ int	is_redirect(t_cmd *cmd, t_minishell *shell)
 			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0666); // '>>' APPEND mode
 		else
 			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666); // '>' REDIRECT mode
-		dup2(fd, STDOUT_FILENO); // Redirect stdout to outfile
+		dup2(fd, 1); // Redirect stdout to outfile
 	}
 	else if (cmd->infile)
 	{
@@ -94,7 +144,7 @@ int	is_redirect(t_cmd *cmd, t_minishell *shell)
 		{
 			fd = open(cmd->infile, O_RDONLY);
 		}
-		dup2(fd, STDIN_FILENO); // Redirect stdin to infile
+		dup2(fd, 0); // Redirect stdin to infile
 	}
 	else
 		return (FAILURE);
@@ -126,7 +176,7 @@ void	copy_envp(t_minishell *shell, char **envp)
 	if (!shell->envp)
 	{
 		perror("envp malloc failed");
-		exit(EXIT_FAILURE);
+		exit(1);
 	}
 
 	i = 0;
@@ -136,7 +186,7 @@ void	copy_envp(t_minishell *shell, char **envp)
 		if (!shell->envp[i])
 		{
 			perror("ft_strdup failed");
-			exit(EXIT_FAILURE);
+			exit(1);
 		}
 		i++;
 	}

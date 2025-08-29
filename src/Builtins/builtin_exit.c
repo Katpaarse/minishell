@@ -21,15 +21,15 @@ int	builtin_exit(t_cmd *cmd, t_minishell *shell)
 {
 	if (cmd->args[2] != NULL)
 	{
-		write(STDERR_FILENO, "exit\n", 5);
-		write(STDERR_FILENO, "minishell: exit: too many arguments\n", 35);
+		write(2, "exit\n", 5);
+		write(2, "minishell: exit: too many arguments\n", 35);
 		return (FAILURE);
 	}
 
 	// exit with no arguments or with one argument
 	if (cmd->args[1] == NULL)
 	{
-		write(STDOUT_FILENO, "exit\n", 5);
+		write(1, "exit\n", 5);
 		exit(shell->exit_code); // Exit with the last command exit code
 	}
 	else if (cmd->args[1] != NULL && cmd->args[2] == NULL)
@@ -39,7 +39,7 @@ int	builtin_exit(t_cmd *cmd, t_minishell *shell)
 		while (shell->exit_code < 0 || shell->exit_code > 255)
 			shell->exit_code = shell->exit_code % 256; // Ensure exit code is within 0-255 range
 
-		write(STDOUT_FILENO, "exit\n", 5);
+		write(1, "exit\n", 5);
 		exit(shell->exit_code); // Exit with the specified exit code
 	}
 	return (SUCCESS);
