@@ -41,6 +41,8 @@ typedef struct s_cmd
 	struct s_cmd	*next; //linked list to next command
 }	t_cmd;
 
+// 'fd' variable in struct ? 'fd **array' to keep track of multiple fds.
+
 typedef struct s_minishell
 {
 	t_cmd	*cmds; // linked list of parsed commands
@@ -50,18 +52,26 @@ typedef struct s_minishell
 }	t_minishell;
 
 // Executor functions
-int	execute_command(char **argv, char **envp);
+int 	wait_for_child(pid_t pid);
+int		execute_command(char **argv, char **envp, t_minishell *shell, t_cmd *cmd);
+int		run_external(char **argv, char **envp);
+char	*find_cmd_path(char **argv, char **envp);
+char	*find_absolute_path(char **argv, char **envp);
+char	*find_relative_path(char *cmd, char *path, char **envp);
 
 // Builtin functions
-int		is_builtin(char **argv);
-int		run_builtin(char **argv, char **envp);
 int		builtin_cd(t_cmd *cmd, t_minishell *shell, int fd);
-int		builtin_pwd(t_cmd *cmd, t_minishell *shell);
-int		builtin_echo(t_cmd *cmd, t_minishell *shell);
-int		builtin_env(t_minishell *shell);
+int		builtin_pwd(void);
+int		builtin_echo(t_cmd *cmd);
+int		builtin_env(t_minishell *shell, int fd);
 int		builtin_export(t_cmd *cmd, t_minishell *shell);
 int		builtin_unset(t_cmd *cmd, t_minishell *shell);
 int		builtin_exit(t_cmd *cmd, t_minishell *shell);
+
+// Builtin helper functions
+int		is_builtin(char **argv);
+int		run_builtin(char **argv, t_minishell *shell, t_cmd *cmd);
+int		is_redirect(t_cmd *cmd, t_minishell *shell);
 void	copy_envp(t_minishell *shell, char **envp);
 
 //parsing functions

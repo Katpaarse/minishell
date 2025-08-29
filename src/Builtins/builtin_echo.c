@@ -18,13 +18,12 @@
         Example: echo hello, echo -n hello world
 */
 
-int	builtin_echo(t_cmd *cmd, t_minishell *shell)
+int	builtin_echo(t_cmd *cmd)
 {
 	int i;
 	int nl;
 	char **args;
 	int first_word;
-	(void)shell;
 	
 	i = 1; // Start from 1 to skip the command name
 	nl = TRUE; // bash default behavior is to print newline
@@ -34,7 +33,7 @@ int	builtin_echo(t_cmd *cmd, t_minishell *shell)
 	// If no arguments are provided, print a newline
 	if (!args || !args[0])
 	{
-		write(STDOUT_FILENO, "\n", 1); // Print newline
+		write(1, "\n", 1); // Print newline
 		return (SUCCESS); // If no arguments, just print newline
 	}
 
@@ -57,14 +56,14 @@ int	builtin_echo(t_cmd *cmd, t_minishell *shell)
 	while (args[i] != NULL)
 	{
 		if (!first_word)
-			write(STDOUT_FILENO, " ", 1);
-		write(STDOUT_FILENO, args[i], strlen(args[i]));
+			write(1, " ", 1);
+		write(1, args[i], strlen(args[i]));
 		// printf("%s", args[i]);
 		first_word = FALSE;
 		i++;
 	}
 	if (nl == TRUE)
-		write(STDOUT_FILENO, "\n", 1);
+		write(1, "\n", 1);
 
 	return (SUCCESS);
 }

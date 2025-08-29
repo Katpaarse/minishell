@@ -26,8 +26,9 @@
 
 int	builtin_cd(t_cmd *cmd, t_minishell *shell, int fd)
 {
-	char *path;
-	char *oldpwd;
+	char	*path;
+	char	*oldpwd;
+	int 	i;
 
 	if (!cmd || !cmd->args || !shell)
 		return (FAILURE);
@@ -70,18 +71,19 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell, int fd)
 	else
 		return (FAILURE);
 
-	// Update PWD and OLDPWD environment variables
-	if (setenv("PWD", path, 1) == -1)
+	while (shell->envp[i])
 	{
-		write(fd, "cd: failed to set PWD\n", 23);
-		free(oldpwd);
-		return (FAILURE);
-	}
-	if (setenv("OLDPWD", oldpwd, 1) == -1)
-	{
-		write(fd, "cd: failed to set OLDPWD\n", 26);
-		free(oldpwd);
-		return (FAILURE);
+		if (ft_strncmp(shell->envp[i], "PWD=", 4) == 0)
+		{
+			free(shell->envp[i]);
+			shell->envp[i] = ft_strjoin_and_free(ft_strdup("PWD="), getcwd(NULL, 0));
+		}
+		else if (ft_strncmp(shell->envp[i], "OLDPWD=", 7) == 0)
+		{
+			free(shell->envp[i]);
+			shell->envp[i] = ft_strjoin_and_free(ft_strdup("OLDPWD="), oldpwd);
+		}
+		i++;
 	}
 	free(oldpwd);
 

@@ -17,12 +17,9 @@
         Example: pwd
 */
 
-int	builtin_pwd(t_cmd *cmd, t_minishell *shell)
+int	builtin_pwd(void)
 {
 	char *cwd;
-
-	(void)cmd; // Unused parameter, can be removed if not needed
-	(void)shell; // Unused parameter, can be removed if not needed
 
 	// Get the pathname of the current working directory,
 	// 		extern char *getcwd (char *__buf, size_t __size) __THROW __wur;
@@ -41,12 +38,12 @@ int	builtin_pwd(t_cmd *cmd, t_minishell *shell)
 	int len;
 	len = strlen(cwd);
 
-	if (write(STDOUT_FILENO, cwd, len) < 0)
+	if (write(1, cwd, len) < 0)
 	{
 		//error
 		free(cwd);
 	}
-	if (write(STDOUT_FILENO, "\n", 1) < 0)
+	if (write(1, "\n", 1) < 0)
 	{
 		//error
 		free(cwd);

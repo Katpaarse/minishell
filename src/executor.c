@@ -33,95 +33,135 @@ Everything else should be executed as an external program via 'execve'
 #include <unistd.h>
 #include <signal.h>
 
-int main(int argc, char **argv, char **envp)
+// int main(int argc, char **argv, char **envp)
+// {
+// 	(void)argc;
+// 	(void)argv;
+//     char    *cmd[] = {"pwd", NULL};
+//     execute_command(cmd, envp);
+//     return (SUCCESS);
+// }
+
+int wait_for_child(pid_t pid)
 {
-	(void)argc;
-	(void)argv;
-    char    *cmd[] = {"pwd", NULL};
-    execute_command(cmd, envp);
-    return (SUCCESS);
+    int status;
+
+    waitpid(pid, &status, 0);
+    return (status);
 }
 
-int execute_command(char **argv, char **envp)
+int execute_command(char **argv, char **envp, t_minishell *shell, t_cmd *cmd)
 {
-	(void)envp;
-    if (!argv || !argv[0] || argv[0][0] == '\0')
+    if (!envp || !argv || !argv[0] || argv[0][0] == '\0')
         return (FAILURE);
 
-    if (is_builtin(argv))
+    if (is_builtin(argv) == SUCCESS)
     {
         run_builtin(argv, envp);
         return (SUCCESS);
     }
-	// else (EXTERNAL COMMAND)
-	// Here you would typically fork a new process and use execve to run the command
-	// For example:
-	// if (fork() == 0) {
-	//     execve(argv[0], argv, envp);
-	//     perror("execve failed");
-	//     exit(EXIT_FAILURE);
-	// }
-	// wait(NULL); // Wait for the child process to finish
 	else
-		return (FAILURE); // Placeholder for external command execution
-    // fork();
-    // execve();
-    // waitpid();
+	{
+		run_external(argv, envp);
+		return (SUCCESS);
+	}
 }
 
 
-int is_builtin(char **argv)
+int	run_external(char **argv, char **envp)
 {
-    if (argv[0])
-    {
-        if (ft_strncmp(argv[0], "cd", 3) == 0)
-            return (SUCCESS);
-		else if (ft_strncmp(argv[0], "echo", 5) == 0)
-			return (SUCCESS);
-        else if (ft_strncmp(argv[0], "pwd", 4) == 0)
-			return (SUCCESS);
-		else if (ft_strncmp(argv[0], "env", 4) == 0)
-			return (SUCCESS);
-        else if (ft_strncmp(argv[0], "export", 7) == 0)
-            return (SUCCESS);
-        else if (ft_strncmp(argv[0], "unset", 6) == 0)
-            return (SUCCESS);
-        else if (ft_strncmp(argv[0], "exit", 5) == 0)
-            return (SUCCESS);
-        else
-            return (FAILURE);
-    }
-    else
-        return (FAILURE);
+	pid_t	pid;
+	int		status;
+	char 	*cmd_path;
+
+	cmd_path = find_cmd_path(argv, envp);
+	pid = fork();
+
+	if (pid == 0)
+	{
+		execve(cmd_path, argv, envp);
+		perror("execve failed");
+		exit(EXIT_FAILURE);
+	}
+	waitpid(pid, &status, 0);
+	return (status);
 }
 
-int run_builtin(char **argv, char **envp)
+char	*find_cmd_path(char **argv, char **envp)
 {
-    if (argv[0])
-    {
-        if (ft_strncmp(argv[0], "cd", 3) == 0)
-            return (builtin_cd());
-		else if (ft_strncmp(argv[0], "echo", 5) == 0)
-			return (builtin_echo());
-        else if (ft_strncmp(argv[0], "pwd", 4) == 0)
-			return (builtin_pwd());
-		else if (ft_strncmp(argv[0], "env", 4) == 0)
-			return (builtin_env());
-        else if (ft_strncmp(argv[0], "export", 7) == 0)
-            return (builtin_export());
-        else if (ft_strncmp(argv[0], "unset", 6) == 0)
-            return (builtin_unset());
-        else if (ft_strncmp(argv[0], "exit", 5) == 0)
-            return (builtin_exit());
-        else
-            return (FAILURE);
-    }
-    else
-        return (FAILURE);
+	char	*path;
+
+	if (!argv || !argv[0] || argv[0][0] == '\0' || !envp)
+		return (NULL);
+
+	if (ft_strchr(argv[0], '/') != NULL)
+		return (find_absolute_path(argv, envp));
+	else 
+	{
+		path = NULL;
+		path = find_relative_path(argv[0], path, envp);
+		if (path)
+			return (path);
+	}
+
+	return (NULL);
 }
 
-... execute_external()
-{}
+char	*find_absolute_path(char **argv, char **envp)
+{
+	int		i;
+	char	*path;
 
-... wait_for_child()
-{}
+	i = 0;
+	if (!argv || !argv[0] || argv[0][0] == '\0' || !envp)
+		return (NULL);
+	if (ft_strchr(argv[0], '/') != NULL)
+	{
+		if (access(argv[0], X_OK) == 0)
+			return (argv[0]);
+		else
+			return (NULL);
+	}
+	return (NULL);
+}
+
+char	*find_relative_path(char *cmd, char *path, char **envp)
+{
+	char	**paths;
+	char	*full_path;
+	int		i;
+	
+	if (!cmd || !path)
+		return (NULL);
+
+	i = 0;
+	while (envp[i])
+	{
+		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
+		{
+			path = envp[i] + 5; // Skip "PATH="
+			return (path);
+		}
+		i++;
+	}
+
+	paths = ft_split(path, ':');
+	if (!paths)
+		return (NULL);
+
+	i = 0;
+	while (paths[i])
+	{
+		full_path = ft_strjoin(paths[i], "/");
+		full_path = ft_strjoin_and_free(full_path, cmd);
+		if (access(full_path, X_OK) == 0)
+		{
+			// Free allocated memory for paths
+		}
+	// Free allocated memory for paths
+	}
+}
+
+
+
+
