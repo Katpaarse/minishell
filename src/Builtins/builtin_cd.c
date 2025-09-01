@@ -12,19 +12,13 @@
 
 #include "minishell.h"
 
-// chdir
-// getcwd
-// write
-// strerror
-// malloc/free
-
 /*
     cd: cd with a relative or absolute path requires exactly 1 argument. 
 	The path is that argument.
         Example: cd /home, cd ../documents
 */
 
-int	builtin_cd(t_cmd *cmd, t_minishell *shell, int fd)
+int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 {
 	char	*path;
 	char	*oldpwd;
@@ -35,7 +29,7 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell, int fd)
 
 	if (cmd->args[2] != NULL)
 	{
-		write(fd, "cd: too many arguments\n", 24);
+		write(2, "cd: too many arguments\n", 24);
 		return (FAILURE);
 	}
 
@@ -52,25 +46,25 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell, int fd)
 
 	if (!path)
 	{
-		write(fd, "cd: HOME not set\n", 17);
+		write(2, "cd: HOME not set\n", 17);
 		free(oldpwd);
 		return (FAILURE);
 	}
 
 	if (path && chdir(path) == 0)
 	{
-		write(fd, path, ft_strlen(path));
-		write(fd, "\n", 1);
+		write(1, path, ft_strlen(path));
+		write(1, "\n", 1);
 	}
 	else if (path && chdir(path) != 0)
 	{
-		write(fd, "cd: no such file or directory\n", 31);
+		write(2, "cd: no such file or directory\n", 31);
 		free(oldpwd);
 		return (FAILURE);
 	}
 	else
 		return (FAILURE);
-
+	i = 0;
 	while (shell->envp[i])
 	{
 		if (ft_strncmp(shell->envp[i], "PWD=", 4) == 0)
@@ -85,7 +79,6 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell, int fd)
 		}
 		i++;
 	}
-	free(oldpwd);
 
 	return (SUCCESS);
 }

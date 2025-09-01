@@ -12,64 +12,6 @@
 
 #include "minishell.h"
 
-/*
-Summary Table
-Builtin		Uses infile		Uses outfile/append
-echo		❌				✅
-cd			❌				❌
-pwd			❌				✅
-export		❌				⚠ optional (rare)
-unset		❌				❌
-env			❌				✅
-exit		❌				❌
-*/
-
-/*int main(int argc, char **argv, char **envp)
-{
-    t_cmd cmd;
-    t_minishell shell;
-	*/
-/*
-    cmd.outfile = NULL;
-    cmd.append = FALSE;
-    cmd.args = NULL; // unused by pwd
-    builtin_pwd(&cmd, &shell);
-
-    cmd.outfile = "pwd_output.txt";
-    cmd.append = FALSE;
-    builtin_pwd(&cmd, &shell);
-    printf("'pwd_output.txt' for output\n");
-*/
-
-    // echo hello world
-    // char *args1[] = {"echo", "hellohihello", "world", NULL};
-    // cmd.args = args1;
-    // cmd.outfile = NULL;
-    // cmd.append = FALSE;
-    // builtin_echo(&cmd, &shell);
-/*
-    // echo -n hello world
-    char *args2[] = {"-n", "hello", "world", NULL};
-    cmd.args = args2;
-    builtin_echo(&cmd, &shell);
-*//*
-    // echo hello world > echo_output.txt
-    // cmd.outfile = "echo_output.txt";
-    // cmd.append = TRUE;
-    // builtin_echo(&cmd, &shell);
-    // printf("Check file 'echo_output.txt' for output\n");
-	int i = 0;
-	while (shell.envp != NULL)
-    {
-		printf("%s\n", shell.envp[i]);
-		i++;
-		if (shell.envp[i] == NULL)
-			break;
-	}
-	return (0);
-}
-*/
-
 int is_builtin(char **argv)
 {
     if (argv[0])
@@ -100,13 +42,13 @@ int run_builtin(char **argv, t_minishell *shell, t_cmd *cmd)
     if (argv[0])
     {
         if (ft_strncmp(argv[0], "cd", 3) == 0)
-            return (builtin_cd(cmd, shell, /*fd*/));
+            return (builtin_cd(cmd, shell));
 		else if (ft_strncmp(argv[0], "echo", 5) == 0)
 			return (builtin_echo(cmd));
         else if (ft_strncmp(argv[0], "pwd", 4) == 0)
 			return (builtin_pwd());
 		else if (ft_strncmp(argv[0], "env", 4) == 0)
-			return (builtin_env(shell, /*fd*/));
+			return (builtin_env(shell));
         else if (ft_strncmp(argv[0], "export", 7) == 0)
             return (builtin_export(cmd, shell));
         else if (ft_strncmp(argv[0], "unset", 6) == 0)
@@ -120,76 +62,132 @@ int run_builtin(char **argv, t_minishell *shell, t_cmd *cmd)
         return (FAILURE);
 }
 
+/*
+
+This will automatically redirect stdin/stdout according to the command’s redirects array.
+
+You don’t need to manually pass fds to each builtin.
+
+Heredoc (<<) still needs implementation in is_redirect.
+
+int	run_builtin(char **argv, t_minishell *shell, t_cmd *cmd)
+{
+	int		stdin_backup;
+	int		stdout_backup;
+
+	if (!argv || !cmd)
+		return (FAILURE);
+
+	// Backup original stdin and stdout
+	stdin_backup = dup(0);
+	stdout_backup = dup(1);
+
+	// Apply redirections
+	if (is_redirect(cmd) == FAILURE)
+	{
+		// If redirection fails, restore and exit
+		dup2(stdin_backup, 0);
+		dup2(stdout_backup, 1);
+		close(stdin_backup);
+		close(stdout_backup);
+		return (FAILURE);
+	}
+
+	if (ft_strncmp(argv[0], "cd", 3) == 0)
+		builtin_cd(cmd, shell);
+	else if (ft_strncmp(argv[0], "echo", 5) == 0)
+		builtin_echo(cmd);
+	else if (ft_strncmp(argv[0], "pwd", 4) == 0)
+		builtin_pwd();
+	else if (ft_strncmp(argv[0], "env", 4) == 0)
+		builtin_env(shell);
+	else if (ft_strncmp(argv[0], "export", 7) == 0)
+		builtin_export(cmd, shell);
+	else if (ft_strncmp(argv[0], "unset", 6) == 0)
+		builtin_unset(cmd, shell);
+	else if (ft_strncmp(argv[0], "exit", 5) == 0)
+		builtin_exit(cmd, shell);
+	else
+	{
+		// Restore original stdin/stdout if builtin not recognized
+		dup2(stdin_backup, 0);
+		dup2(stdout_backup, 1);
+		close(stdin_backup);
+		close(stdout_backup);
+		return (FAILURE);
+	}
+
+	// Restore original stdin/stdout after running builtin
+	dup2(stdin_backup, 0);
+	dup2(stdout_backup, 1);
+	close(stdin_backup);
+	close(stdout_backup);
+
+	return (SUCCESS);
+}
+*/
+
 int	is_redirect(t_cmd *cmd, t_minishell *shell)
 {
 	int fd;
+	int	i;
+
 	if (!cmd || !shell)
 		return (FAILURE);
 
-	if (cmd->outfile)
+	i = 0;
+	while (cmd->redirects[i].type != RED_NONE)
 	{
-		if (cmd->append == TRUE)
-			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0666); // '>>' APPEND mode
+		if (cmd->redirects[i].type == RED_OUTPUT)
+			fd = open(cmd->redirects[i].filename, O_WRONLY | O_CREAT | O_TRUNC, 0666); 	// '>' TRUNCATE mode
+		else if (cmd->redirects[i].type == RED_APPEND)
+			fd = open(cmd->redirects[i].filename, O_WRONLY | O_CREAT | O_APPEND, 0666); // '>>' APPEND mode
+		else if (cmd->redirects[i].type == RED_INPUT)
+			fd = open(cmd->redirects[i].filename, O_RDONLY);							// '<' INFILE mode
+		else if (cmd->redirects[i].type == RED_HEREDOC)
+		{																				// '<<' HEREDOC 'EOF' mode
+			// implement heredoc handling
+			i++;
+			continue ;
+		}
 		else
-			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666); // '>' REDIRECT mode
-		dup2(fd, 1); // Redirect stdout to outfile
-	}
-	else if (cmd->infile)
-	{
-		if (cmd->heredoc_delim == TRUE)
 		{
+			i++;
+			continue ;
+		}
+
+		if (fd < 0)
+		{
+			// error handling here
 			return (FAILURE);
 		}
-		else
-		{
-			fd = open(cmd->infile, O_RDONLY);
-		}
-		dup2(fd, 0); // Redirect stdin to infile
-	}
-	else
-		return (FAILURE);
 
-	if (fd > 0)
+		// Redirect stdout or stdin depending on type
+		if (cmd->redirects[i].type == RED_OUTPUT || cmd->redirects[i].type == RED_APPEND)
+		{
+			if (dup2(fd, 1) < 0)
+			{
+				// error handling here
+				close(fd);
+				return (FAILURE);
+			}
+		}
+		else if (cmd->redirects[i].type == RED_INPUT || cmd->redirects[i].type == RED_HEREDOC)
+		{
+			if (dup2(fd, 0) < 0)
+			{
+				// error handling here
+				close(fd);
+				return (FAILURE);
+			}
+		}
+
 		close(fd);
-	else if (fd < 0)
-	{
-		perror("Error opening infile/outfile");
-		return (FAILURE);
+		i++;
 	}
 
 	return (SUCCESS);
 }
 
-void	copy_envp(t_minishell *shell, char **envp)
-{
-	int i;
 
-	i = 0;
-	if (!envp || !shell)
-		return;
-
-	// Count the number of environment variables
-	while (envp[i] != NULL)
-		i++;
-	
-	shell->envp = malloc(sizeof(char *) * (i + 1));
-	if (!shell->envp)
-	{
-		perror("envp malloc failed");
-		exit(1);
-	}
-
-	i = 0;
-	while (envp[i] != NULL)
-	{
-		shell->envp[i] = ft_strdup(envp[i]);
-		if (!shell->envp[i])
-		{
-			perror("ft_strdup failed");
-			exit(1);
-		}
-		i++;
-	}
-	shell->envp[i] = NULL; // Null-terminate the array
-}
 

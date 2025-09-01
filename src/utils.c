@@ -12,6 +12,40 @@
 
 #include "minishell.h"
 
+
+void	copy_envp(t_minishell *shell, char **envp)
+{
+	int i;
+
+	i = 0;
+	if (!envp || !shell)
+		return;
+
+	// Count the number of environment variables
+	while (envp[i] != NULL)
+		i++;
+	
+	shell->envp = malloc(sizeof(char *) * (i + 1));
+	if (!shell->envp)
+	{
+		perror("envp malloc failed");
+		exit(1);
+	}
+
+	i = 0;
+	while (envp[i] != NULL)
+	{
+		shell->envp[i] = ft_strdup(envp[i]);
+		if (!shell->envp[i])
+		{
+			perror("ft_strdup failed");
+			exit(1);
+		}
+		i++;
+	}
+	shell->envp[i] = NULL; // Null-terminate the array
+}
+
 char    *ft_strjoin_and_free(char *s1, char *s2)
 {
 	size_t  len_s1;

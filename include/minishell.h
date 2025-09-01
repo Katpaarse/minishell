@@ -21,6 +21,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -31,17 +32,41 @@
 # define TRUE 1
 # define FALSE 0
 
+// Dit is nodig om meerdere redirections in 1 command te kunnen bijhouden en uitvoeren.
+// Bijvoorbeeld: cmd < infile > outfile >> appendfile
+
+/*
+VOORBEELD:
+command: cat < in.txt > out.txt >> log.txt 
+
+cmd->args = ["cat", NULL]
+cmd->redirects[0] = { "in.txt", RED_INPUT }
+cmd->redirects[1] = { "out.txt", RED_OUTPUT }
+cmd->redirects[2] = { "log.txt", RED_APPEND }
+
+*/
+
+typedef enum e_redirect_type
+{
+	RED_NONE,
+	RED_INPUT,      // <
+	RED_OUTPUT,     // >
+	RED_APPEND,     // >>
+	RED_HEREDOC     // <<
+}	t_redirect_type;
+
+typedef struct s_redirect
+{
+	char 			*filename;		// name of the file for redirection
+	t_redirect_type type;			// type of redirection
+}	t_redirect;
+
 typedef struct s_cmd
 {
 	char			**args; //command and arguments
-	char			*infile; // < file
-	char			*outfile; // > file or >> file
-	int				append; // 1 if >> append mode
-	char			*heredoc_delim; // looks for "EOF" when << redirection is called in shell to tell the shell to stop reading from input
+	t_redirect		*redirects; // array of redirections
 	struct s_cmd	*next; //linked list to next command
 }	t_cmd;
-
-// 'fd' variable in struct ? 'fd **array' to keep track of multiple fds.
 
 typedef struct s_minishell
 {
@@ -56,14 +81,14 @@ int 	wait_for_child(pid_t pid);
 int		execute_command(char **argv, char **envp, t_minishell *shell, t_cmd *cmd);
 int		run_external(char **argv, char **envp);
 char	*find_cmd_path(char **argv, char **envp);
-char	*find_absolute_path(char **argv, char **envp);
-char	*find_relative_path(char *cmd, char *path, char **envp);
+char	*find_absolute_path(char **argv);
+char	*find_relative_path(char *cmd, char **envp);
 
 // Builtin functions
-int		builtin_cd(t_cmd *cmd, t_minishell *shell, int fd);
+int		builtin_cd(t_cmd *cmd, t_minishell *shell);
 int		builtin_pwd(void);
 int		builtin_echo(t_cmd *cmd);
-int		builtin_env(t_minishell *shell, int fd);
+int		builtin_env(t_minishell *shell);
 int		builtin_export(t_cmd *cmd, t_minishell *shell);
 int		builtin_unset(t_cmd *cmd, t_minishell *shell);
 int		builtin_exit(t_cmd *cmd, t_minishell *shell);

@@ -38,16 +38,12 @@ int	builtin_pwd(void)
 	int len;
 	len = strlen(cwd);
 
-	if (write(1, cwd, len) < 0)
-	{
-		//error
-		free(cwd);
-	}
-	if (write(1, "\n", 1) < 0)
-	{
-		//error
-		free(cwd);
-	}
+    if (write(1, cwd, len) < 0 || write(1, "\n", 1) < 0)
+    {
+        free(cwd);
+        return FAILURE;
+    }
+
 	if (cwd)
 		free(cwd); // Free the allocated memory for cwd
 	return (SUCCESS);
