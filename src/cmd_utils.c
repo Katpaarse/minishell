@@ -6,42 +6,11 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/29 15:52:41 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/01 17:49:05 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/*
-Now about t_redirect initialization
-
-Since t_redirect is a small struct, you’ll usually allocate it during parsing. For example, when you parse a > token:
-
-t_redirect new_redir;
-new_redir.filename = strdup("out.txt");
-new_redir.type = RED_OUTPUT;
-
-Then you push it into the cmd->redirects array (using malloc/realloc if necessary).
-
----
-
-If you want a helper function for redirects
-
-This can make life easier:
-
-t_redirect	create_redirect(const char *filename, t_redirect_type type)
-{
-	t_redirect redir;
-
-	redir.filename = strdup(filename);
-	redir.type = type;
-	return (redir);
-}
-
-Then in your parser:
-cmd->redirects[i] = create_redirect("out.txt", RED_OUTPUT);
-*/
-
 
 // creates a new t_cmd node and initializes all its fields to default values
 t_cmd	*cmd_into_new_node(void)
@@ -52,9 +21,8 @@ t_cmd	*cmd_into_new_node(void)
 	if (cmd == NULL)
 		return (NULL);
 	cmd->args = NULL; // no argument yet and sets it to NULL
-	cmd->redirects = NULL; // no redirection yet
+	cmd->redirects = NULL; // no redirects yet
 	cmd->next = NULL; // no next command yet
-	cmd->heredoc_delim = NULL; // set to NULL because not EOF yet
 	return (cmd);
 }
 
@@ -81,4 +49,48 @@ char	**add_argument(char **args, char *new_arg)
 	new_args [i + 1] = NULL;
 	free(args);
 	return (new_args);
+}
+
+void	free_redirects(t_redirect *list)
+{
+	int	i;
+	
+	if (list == NULL)
+		return ;
+	i = 0;
+	while (list[i].filename != NULL) // loop through each redirect
+	{
+		free(list[i].filename); // free strdup’d filename
+		i++;
+	}
+	free(list); // free the array itself
+}
+
+void	free_args(char **args)
+{
+	int	i;
+	
+	if (args == NULL)
+		return ;
+	i = 0;
+	while (args[i])
+	{
+		free(args[i]); // free each argument string
+		i++;
+	}
+	free(args); // free the array
+}
+
+void	free_cmds(t_cmd *cmd)
+{
+	t_cmd	*next;
+	
+	while (cmd != NULL)
+	{
+		next = cmd->next; // save the next node
+		free_args(cmd->args); // free arguments
+		free_redirects(cmd->redirects); // free redirects
+		free(cmd); // free this node
+		cmd = next; // move to next
+	}
 }
