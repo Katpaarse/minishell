@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/26 15:13:17 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/08/29 20:02:16 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ char	*expand_normal_char(char const *input, int *i, char *result);
 char    *expand_variables(const char *input, t_minishell *shell);
 char	*remove_quotes(char const *token);
 char	*process_token(char *token, t_minishell *shell);
+void	print_error(char const *source, char const *message, char const *token);
 
 //debug parsing functions
 void	print_debug_cmds(t_cmd *cmds);
