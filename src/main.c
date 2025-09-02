@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/02 16:37:54 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/02 17:16:27 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,18 @@ int main(int argc, char **argv, char **envp)
 		while (tokens[i]) // loop through each token
 		{
 			expanded = expand_variables(tokens[i], &shell); // expand_variables replaces $HOME with its value from envp
-			free(expanded);
+			free(tokens[i]);
+			tokens[i] = expanded;
 			i++;
 		}
-		if (shell.cmds)
+		shell.cmds = tokens_into_cmds(tokens);
+		if (!shell.cmds)
+			write(2, "minishell: syntax error\n", 24);
+		else
 		{
-			execute_command(&shell);
-			return (0);
+			shell.exit_code = execute_command(&shell);
+			free_cmds(shell.cmds);
+			shell.cmds = NULL;
 		}
 		i = 0;
 		while (tokens[i]) // cleanup frees all the tokens and input
@@ -61,5 +66,5 @@ int main(int argc, char **argv, char **envp)
 		free(tokens);
 		free(input);
 	}
-	return (0);
+	return (shell.exit_code);
 }
