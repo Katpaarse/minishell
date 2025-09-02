@@ -62,14 +62,15 @@ int run_builtin(t_cmd *cmd, t_minishell *shell)
         return (FAILURE);
 }
 
-/*
 
+/*
 This will automatically redirect stdin/stdout according to the command’s redirects array.
 
 You don’t need to manually pass fds to each builtin.
 
 Heredoc (<<) still needs implementation in is_redirect.
-
+*/
+/*
 int	run_builtin(char **argv, t_minishell *shell, t_cmd *cmd)
 {
 	int		stdin_backup;
@@ -83,7 +84,7 @@ int	run_builtin(char **argv, t_minishell *shell, t_cmd *cmd)
 	stdout_backup = dup(1);
 
 	// Apply redirections
-	if (is_redirect(cmd) == FAILURE)
+	if (is_redirect(cmd, shell) == FAILURE)
 	{
 		// If redirection fails, restore and exit
 		dup2(stdin_backup, 0);
