@@ -37,19 +37,19 @@ Everything else should be executed as an external program via 'execve'
 #include <unistd.h>
 #include <signal.h>
 
-int execute_command(char **argv, char **envp, t_minishell *shell, t_cmd *cmd)
+int execute_command(t_cmd *cmd, t_minishell *shell) // Execution call function.
 {
-    if (!envp || !argv || !argv[0] || argv[0][0] == '\0')
+    if (!shell->envp || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
         return (FAILURE);
 
-    if (is_builtin(argv) == SUCCESS) // Parent process runs built-in commands
+    if (is_builtin(cmd->args) == SUCCESS) // Parent process runs built-in commands
     {
-        run_builtin(argv, shell, cmd);
+        run_builtin(cmd, shell);
         return (SUCCESS);
     }
 	else // Child process runs external commands with execve and fork
 	{
-		run_external(argv, shell->envp);
+		run_external(cmd, shell);
 		return (SUCCESS);
 	}
 }

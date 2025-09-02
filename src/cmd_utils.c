@@ -54,7 +54,6 @@ t_cmd	*cmd_into_new_node(void)
 	cmd->args = NULL; // no argument yet and sets it to NULL
 	cmd->redirects = NULL; // no redirection yet
 	cmd->next = NULL; // no next command yet
-	cmd->heredoc_delim = NULL; // set to NULL because not EOF yet
 	return (cmd);
 }
 
