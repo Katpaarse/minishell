@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/02 16:25:31 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/02 16:43:29 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ typedef struct s_minishell
 // Executor functions
 int 	wait_for_child(pid_t pid);
 int		execute_command(t_cmd *cmd, t_minishell *shell);
-// int		run_external(char **argv, char **envp);
+int		run_external(t_cmd *cmd, t_minishell *shell);
 // char	*find_cmd_path(char **argv, char **envp);
 // char	*find_absolute_path(char **argv);
 // char	*find_relative_path(char *cmd, char **envp);
@@ -89,7 +89,7 @@ int		builtin_cd(t_cmd *cmd, t_minishell *shell);
 int		builtin_pwd(void);
 int		builtin_echo(t_cmd *cmd);
 int		builtin_env(t_minishell *shell);
-// int		builtin_export(t_cmd *cmd, t_minishell *shell);
+int 	builtin_export(char **args, char ***env);
 int		builtin_unset(t_cmd *cmd, t_minishell *shell);
 int		builtin_exit(t_cmd *cmd, t_minishell *shell);
 

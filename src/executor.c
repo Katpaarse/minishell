@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:22:58 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/02 16:26:31 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/02 16:28:14 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,7 @@ Everything else should be executed as an external program via 'execve'
 --- --- --- --- --- --- --- --- ---
 */
 
-#include "../include/minishell.h"
-#include <unistd.h>
-#include <signal.h>
+#include "minishell.h"
 
 int execute_command(t_cmd *cmd, t_minishell *shell) // Execution call function.
 {
