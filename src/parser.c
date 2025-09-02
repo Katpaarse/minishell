@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/29 16:34:17 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/01 16:40:24 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_cmd	*tokens_into_cmds(char **tokens)
 	{
 		if (tokens[i][0] == '|' && tokens[i][1] == '\0')
 		{
-			if (current->args == NULL && current->infile == NULL && current->outfile == NULL)
+			if (current->args == NULL && current->redirects == NULL)
 				return (NULL); // syntax error: empty command line before pipe
 			current->next = cmd_into_new_node();
 			current = current->next;
@@ -38,30 +38,28 @@ t_cmd	*tokens_into_cmds(char **tokens)
 			if (tokens[i + 1] == NULL)
 				return (NULL); // syntax error: missing heredoc delimiter
 			i++;
-			current->heredoc_delim = ft_strdup(tokens[i]); // store delimiter "EOF"
+			current->redirects = add_redirect(current->redirects, ft_strdup(tokens[i]), RED_HEREDOC); // store delimiter "EOF"
 		}
 		else if (tokens[i][0] == '<' && tokens[i][1] == '\0')
 		{
 			if (tokens[i + 1] == NULL)
 				return (NULL); // syntax error: missing infile 
 			i++;
-			current->infile = ft_strdup(tokens[i]);
+			current->redirects = add_redirect(current->redirects, ft_strdup(tokens[i]), RED_INPUT);
 		}
 		else if (tokens[i][0] == '>' && tokens[i][1] == '\0')
 		{
 			if (tokens[i + 1] == NULL)
 				return (NULL); // syntax error: missing outfile
 			i++;
-			current->outfile = ft_strdup(tokens[i]);
-			current->append = FALSE;
+			current->redirects = add_redirect(current->redirects, ft_strdup(tokens[i]), RED_OUTPUT);
 		}
 		else if (tokens[i][0] == '>' && tokens[i][1] == '>' && tokens[i][2] == '\0')
 		{
 			if (tokens[i + 1] == NULL)
 				return (NULL); // syntax error: missing outfile
 			i++;
-			current->outfile = ft_strdup(tokens[i]);
-			current->append = TRUE;
+			current->redirects = add_redirect(current->redirects, ft_strdup(tokens[i]), RED_APPEND);
 		}
 		else
 			current->args = add_argument(current->args, ft_strdup(tokens[i]));
