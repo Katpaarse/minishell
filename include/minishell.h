@@ -78,7 +78,7 @@ typedef struct s_minishell
 
 // Executor functions
 int 	wait_for_child(pid_t pid);
-int		execute_command(char **argv, char **envp, t_minishell *shell, t_cmd *cmd);
+int		execute_command(t_cmd *cmd, t_minishell *shell);
 int		run_external(char **argv, char **envp);
 char	*find_cmd_path(char **argv, char **envp);
 char	*find_absolute_path(char **argv);
@@ -95,7 +95,7 @@ int		builtin_exit(t_cmd *cmd, t_minishell *shell);
 
 // Builtin helper functions
 int		is_builtin(char **argv);
-int		run_builtin(char **argv, t_minishell *shell, t_cmd *cmd);
+int		run_builtin(t_cmd *cmd, t_minishell *shell);
 int		is_redirect(t_cmd *cmd, t_minishell *shell);
 void	copy_envp(t_minishell *shell, char **envp);
 

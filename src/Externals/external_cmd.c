@@ -12,13 +12,13 @@
 
 #include "../include/minishell.h"
 
-int	run_external(char **argv, char **envp)
+int	run_external(t_cmd *cmd, t_minishell *shell)
 {
 	pid_t	pid;
 	int		status;
 	char 	*cmd_path;
 
-	cmd_path = find_cmd_path(argv, envp);
+	cmd_path = find_cmd_path(cmd, shell);
 	if (!cmd_path)
 	{
 		// error handling can be added here if needed
@@ -34,7 +34,7 @@ int	run_external(char **argv, char **envp)
 
 	if (pid == 0)
 	{
-		execve(cmd_path, argv, envp); 	// replaces child process with new program
+		execve(cmd_path, cmd->args, shell->envp); 	// replaces child process with new program
 		perror("execve failed"); 		// only reached if execve fails
 		exit(EXIT_FAILURE); 			// exit child process if execve fails
 	}

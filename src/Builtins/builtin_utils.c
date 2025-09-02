@@ -37,23 +37,23 @@ int is_builtin(char **argv)
         return (FAILURE);
 }
 
-int run_builtin(char **argv, t_minishell *shell, t_cmd *cmd)
+int run_builtin(t_cmd *cmd, t_minishell *shell)
 {
-    if (argv[0])
+    if (cmd->args[0])
     {
-        if (ft_strncmp(argv[0], "cd", 3) == 0)
+        if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
             return (builtin_cd(cmd, shell));
-		else if (ft_strncmp(argv[0], "echo", 5) == 0)
+		else if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
 			return (builtin_echo(cmd));
-        else if (ft_strncmp(argv[0], "pwd", 4) == 0)
+        else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
 			return (builtin_pwd());
-		else if (ft_strncmp(argv[0], "env", 4) == 0)
+		else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 			return (builtin_env(shell));
-        else if (ft_strncmp(argv[0], "export", 7) == 0)
+        else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
             return (builtin_export(cmd, shell));
-        else if (ft_strncmp(argv[0], "unset", 6) == 0)
+        else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
             return (builtin_unset(cmd, shell));
-        else if (ft_strncmp(argv[0], "exit", 5) == 0)
+        else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
             return (builtin_exit(cmd, shell));
         else
             return (FAILURE);
