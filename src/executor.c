@@ -35,19 +35,19 @@ Everything else should be executed as an external program via 'execve'
 
 #include "minishell.h"
 
-int execute_command(t_cmd *cmd, t_minishell *shell) // Execution call function.
+int execute_command(t_minishell *shell) // Execution call function.
 {
-    if (!shell->envp || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
+    if (!shell->envp || !shell->cmds->args || !shell->cmds->args[0] || shell->cmds->args[0][0] == '\0')
         return (FAILURE);
 
-    if (is_builtin(cmd->args) == SUCCESS) // Parent process runs built-in commands
+    if (is_builtin(shell->cmds->args) == SUCCESS) // Parent process runs built-in commands
     {
-        run_builtin(cmd, shell);
+        run_builtin(shell->cmds, shell);
         return (SUCCESS);
     }
 	else // Child process runs external commands with execve and fork
 	{
-		run_external(cmd, shell);
+		run_external(shell->cmds->args, shell->envp);
 		return (SUCCESS);
 	}
 }

@@ -78,11 +78,11 @@ typedef struct s_minishell
 
 // Executor functions
 int 	wait_for_child(pid_t pid);
-int		execute_command(t_cmd *cmd, t_minishell *shell);
-int		run_external(t_cmd *cmd, t_minishell *shell);
-// char	*find_cmd_path(char **argv, char **envp);
-// char	*find_absolute_path(char **argv);
-// char	*find_relative_path(char *cmd, char **envp);
+int		run_external(char **argv, char **envp);
+char	*find_cmd_path(char **argv, char **envp);
+char	*find_absolute_path(char **argv);
+char	*find_relative_path(char *cmd, char **envp);
+int 	execute_command(t_minishell *shell);
 
 // Builtin functions
 int		builtin_cd(t_cmd *cmd, t_minishell *shell);

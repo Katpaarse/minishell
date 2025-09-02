@@ -10,34 +10,30 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "minishell.h"
 
-char	*find_cmd_path(t_cmd *cmd, t_minishell *shell)
+char	*find_cmd_path(char **argv, char **envp)
 {
-	char	*path;
-
-	if (!cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0' || !shell->envp)
+	if (!argv || !argv[0] || argv[0][0] == '\0' || !envp)
 		return (NULL);
 
-	if (ft_strchr(cmd->args[0], '/') != NULL)
-		return (find_absolute_path(cmd));
+	if (ft_strchr(argv[0], '/') != NULL)
+		return (find_absolute_path(argv));
 	else
-		return (find_relative_path(cmd, shell));
+		return (find_relative_path(argv[0], envp));
 
 	return (NULL);
 }
 
-char	*find_absolute_path(t_cmd *cmd)
+char	*find_absolute_path(char **argv)
 {
 	int		i;
-	char	*path;
-
 	i = 0;
-	if (!cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
+	if (!argv || !argv[0] || argv[0][0] == '\0')
 		return (NULL);
 
-	if (access(cmd->args[0], X_OK) == 0)
-		return (cmd->args[0]);
+	if (access(argv[0], X_OK) == 0)
+		return (argv[0]);
 	else
 	{
 		// error handling can be added here if needed
@@ -45,22 +41,23 @@ char	*find_absolute_path(t_cmd *cmd)
 	}
 }
 
-char	*find_relative_path(t_cmd *cmd, t_minishell *shell)
+char	*find_relative_path(char *cmd, char **envp)
 {
 	char	**paths;
 	char	*path_string;
 	char	*full_path;
 	int		i;
 
-	if (!cmd->args || !shell->envp)
+	path_string = NULL;
+	if (!cmd || !envp)
 		return (NULL);
 
 	i = 0;
-	while (shell->envp[i])
+	while (envp[i] != NULL)
 	{
-		if (ft_strncmp(shell->envp[i], "PATH=", 5) == 0)
+		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
 		{
-			path_string = shell->envp[i] + 5; // Skip "PATH="
+			path_string = envp[i] + 5; // Skip "PATH="
 			break ;
 		}
 		i++;
@@ -76,7 +73,7 @@ char	*find_relative_path(t_cmd *cmd, t_minishell *shell)
 	while (paths[i])
 	{
 		full_path = ft_strjoin(paths[i], "/");
-		full_path = ft_strjoin_and_free(full_path, cmd->args[0]);
+		full_path = ft_strjoin_and_free(full_path, cmd);
 		if (access(full_path, X_OK) == 0)
 		{
 			// Free allocated memory for paths

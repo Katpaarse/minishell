@@ -49,7 +49,7 @@ int main(int argc, char **argv, char **envp)
 		}
 		if (shell.cmds)
 		{
-			execute_command(shell.cmds, &shell);
+			execute_command(&shell);
 			return (0);
 		}
 		i = 0;
