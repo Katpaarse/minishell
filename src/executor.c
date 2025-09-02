@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lavan-de <lavan-de@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:22:58 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/08/13 18:55:02 by lavan-de         ###   ########.fr       */
+/*   Updated: 2025/09/02 16:26:31 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,3 @@ int execute_command(t_cmd *cmd, t_minishell *shell) // Execution call function.
 		return (SUCCESS);
 	}
 }
-
-
