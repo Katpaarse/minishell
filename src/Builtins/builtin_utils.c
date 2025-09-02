@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 18:21:49 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/08/21 19:36:26 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/02 16:25:52 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ int run_builtin(t_cmd *cmd, t_minishell *shell)
 			return (builtin_pwd());
 		else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 			return (builtin_env(shell));
-        else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
-            return (builtin_export(cmd, shell));
+        // else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
+        //     return (builtin_export(cmd, shell));
         else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
             return (builtin_unset(cmd, shell));
         else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
