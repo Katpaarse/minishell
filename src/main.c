@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/02 17:16:27 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/04 14:32:40 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int main(int argc, char **argv, char **envp)
 	shell.exit_code = 0; // set not 0. So the last exit code is succes
 	shell.cmds = NULL; // not parsed into commands yet
 	
-	while (1) // infinite loop untill user presses cntrl + D(EOF) or gets out manually
+	while (1) // infinite loop untill user presses cntrl + D(EOF) or "exit" or gets out manually
 	{
 		input = readline("minishell > "); // shows minishell > and waiting for input
 		if (input == NULL) 
@@ -48,10 +48,8 @@ int main(int argc, char **argv, char **envp)
 			tokens[i] = expanded;
 			i++;
 		}
-		shell.cmds = tokens_into_cmds(tokens);
-		if (!shell.cmds)
-			write(2, "minishell: syntax error\n", 24);
-		else
+		shell.cmds = tokens_into_cmds(tokens, &shell);
+		if (shell.cmds)
 		{
 			shell.exit_code = execute_command(&shell);
 			free_cmds(shell.cmds);

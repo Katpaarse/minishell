@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/02 16:43:29 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/04 16:03:19 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	copy_envp(t_minishell *shell, char **envp);
 char		**tokenize_input(char *input);
 t_cmd		*cmd_into_new_node(void);
 char		**add_argument(char **args, char *arg);
-t_cmd		*tokens_into_cmds(char **tokens);
+t_cmd		*tokens_into_cmds(char **tokens, t_minishell *shell);
 char		*ft_strjoin_and_free(char *s1, char *s2);
 char 		*get_env_value(char const *name, char **envp);
 size_t  	count_env(char **envp);
@@ -116,14 +116,12 @@ char		*expand_normal_char(char const *input, int *i, char *result);
 char    	*expand_variables(const char *input, t_minishell *shell);
 char		*remove_quotes(char const *token);
 char		*process_token(char *token, t_minishell *shell);
-void		print_error(char const *source, char const *message, char const *token);
+void		print_syntax_error(t_minishell *shell, char const *token);
+void		print_error(t_minishell *shell, char const *message);
 int			count_redirects(t_redirect *list);
 t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type);
 void		free_redirects(t_redirect *list);
 void		free_args(char **args);
 void		free_cmds(t_cmd *cmd);
-
-//debug parsing functions
-void	print_debug_cmds(t_cmd *cmds);
 
 # endif
