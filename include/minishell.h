@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/04 16:03:19 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/08 17:39:52 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,9 @@ char	*find_absolute_path(char **argv);
 char	*find_relative_path(char *cmd, char **envp);
 int 	execute_command(t_minishell *shell);
 
+// functions for handling pipes
+void	execute_pipeline(t_minishell *shell, t_cmd cmds);
+
 // Builtin functions
 int		builtin_cd(t_cmd *cmd, t_minishell *shell);
 int		builtin_pwd(void);
@@ -98,6 +101,7 @@ int		is_builtin(char **argv);
 int		run_builtin(t_cmd *cmd, t_minishell *shell);
 int		is_redirect(t_cmd *cmd, t_minishell *shell);
 void	copy_envp(t_minishell *shell, char **envp);
+int		is_parent_builtin(t_cmd *cmd);
 
 //parsing functions
 char		**tokenize_input(char *input);
