@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   external_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lavan-de <lavan-de@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:37:59 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/08/31 16:38:00 by lavan-de         ###   ########.fr       */
+/*   Updated: 2025/09/09 16:03:04 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,28 @@ int wait_for_child(pid_t pid)
     int status;
 
     waitpid(pid, &status, 0);
-    return (status);
+    return (status / 256);
 }
+/* 
 
+It fills status with extra info:
+
+exit code of the child
+
+whether the child was stopped, continued, killed by a signal, etc.
+So we need status to extract the real exit code.
+
+So, if exit(42) was called, the status looks like 42 << 8.
+Dividing by 256 (status / 256) shifts it right by 8 bits, giving you the exit code back. 
+
+Example:
+
+child: exit(42)
+
+status = 10752 (because 42 * 256 = 10752)
+
+status / 256 = 42 ✅
+
+status (16 bits):
+   [ exit code (8 bits) | flags/signals (8 bits) ]
+*/

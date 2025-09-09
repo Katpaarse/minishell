@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:58:19 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/08/26 18:14:39 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/09 18:56:35 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,30 +17,22 @@ void	copy_envp(t_minishell *shell, char **envp)
 {
 	int i;
 
-	i = 0;
 	if (!envp || !shell)
 		return;
-
 	// Count the number of environment variables
+	i = 0;
 	while (envp[i] != NULL)
 		i++;
 	
 	shell->envp = malloc(sizeof(char *) * (i + 1));
 	if (!shell->envp)
-	{
-		perror("envp malloc failed");
-		exit(1);
-	}
-
+		print_error(shell,"envp malloc failed");
 	i = 0;
 	while (envp[i] != NULL)
 	{
 		shell->envp[i] = ft_strdup(envp[i]);
 		if (!shell->envp[i])
-		{
-			perror("ft_strdup failed");
-			exit(1);
-		}
+			print_error(shell, "ft_strdup failed");
 		i++;
 	}
 	shell->envp[i] = NULL; // Null-terminate the array
