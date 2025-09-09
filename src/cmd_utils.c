@@ -46,7 +46,7 @@ char	**add_argument(char **args, char *new_arg)
 		i++;
 	}
 	new_args[i] = new_arg;
-	new_args [i + 1] = NULL;
+	new_args[i + 1] = NULL;
 	free(args);
 	return (new_args);
 }

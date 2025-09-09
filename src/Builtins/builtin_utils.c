@@ -62,7 +62,6 @@ int run_builtin(t_cmd *cmd, t_minishell *shell)
         return (FAILURE);
 }
 
-
 /*
 This will automatically redirect stdin/stdout according to the command’s redirects array.
 
