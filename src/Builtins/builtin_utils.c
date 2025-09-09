@@ -190,18 +190,26 @@ int	is_redirect(t_cmd *cmd, t_minishell *shell)
 	return (SUCCESS);
 }
 
+/*
+
+Parent builtin with no pipes → run directly in parent.
+
+Anything in a pipeline (even parent builtins) → fork, because that’s how pipelines are defined.
+
+*/
+
 // Must run in parent: cd, export, unset, exit -> they change shell state. Can run in child process: echo, pwd, env -> they output stuff
 int	is_parent_builtin(t_cmd *cmd)
 {
-	if (cmd->args[0] == NULL || cmd->args == NULL)
-		return (FALSE);
+	if (!cmd || !cmd->args || !cmd->args[0])
+		return (FAILURE);
 	if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
-		return (TRUE);
+		return (SUCCESS);
 	if (ft_strncmp(cmd->args[0], "export", 7) == 0)
-		return (TRUE);
+		return (SUCCESS);
 	if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
-		return (TRUE);
+		return (SUCCESS);
 	if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
-		return (TRUE);
-	return (FALSE);
+		return (SUCCESS);
+	return (FAILURE);
 }
