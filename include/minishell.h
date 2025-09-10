@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/08 17:39:52 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/10 19:09:34 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,10 @@ char	*find_relative_path(char *cmd, char **envp);
 int 	execute_command(t_minishell *shell);
 
 // functions for handling pipes
-void	execute_pipeline(t_minishell *shell, t_cmd cmds);
+void	execute_pipeline(t_minishell *shell, t_cmd *cmds);
+void 	wait_all_children(t_minishell *shell, pid_t *child_pids, int count);
+pid_t 	fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd);
+void 	execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd);
 
 // Builtin functions
 int		builtin_cd(t_cmd *cmd, t_minishell *shell);

@@ -6,33 +6,14 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 15:36:19 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/09 19:53:28 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/10 19:09:23 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
-Pipelines/ folder
-→ handles all the gritty stuff:
-
-	looping over commands,
-
-	creating pipes,
-
-	forking children,
-
-	redirecting stdin/stdout with dup2,
-
-	running builtins or externals in the child,
-
-	closing fds properly,
-
-	waiting and collecting exit statuses.
-*/
-
 //  Execute a child process (builtin or external)
-static void execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
+void execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
 {
 	char	*cmd_path;
 	
@@ -60,47 +41,136 @@ static void execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *
 	exit(126);
 }
 
-// Fork and execute child, setup pipes
-static pid_t fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
+void	execute_pipeline(t_minishell *shell, t_cmd *cmds)
 {
+	int		i;
+	int		fd[2]; // initialize 2 unused fds. fd[0] = fd 3 (read end) and fd[1] = fd 4 (write end)
+	int		prev_fd;
+	t_cmd	*current;
+	int		num_cmds;
+	pid_t	*child_pids;
 	pid_t	pid;
 
-	if (current->next != NULL) // If not the last command -> create a new pipe for communication with the next child
+	if (cmds == NULL)
+		return ;
+	// Special case: single parent-only builtin
+	if (!cmds->next && is_parent_builtin(cmds)) // checks if there is not next command. So its not part of cmd1 | cmd2 | cmd3 | but something like echo hello | cd .. also checks if its a parent builtin so no child process is needed.
 	{
-		if(pipe(fd) == -1)
-		{
-			print_error(shell, "pipe failed");
-			return (-1);
-		}
+		shell->exit_code = run_builtin(cmds, shell);
+		return ;
 	}
-	pid = fork(); // clone process for child process
-	if (pid < 0)
+	// Count number of commands
+	num_cmds = 0;
+	current = cmds;
+	while (current)
 	{
-		print_error(shell, "fork failed");
-		return (-1);
+		num_cmds++;
+		current = current->next;
 	}
-	if (pid == 0)
-		execute_child(shell, current, prev_fd, fd); // In the child -> run execute_child() to set up FDs and run the command.
-	if (prev_fd != -1)
-		close(prev_fd);
-	if (current->next != NULL)
-		prev_fd = fd[0];
-	return (pid);
-}
-
-// Wait for all children (while loop). Use wait_for_child function from builtin utils
-static void wait_all_children(t_minishell *shell, pid_t *child_pids, int count)
-{
-	int	i;
-
+	// Allocate array for child PIDs
+	child_pids = malloc(sizeof(pid_t) * num_cmds);
+	if (child_pids == NULL)
+		return ;
+	// Reset variables
+	current = cmds;
+	prev_fd = -1;
 	i = 0;
-	while (i < count)
+	// Fork each command
+	while (current)
 	{
-		shell->exit_code = wait_for_child(child_pids[i]);
+		pid = fork_and_execute_child(shell, current, prev_fd, fd);
+		if (pid == -1)
+		{
+			free(child_pids);
+			return ;
+		}
+		child_pids[i] = pid;
+		if (current->next != NULL)
+			prev_fd = fd[0];
+		else
+			prev_fd = -1;
+		current = current->next;
 		i++;
 	}
+	// Wait for all children
+	wait_all_children(shell, child_pids, num_cmds);
+	free(child_pids);
 }
-void	execute_pipeline(t_minishell *shell, t_cmd cmds)
-{
-	
-}
+
+/*
+We’ll use the example command:
+echo hello | grep h | wc -c
+Your minishell builds a linked list:
+cmd1: echo hello
+cmd2: grep h
+cmd3: wc -c
+Step 0: Initial FDs
+
+At the very beginning, each process has at least:
+0 → stdin (terminal input)
+1 → stdout (terminal output)
+2 → stderr (terminal error)
+Everything else is unused (FD 3+).
+
+Step 1: First command (echo hello)
+Parent creates pipe1 → returns 2 new FDs:
+fd[0] = 3 (read end)
+fd[1] = 4 (write end)
+Child1 (echo)
+dup2(fd[1], 1) → duplicate 4 onto 1 (stdout now points to pipe write).
+Close original pipe FDs (3 and 4).
+Now child1 has:
+stdin = 0 (terminal)
+stdout = 1 (really pipe write end)
+Runs echo hello, writes into pipe1.
+Parent
+Closes old prev_fd (none yet).
+Closes fd[1] = 4 (write end of pipe1).
+Keeps fd[0] = 3 for next child.
+Step 2: Second command (grep h)
+Parent creates pipe2 → returns new FDs:
+fd[0] = 5 (read end)
+fd[1] = 6 (write end)
+Child2 (grep)
+dup2(prev_fd, 0) → dup2(3, 0) → stdin now comes from pipe1 read end.
+dup2(fd[1], 1) → dup2(6, 1) → stdout now points to pipe2 write end.
+Close FDs 3, 5, 6.
+Now child2 has:
+stdin = 0 (pipe1 read end)
+stdout = 1 (pipe2 write end)
+Runs grep h, reads from echo output, writes into pipe2.
+Parent
+Closes prev_fd = 3 (pipe1 read end).
+Closes fd[1] = 6 (pipe2 write end).
+Keeps fd[0] = 5 for next child.
+Step 3: Third command (wc -c)
+current->next == NULL → no new pipe.
+Child3 (wc)
+dup2(prev_fd, 0) → dup2(5, 0) → stdin now comes from pipe2 read end.
+stdout remains = 1 (terminal).
+Close FD 5.
+Now child3 has:
+stdin = 0 (pipe2 read end)
+stdout = 1 (terminal)
+Runs wc -c, reads from grep output, writes to terminal.
+Parent
+Closes prev_fd = 5.
+
+Step 4: Parent waits
+
+Parent calls waitpid on all 3 children.
+shell->exit_code is updated to the exit code of the last child (wc -c).
+
+Child1	terminal	pipe1 (fd=4 → dup’d to 1)	writes hello\n
+Child2	pipe1 (fd=3 → dup’d to 0)	pipe2 (fd=6 → dup’d to 1)	filters text
+Child3	pipe2 (fd=5 → dup’d to 0)	terminal	counts characters
+Parent	closes unused ends, only waits	terminal	coordinates
+
+After execution:
+Parent has closed all pipe ends (3, 4, 5, 6).
+
+Only 0, 1, 2 remain.
+
+That’s how your pipeline wiring works under the hood.
+Every pipe adds two new FDs. You duplicate (dup2) the one you need (read for stdin, write for stdout), then close both originals so only the correct processes keep the pipe ends they need.
+*/
