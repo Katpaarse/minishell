@@ -19,28 +19,38 @@
 
 int	builtin_exit(t_cmd *cmd, t_minishell *shell)
 {
-	if (cmd->args[2] != NULL)
+	int		i;
+	long	exit_code;
+
+	write(1, "exit\n", 5);
+
+	if (cmd->args[1] && cmd->args[2])
 	{
-		write(2, "exit\n", 5);
-		write(2, "minishell: exit: too many arguments\n", 35);
+		write(2, "minishell: exit: too many arguments\n", 36);
 		return (FAILURE);
 	}
 
-	// exit with no arguments or with one argument
-	if (cmd->args[1] == NULL)
+	if (!cmd->args[1])
 	{
-		write(1, "exit\n", 5);
+		// free resources if needed
 		exit(shell->exit_code); // Exit with the last command exit code
 	}
-	else if (cmd->args[1] != NULL && cmd->args[2] == NULL)
+
+	i = 0;
+	while (cmd->args[1][i] != '\0')
 	{
-		shell->exit_code = atoi(cmd->args[1]);
-
-		while (shell->exit_code < 0 || shell->exit_code > 255)
-			shell->exit_code = shell->exit_code % 256; // Ensure exit code is within 0-255 range
-
-		write(1, "exit\n", 5);
-		exit(shell->exit_code); // Exit with the specified exit code
+		if (!ft_isdigit(cmd->args[1][i])) // '-' and '+' DONT FORGET
+		{
+			write(2, "minishell: exit: ", 17);
+			write(2, cmd->args[1], ft_strlen(cmd->args[1]));
+			write(2, ": numeric argument required\n", 28);
+			// free resources if needed
+			exit(2); // exit with status 2 for non-numeric argument
+		}
+		i++;
 	}
-	return (SUCCESS);
+
+	exit_code = ft_atol(cmd->args[1]);
+
+	exit(exit_code % 256); // Exit with the provided exit code modulo 256
 }

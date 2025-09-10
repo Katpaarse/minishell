@@ -27,13 +27,12 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 	if (!cmd || !cmd->args || !shell)
 		return (FAILURE);
 
-	var_len = 0;
 	unset_check = FAILURE;
 
 	i = 1;
 	while (cmd->args[i] != NULL)
 	{
-		if (cmd->args[i][0] == '\0' && cmd->args[i + 1] != NULL)
+		if (cmd->args[i][0] == '\0' /*&& cmd->args[i + 1] != NULL*/)
 		{
 			i++;
 			continue;
@@ -48,6 +47,7 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 			if (ft_strncmp(shell->envp[j], cmd->args[i], var_len) == 0
 				&& (shell->envp[j][var_len] == '=' || shell->envp[j][var_len] == '\0'))
 			{
+				printf("Freeing envp[%d]: %p -> %s\n", j, shell->envp[j], shell->envp[j]);
 				free(shell->envp[j]);
 				// Shift elements to the left
 				while (shell->envp[j + 1] != NULL)
@@ -57,12 +57,12 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 				}
 				shell->envp[j] = NULL;
 				unset_check = SUCCESS; // At least one variable was unset
-				i++; // Move to the next argument
 				break; // continue to next argument
 			}
 			else
 				j++;
 		}
+		i++; // Move to the next argument
 	}
 	// If no variables were unset, return FAILURE
 	if (unset_check == FAILURE)

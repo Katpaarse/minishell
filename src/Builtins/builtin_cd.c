@@ -34,7 +34,7 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 
 	printf("P[0]\t[%p]\nS[0]\t[%s]\n", cmd->args[0], cmd->args[0]);
 	printf("P[1]\t[%p]\nS[1]\t[%s]\n", cmd->args[1], cmd->args[1]);
-	printf("P[2]\t[%p]\n", cmd->args[2]);
+	// printf("P[2]\t[%p]\n", cmd->args[2]);
 
 	if (cmd->args[1] && cmd->args[2])
 	{
@@ -94,12 +94,12 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 		//printf("envp[%d]: %p -> %s\n", i, shell->envp[i], shell->envp[i]);
 		if (ft_strncmp(shell->envp[i], "PWD=", 4) == 0)
 		{
-			//free(shell->envp[i]);
+			free(shell->envp[i]);
 			shell->envp[i] = ft_strjoin("PWD=", new_pwd);
 		}
 		else if (ft_strncmp(shell->envp[i], "OLDPWD=", 7) == 0)
 		{
-			//free(shell->envp[i]);
+			free(shell->envp[i]);
 			shell->envp[i] = ft_strjoin("OLDPWD=", old_pwd);
 			oldpwd_i = i;
 		}
