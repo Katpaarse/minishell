@@ -23,7 +23,7 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	// initialize shell state
-	shell.envp = envp; // store environment pointer to the struct
+	copy_envp(&shell, envp); // store environment pointer to the struct
 	shell.exit_code = 0; // set not 0. So the last exit code is succes
 	shell.cmds = NULL; // not parsed into commands yet
 	
