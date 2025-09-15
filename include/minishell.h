@@ -95,7 +95,7 @@ int		builtin_cd(t_cmd *cmd, t_minishell *shell);
 int		builtin_pwd(void);
 int		builtin_echo(t_cmd *cmd);
 int		builtin_env(t_minishell *shell);
-int 	builtin_export(char **args, char ***env);
+int 	builtin_export(t_cmd *cmd, t_minishell *shell);
 int		builtin_unset(t_cmd *cmd, t_minishell *shell);
 int		builtin_exit(t_cmd *cmd, t_minishell *shell);
 
@@ -105,6 +105,8 @@ int		run_builtin(t_cmd *cmd, t_minishell *shell);
 int		is_redirect(t_cmd *cmd, t_minishell *shell);
 void	copy_envp(t_minishell *shell, char **envp);
 int		is_parent_builtin(t_cmd *cmd);
+void	add_or_update_exp(t_minishell *shell, char *var);
+void	add_or_update_env(t_minishell *shell, char *var);
 
 //parsing functions
 char		**tokenize_input(char *input);
@@ -112,6 +114,7 @@ t_cmd		*cmd_into_new_node(void);
 char		**add_argument(char **args, char *arg);
 t_cmd		*tokens_into_cmds(char **tokens, t_minishell *shell);
 char		*ft_strjoin_and_free(char *s1, char *s2);
+char		**ft_arrayjoin_and_free(char **arr, char *str);
 char 		*get_env_value(char const *name, char **envp);
 size_t  	count_env(char **envp);
 char    	*get_env_name(char const *name, char **envp);

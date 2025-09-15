@@ -107,6 +107,10 @@ Everything else should be executed as an external program via 'execve'
 
 int execute_command(t_minishell *shell) // Execution call function.
 {
+	// is_parent_builtin
+	// is_redirect
+	// execute_pipeline
+
     if (!shell->envp || !shell->cmds->args || !shell->cmds->args[0] || shell->cmds->args[0][0] == '\0')
         return (FAILURE);
 
