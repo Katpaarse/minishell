@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_cd(NOT DONE).c                             :+:      :+:    :+:   */
+/*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:45:01 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/08/21 19:35:43 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/15 16:48:56 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,25 +25,14 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 	char	*old_pwd;
 	int 	i;
 	int		oldpwd_i;
-	//int		arg_c;
 
 	if (!cmd || !cmd->args || !shell)
 		return (FAILURE);
-
-	printf("TEST\n");
-
-	printf("P[0]\t[%p]\nS[0]\t[%s]\n", cmd->args[0], cmd->args[0]);
-	printf("P[1]\t[%p]\nS[1]\t[%s]\n", cmd->args[1], cmd->args[1]);
-	// printf("P[2]\t[%p]\n", cmd->args[2]);
-
 	if (cmd->args[1] && cmd->args[2])
 	{
 		write(2, "cd: too many arguments\n", 24);
 		return (FAILURE);
 	}
-
-	printf("TEST1\n");
-
 	old_pwd = getcwd(NULL, 0); // MALLOC so free it later
 	if (!old_pwd)
 		return (FAILURE);
@@ -52,46 +41,32 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 		path = get_env_value("HOME", shell->envp);
 	else if (ft_strncmp(cmd->args[1], "-", 2) == 0)
 	{
-		printf("TEST2.4");
 		path = get_env_value("OLDPWD", shell->envp);
 	}
 	else	
 		path = cmd->args[1];
-
-	printf("TEST3\n");
-
 	if (!path)
 	{
 		write(2, "cd: HOME/OLDPWD not set\n", 24);
 		free(old_pwd);
 		return (FAILURE);
 	}
-
-	printf("TEST4\n");
-
 	if (chdir(path) != 0)
 	{
 		write(2, "cd: no such file or directory\n", 31);
 		free(old_pwd);
 		return (FAILURE);
 	}
-
-	printf("TEST5\n");
-
 	new_pwd = getcwd(NULL, 0);
 	if (!new_pwd)
 	{
 		free(old_pwd);
 		return (FAILURE);
 	}
-
-	printf("TEST6\n");
-
 	oldpwd_i = -1;
 	i = 0;
 	while (shell->envp[i])
 	{
-		//printf("envp[%d]: %p -> %s\n", i, shell->envp[i], shell->envp[i]);
 		if (ft_strncmp(shell->envp[i], "PWD=", 4) == 0)
 		{
 			free(shell->envp[i]);
@@ -105,23 +80,13 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 		}
 		i++;
 	}
-
-	printf("TEST7\n");
-
 	if (cmd->args[1] && ft_strncmp(cmd->args[1], "-", 2) == 0 && oldpwd_i != -1)
 	{
-		printf("TEST7.5\n %p -> %s\n", shell->envp[i], shell->envp[i]);
 		write(1, shell->envp[oldpwd_i], ft_strlen(shell->envp[oldpwd_i]));
 		write(1, "\n", 1);
 	}
-
-	printf("TEST8\n");
-
 	free(new_pwd);
 	free(old_pwd);
-
-	printf("TEST9\n");
-
 	return (SUCCESS);
 }
 /*
