@@ -23,12 +23,12 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 	int j;
 	int var_len;
 	int unset_check;
+	char	**list;
 
 	if (!cmd || !cmd->args || !shell)
 		return (FAILURE);
 
 	unset_check = FAILURE;
-
 	i = 1;
 	while (cmd->args[i] != NULL)
 	{
@@ -41,34 +41,54 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 		while (cmd->args[i][var_len] != '=' && cmd->args[i][var_len] != '\0')
 			var_len++;
 
+		list = shell->envp;
 		j = 0;
-		while (shell->envp[j] != NULL)
+		while (list[j] != NULL)
 		{
-			if (ft_strncmp(shell->envp[j], cmd->args[i], var_len) == 0
-				&& (shell->envp[j][var_len] == '=' || shell->envp[j][var_len] == '\0'))
+			if (ft_strncmp(list[j], cmd->args[i], var_len) == 0
+				&& (list[j][var_len] == '=' || list[j][var_len] == '\0'))
 			{
-				printf("Freeing envp[%d]: %p -> %s\n", j, shell->envp[j], shell->envp[j]);
-				free(shell->envp[j]);
-				// Shift elements to the left
-				while (shell->envp[j + 1] != NULL)
+				printf("Freeing envp[%d]: %p -> %s\n", j, list[j], list[j]);
+				free(list[j]);
+				// shift to the left
+				while (list[j + 1] != NULL)
 				{
-					shell->envp[j] = shell->envp[j + 1];
+					list[j] = list[j + 1];
 					j++;
 				}
-				shell->envp[j] = NULL;
+				list[j] = NULL;
 				unset_check = SUCCESS; // At least one variable was unset
 				break; // continue to next argument
 			}
 			else
 				j++;
 		}
+
+		list = shell->exp_list;
+		j = 0;
+		while (list[j] != NULL)
+		{
+			if (ft_strncmp(list[j], cmd->args[i], var_len) == 0
+				&& (list[j][var_len] == '=' || list[j][var_len] == '\0'))
+			{
+				printf("Freeing exp_list[%d]: %p -> %s\n", j, list[j], list[j]);
+				free(list[j]);
+				// shift to the left
+				while (list[j + 1] != NULL)
+				{
+					list[j] = list[j + 1];
+					j++;
+				}
+				list[j] = NULL;
+				unset_check = SUCCESS; // at least one variable was unset
+				break; // continue to next argument
+			}
+			else
+				j++;
+		}
+	
 		i++; // Move to the next argument
 	}
-	// If no variables were unset, return FAILURE
-	if (unset_check == FAILURE)
-	{
-		//error
-		return (FAILURE);
-	}
-	return (SUCCESS);
+
+	return (unset_check); // success or failure
 }
