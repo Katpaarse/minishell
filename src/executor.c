@@ -18,10 +18,7 @@ int	execute_command(t_minishell *shell)
 		return (FAILURE);
 	if (is_builtin(shell->cmds->args) == SUCCESS && shell->cmds->next == NULL)
 	{
-		if (is_parent_builtin(shell->cmds))
-			shell->exit_code = run_builtin(shell->cmds, shell);
-		else
-			run_builtin(shell->cmds, shell);
+		run_builtin(shell->cmds, shell);
 		return (SUCCESS);
 	}
 	else if (shell->cmds->next != NULL)
@@ -31,7 +28,7 @@ int	execute_command(t_minishell *shell)
 	}
 	else
 	{
-		run_external(shell->cmds->args, shell->envp);
+		run_external(shell->cmds, shell);
 		return (SUCCESS);
 	}
 }
