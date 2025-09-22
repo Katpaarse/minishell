@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 15:36:19 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/10 19:09:23 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:38:01 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	execute_pipeline(t_minishell *shell, t_cmd *cmds)
 	pid_t	*child_pids;
 	pid_t	pid;
 
-	if (cmds == NULL)
+	if (!cmds)
 		return ;
 	// Special case: single parent-only builtin
 	if (!cmds->next && is_parent_builtin(cmds)) // checks if there is not next command. So its not part of cmd1 | cmd2 | cmd3 | but something like echo hello | cd .. also checks if its a parent builtin so no child process is needed.
@@ -69,7 +69,7 @@ void	execute_pipeline(t_minishell *shell, t_cmd *cmds)
 	}
 	// Allocate array for child PIDs
 	child_pids = malloc(sizeof(pid_t) * num_cmds);
-	if (child_pids == NULL)
+	if (!child_pids)
 		return ;
 	// Reset variables
 	current = cmds;

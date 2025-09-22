@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 15:27:24 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/28 18:46:51 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:34:32 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*expand_exit_code(char *result, int exit_code)
 	char	*code;
 	
 	code = ft_itoa(exit_code); // converts the integer exit_code (from your shell struct) to a string
-	if (code == NULL)
+	if (!code)
 		return (result);
 	result = ft_strjoin_and_free(result, code); // append it to the new string. And frees the old string
 	free(code); // free the temporary string
@@ -36,7 +36,7 @@ char	*expand_variable(char const *input, int *i, char **envp, char *result)
 	while (ft_isalnum(input[*i]) || input[*i] == '_') // moves the pointer forward to read the full variable name. Stops when it hits a character that isn’t alphanumeric or underscore
 		(*i)++;
 	name = ft_substr(input, start, *i - start); // extract the variable name. Example: HOME from $HOME
-	if (name == NULL)
+	if (!name)
 		return (result);
 	value = get_env_value(name, envp); // looks up the environment variable. Returns an empty string or new string depending on the result
 	free(name);
@@ -66,7 +66,7 @@ char    *expand_variables(const char *input, t_minishell *shell)
     char    *result;
     int     i;
 
-    if (input == NULL)
+    if (!input)
         return (NULL);
     result = ft_strdup(""); // initialize result as an empty string
     i = 0;

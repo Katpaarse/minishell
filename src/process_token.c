@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 14:06:47 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/26 17:28:32 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:31:50 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	*remove_quotes(char const *token)
 {
 	size_t	len;
 	
-	if (token == NULL)
+	if (!token)
 		return (NULL);
 	len = ft_strlen(token);
 	if (len < 2)
@@ -36,7 +36,7 @@ char	*process_token(char *token, t_minishell *shell)
 	char	*clean;
 	char	*expanded;
 
-	if (token == NULL)
+	if (!token)
 		return (NULL);
 	len = ft_strlen(token);
 	if (len >= 2 && token[0] == '\'' && token[len - 1] == '\'') // single matching quotes in token. No expansion needed. Just remove single quotes
@@ -45,7 +45,7 @@ char	*process_token(char *token, t_minishell *shell)
 		return (token);
 	}
 	expanded = expand_variables(token, shell); // the function returns a malloc'ed string. So we need to free it after use
-	if (expanded == NULL)
+	if (!expanded)
 		return (NULL);
 	clean = remove_quotes(expanded); // remove quotes if double quotes are found after variable expansion
 	free (expanded);

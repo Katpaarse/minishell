@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 16:04:35 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/16 15:26:37 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:32:13 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type)
 
 	len = count_redirects(list);
 	new_list = malloc(sizeof(t_redirect) * (len + 2)); // + 1 for new redirect added to list and + 1 for sentinal null terminator for list
-	if (new_list == NULL)
+	if (!new_list)
 		return (NULL);
 	i = 0;
 	while (i < len)

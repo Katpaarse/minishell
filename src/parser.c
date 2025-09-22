@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/04 16:36:53 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/22 18:41:50 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 	t_cmd	*current;
 	t_cmd	*head;
 
-	if (tokens == NULL || *tokens == NULL) // first check is for pointer to the array is NULL second check to see if the array exists and the first element is NULL. For example when user just presses enter with no input
+	if (!tokens || !*tokens) // first check is for pointer to the array is NULL second check to see if the array exists and the first element is NULL. For example when user just presses enter with no input
 		return (NULL);
 	head = cmd_into_new_node();
 	current = head;
@@ -28,7 +28,7 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 	{
 		if (tokens[i][0] == '|' && tokens[i][1] == '\0')
 		{
-			if (current->args == NULL && current->redirects == NULL)
+			if (!current->args && !current->redirects)
 			{
 				print_syntax_error(shell, tokens[i]);
 				return (NULL);
@@ -38,17 +38,17 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 		}
 		else if (tokens[i][0] == '<' && tokens[i][1] == '<' && tokens[i][2] == '\0')
 		{
-			if (tokens[i + 1] == NULL)
+			if (!tokens[i + 1])
 			{
 				print_syntax_error(shell, NULL); // syntax error: missing heredoc delimiter
 				return (NULL); 
 			}
 			i++;
-			current->redirects = add_redirect(current->redirects, ft_strdup(tokens[i]), RED_HEREDOC); // store delimiter "EOF"
+			current->redirects = add_redirect(current->redirects, ft_strdup(tokens[i]), RED_HEREDOC); // store heredoc delimiter
 		}
 		else if (tokens[i][0] == '<' && tokens[i][1] == '\0')
 		{
-			if (tokens[i + 1] == NULL)
+			if (!tokens[i + 1])
 			{
 				print_syntax_error(shell, NULL); // syntax error: missing infile
 				return (NULL);  
@@ -58,7 +58,7 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 		}
 		else if (tokens[i][0] == '>' && tokens[i][1] == '\0')
 		{
-			if (tokens[i + 1] == NULL)
+			if (!tokens[i + 1])
 			{
 				print_syntax_error(shell, NULL); // syntax error: missing outfile
 				return (NULL);
@@ -68,7 +68,7 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 		}
 		else if (tokens[i][0] == '>' && tokens[i][1] == '>' && tokens[i][2] == '\0')
 		{
-			if (tokens[i + 1] == NULL)
+			if (!tokens[i + 1])
 			{
 				print_syntax_error(shell, NULL); // syntax error: missing outfile
 				return (NULL);

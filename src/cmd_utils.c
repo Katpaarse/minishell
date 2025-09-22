@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/01 17:49:05 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:37:16 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char	**add_argument(char **args, char *new_arg)
 	while (args && args[count])
 		count++;
 	new_args = malloc(sizeof(char *) * (count + 2));
-	if (new_args == NULL)
+	if (!new_args)
 		return (NULL);
 	i = 0;
 	while (i < count)
@@ -55,7 +55,7 @@ void	free_redirects(t_redirect *list)
 {
 	int	i;
 	
-	if (list == NULL)
+	if (!list)
 		return ;
 	i = 0;
 	while (list[i].filename != NULL) // loop through each redirect
@@ -70,7 +70,7 @@ void	free_args(char **args)
 {
 	int	i;
 	
-	if (args == NULL)
+	if (!args)
 		return ;
 	i = 0;
 	while (args[i])

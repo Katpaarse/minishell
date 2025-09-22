@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/04 14:32:40 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:36:33 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ int main(int argc, char **argv, char **envp)
 	while (1) // infinite loop untill user presses cntrl + D(EOF) or "exit" or gets out manually
 	{
 		input = readline("minishell > "); // shows minishell > and waiting for input
-		if (input == NULL) 
+		if (!input) 
 			break; // if not input. Exit the loop
 		if (input[0] != '\0') // if there is no empty input. Save it so history in shell
 			add_history(input);
 		tokens = tokenize_input(input);
-		if (tokens == NULL)
+		if (!tokens)
 		{
 			free(input); // frees the input line and goes back to the prompt without crashing
 			continue;
