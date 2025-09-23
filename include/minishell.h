@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/16 16:29:18 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/23 14:18:01 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,5 +134,6 @@ t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type)
 void		free_redirects(t_redirect *list);
 void		free_args(char **args);
 void		free_cmds(t_cmd *cmd);
+char		*make_temp_heredoc_filename(int	i);
 
 # endif
