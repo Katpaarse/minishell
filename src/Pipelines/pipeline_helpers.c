@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipeline_utils.c                                   :+:      :+:    :+:   */
+/*   pipeline_helpers.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 14:36:06 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/10 19:08:34 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/24 17:57:15 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,10 @@ pid_t fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, in
 {
 	pid_t	pid;
 
-	if (current->next != NULL) // If not the last command -> create a new pipe for communication with the next child
+	if (current->next != NULL && pipe(fd) == -1) // If not the last command -> create a new pipe for communication with the next child
 	{
-		if (pipe(fd) == -1)
-		{
-			print_error(shell, "pipe failed");
-			return (-1);
-		}
+		print_error(shell, "pipe failed");
+		return (-1);
 	}
 	pid = fork(); // clone process for child process
 	if (pid < 0)

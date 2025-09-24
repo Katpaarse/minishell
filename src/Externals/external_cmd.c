@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   external_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lavan-de <lavan-de@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:24:09 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/08/31 16:24:10 by lavan-de         ###   ########.fr       */
+/*   Updated: 2025/09/24 20:00:34 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,25 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 	int		status;
 	char 	*cmd_path;
 
+	if (!cmd | !cmd->args || !cmd->args[0])
+	{
+		print_error(shell, "invalid command");
+		return (127);
+	}
 	cmd_path = find_cmd_path(cmd->args, shell->envp);
 	if (!cmd_path)
 	{
-		// error handling can be added here if needed
+		print_error(shell, "command not found");
 		return (127);
 	}
 	
 	pid = fork();
 	if (pid < 0)
 	{
-		// error handling can be added here if needed
+		perror("fork");
+		free(cmd_path);
 		return (1);
 	}
-
 	if (pid == 0)
 	{
 		if (is_redirect(cmd, shell) == FAILURE)
@@ -40,8 +45,7 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 		perror("execve failed"); 		// only reached if execve fails
 		exit(EXIT_FAILURE); 			// exit child process if execve fails
 	}
-
+	free(cmd_path);
 	status = wait_for_child(pid);
-
 	return (status);
 }

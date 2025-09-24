@@ -6,11 +6,56 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 15:36:19 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/22 15:38:01 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/24 19:47:10 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static void	handle_redirects(t_cmd *cmd)
+{
+	int			fd;
+	t_redirect	*redirection;
+
+	redirection = cmd->redirects;
+	while (redirection)
+	{
+		if (redirection->type == RED_HEREDOC || redirection->type == RED_INPUT)
+		{
+			fd = open(redirection->filename, O_RDONLY);
+			if (fd < 0)
+				perror("open input/heredoc");
+			else
+			{
+				dup2(fd, 0);
+				close(fd);
+			}
+		}
+		else if (redirection->type == RED_OUTPUT)
+		{
+			fd = open(redirection->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd < 0)
+				perror("open output");
+			else
+			{
+				dup2(fd, 1);
+				close(fd);
+			}
+		}
+		else if (redirection->type == RED_APPEND)
+		{
+			fd = open(redirection->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fd < 0)
+				perror("open append");
+			else
+			{
+				dup2(fd, 1);
+				close(fd);
+			}
+		}
+		redirection = redirection->next;
+	}
+}
 
 //  Execute a child process (builtin or external)
 void execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
@@ -28,10 +73,11 @@ void execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
 		close(fd[0]); // close read end
 		close(fd[1]); // close write end after dup
 	}
+	handle_redirects(current);
 	if (run_builtin(current, shell) != FAILURE) // Builtins like echo, pwd, etc. are executed directly. If a builtin was run, you exit the child process immediately with the builtin’s exit code.
 		exit(shell->exit_code);
 	cmd_path = find_cmd_path(current->args, shell->envp); // If it’s not a builtin, you look for an executable in $PATH
-	if (cmd_path == NULL)
+	if (!cmd_path)
 	{
 		print_error(shell, "command not found");
 		exit(127);

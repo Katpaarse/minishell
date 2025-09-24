@@ -6,19 +6,35 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/22 18:41:50 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/24 19:30:42 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+static int	process_heredoc(t_cmd *cmd, t_minishell *shell, char *delimiter, int i)
+{
+	char	*tmpfile;
+
+	tmpfile = handle_heredoc(delimiter, i);
+	if (!tmpfile)
+	{
+		print_error(shell, "heredoc failed");
+		return (FAILURE);
+	}
+	cmd->redirects = add_redirect(cmd->redirects, tmpfile, RED_HEREDOC);
+	return (SUCCESS);
+}
+
 // takes an array of tokens (strings) and converts them into a linked list of t_cmd structures, where each node represents a single command, with its arguments and redirections
 t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 {
-	int		i;
 	t_cmd	*current;
 	t_cmd	*head;
+	int		i;
+	int		heredoc_index;
 
+	heredoc_index = 1; // unique counter for heredocs
 	if (!tokens || !*tokens) // first check is for pointer to the array is NULL second check to see if the array exists and the first element is NULL. For example when user just presses enter with no input
 		return (NULL);
 	head = cmd_into_new_node();
@@ -38,13 +54,10 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 		}
 		else if (tokens[i][0] == '<' && tokens[i][1] == '<' && tokens[i][2] == '\0')
 		{
-			if (!tokens[i + 1])
-			{
-				print_syntax_error(shell, NULL); // syntax error: missing heredoc delimiter
-				return (NULL); 
-			}
+			if (!tokens[i + 1] || process_heredoc(current, shell, tokens[i + 1], heredoc_index) == FAILURE)
+				return (NULL);
 			i++;
-			current->redirects = add_redirect(current->redirects, ft_strdup(tokens[i]), RED_HEREDOC); // store heredoc delimiter
+			heredoc_index++;
 		}
 		else if (tokens[i][0] == '<' && tokens[i][1] == '\0')
 		{
