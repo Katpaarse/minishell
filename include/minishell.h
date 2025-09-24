@@ -46,6 +46,22 @@ cmd->redirects[2] = { "log.txt", RED_APPEND }
 
 */
 
+
+
+
+// IK MOET NOG EEN GLOBAL VARIABLE MAKEN IN SIGNALS.C
+// BIJ ALLE WAITPID CALLS MOET IK DIE GEBRUIKEN
+// ZODAT IK WEET OF IK IN INTERACTIVE MODE BEN OF IN CHILD PROCESS
+// ZODAT IK BIJ SIGINT IN INTERACTIVE MODE DE PROMPT KAN HERHALEN
+// EN IN CHILD PROCESS DE WAITPID KAN INTERRUPTEN
+
+// g_minishell_is_executing for signal handling in interactive mode
+extern int g_minishell_is_executing; 	// 0 = waiting for user input (interactive mode)
+										// 1 = executing a command (child process)
+
+
+
+
 typedef enum e_redirect_type
 {
 	RED_NONE,
