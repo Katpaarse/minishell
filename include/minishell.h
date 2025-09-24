@@ -76,6 +76,12 @@ typedef struct s_minishell
 	int		exit_code; // last command exit code
 }	t_minishell;
 
+// Signal handling functions
+void	setup_signal_handlers(void);
+void	setup_child_signals(void);
+void	handle_sigint(int signum);
+void	handle_sigquit(int signum);
+
 // Executor functions
 int 	wait_for_child(pid_t pid);
 int		run_external(t_cmd *cmd, t_minishell *shell);

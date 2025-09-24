@@ -11,7 +11,7 @@ LIBFT_A     = $(LIBFT_DIR)/libft.a
 
 SRC_FILES   = Builtins/builtin_cd.c Builtins/builtin_echo.c Builtins/builtin_env.c Builtins/builtin_exit.c Builtins/builtin_pwd.c Builtins/builtin_export.c Builtins/builtin_unset.c Builtins/builtin_utils.c \
 			cmd_utils.c env_utils.c executor.c expand_variables.c main.c parser.c process_token.c redirects.c signals.c tokenizer.c utils.c error_messages.c Externals/external_cmd.c Externals/external_utils.c \
-			Pipelines/pipeline_exec.c Pipelines/pipeline_helpers.c
+			Pipelines/pipeline_exec.c Pipelines/pipeline_helpers.c Signals/signals.c
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
 OBJS        = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))

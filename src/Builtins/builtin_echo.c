@@ -21,6 +21,7 @@
 int	builtin_echo(t_cmd *cmd)
 {
 	int i;
+	int	j;
 	int nl;
 	char **args;
 	int first_word;
@@ -42,10 +43,18 @@ int	builtin_echo(t_cmd *cmd)
 	// will print "hello world" without a newline at the end.	
 
 	// is first argument -n, if so, do not print newline
-	while (args[i][0] == '-' && args[i][1] == 'n' && args[i][2] == '\0')
+	//
+	// echo -nnn hello
+	j = 1;
+	while (args[1][0] == '-' && args[1][j] == 'n') 
 	{
-		nl = FALSE; // Set nl to TRUE to print newline
-		i++;
+		nl = FALSE; // Set nl to FALSE to skip newline
+		if (args[1][j + 1] == '\0')
+		{
+			i++;
+			break;
+		}
+		j++;
 	}
 
 	// HANDLE INFILE AND OUTFILE REDIRECTS
@@ -58,7 +67,7 @@ int	builtin_echo(t_cmd *cmd)
 		if (!first_word)
 			write(1, " ", 1);
 		write(1, args[i], strlen(args[i]));
-		// printf("%s", args[i]);
+		//printf("%s\n", args[i]);
 		first_word = FALSE;
 		i++;
 	}

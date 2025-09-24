@@ -24,6 +24,7 @@ int main(int argc, char **argv, char **envp)
 	(void)argv;
 	// initialize shell state
 	copy_envp(&shell, envp); // store environment pointer to the struct
+	setup_signal_handlers(); // setup signal handlers for SIGINT and SIGQUIT
 	shell.exit_code = 0; // set not 0. So the last exit code is succes
 	shell.cmds = NULL; // not parsed into commands yet
 	

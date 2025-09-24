@@ -24,6 +24,7 @@ char	*make_temp_heredoc_filename(int	i)
 	free(num);
 	return (filename);
 }
+
 static int	handle_heredoc(char *delimiter, int i, t_minishell *shell)
 {
 	char	*line;
@@ -34,5 +35,4 @@ static int	handle_heredoc(char *delimiter, int i, t_minishell *shell)
 	if (!i)
 		return (-1);
 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0600);
-	
 }

@@ -137,6 +137,7 @@ int run_builtin(t_cmd *cmd, t_minishell *shell)
                 
             if (pid == 0)
             {
+				setup_child_signals(); 		// setup default signal handlers for child process
                 if (is_redirect(cmd, shell) == FAILURE)
                     exit(EXIT_FAILURE);
 

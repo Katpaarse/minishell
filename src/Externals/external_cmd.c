@@ -34,6 +34,7 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 
 	if (pid == 0)
 	{
+		setup_child_signals(); 		// setup default signal handlers for child process
 		if (is_redirect(cmd, shell) == FAILURE)
 			exit(EXIT_FAILURE); 			// exit child process if redirection fails
 		execve(cmd_path, cmd->args, shell->envp); 	// replaces child process with new program
