@@ -61,7 +61,8 @@ static void	handle_redirects(t_cmd *cmd)
 void execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
 {
 	char	*cmd_path;
-	
+
+	setup_child_signals(); 		// setup default signal handlers for child process
 	if (prev_fd != -1)
 	{
 		dup2(prev_fd, 0); // new fd and old fd. Closes the old fd which is stdin in this case (0)
