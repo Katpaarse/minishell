@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 18:21:49 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/08 17:39:09 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/25 17:48:40 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,41 +24,41 @@ Anything in a pipeline (even parent builtins) → fork, because that’s how pip
 int	is_parent_builtin(t_cmd *cmd)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
-		return (FAILURE);
-	if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
-		return (SUCCESS);
-	if (ft_strncmp(cmd->args[0], "export", 7) == 0)
-		return (SUCCESS);
-	if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
-		return (SUCCESS);
-	if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
-		return (SUCCESS);
-	return (FAILURE);
+		return (FALSE);
+	if (ft_strcmp(cmd->args[0], "cd") == 0)
+		return (TRUE);
+	if (ft_strcmp(cmd->args[0], "export") == 0)
+		return (TRUE);
+	if (ft_strcmp(cmd->args[0], "unset") == 0)
+		return (TRUE);
+	if (ft_strcmp(cmd->args[0], "exit") == 0)
+		return (TRUE);
+	return (FALSE);
 }
 
 int is_builtin(char **argv)
 {
     if (argv[0])
     {
-        if (ft_strncmp(argv[0], "cd", 3) == 0)
-            return (SUCCESS);
-		else if (ft_strncmp(argv[0], "echo", 5) == 0)
-			return (SUCCESS);
-        else if (ft_strncmp(argv[0], "pwd", 4) == 0)
-			return (SUCCESS);
-		else if (ft_strncmp(argv[0], "env", 4) == 0)
-			return (SUCCESS);
-        else if (ft_strncmp(argv[0], "export", 7) == 0)
-            return (SUCCESS);
-        else if (ft_strncmp(argv[0], "unset", 6) == 0)
-            return (SUCCESS);
-        else if (ft_strncmp(argv[0], "exit", 5) == 0)
-            return (SUCCESS);
+        if (ft_strcmp(argv[0], "cd") == 0)
+            return (TRUE);
+		else if (ft_strcmp(argv[0], "echo") == 0)
+			return (TRUE);
+        else if (ft_strcmp(argv[0], "pwd") == 0)
+			return (TRUE);
+		else if (ft_strcmp(argv[0], "env") == 0)
+			return (TRUE);
+        else if (ft_strcmp(argv[0], "export") == 0)
+            return (TRUE);
+        else if (ft_strcmp(argv[0], "unset") == 0)
+            return (TRUE);
+        else if (ft_strcmp(argv[0], "exit") == 0)
+            return (TRUE);
         else
-            return (FAILURE);
+            return (FALSE);
     }
     else
-        return (FAILURE);
+        return (FALSE);
 }
 
 
@@ -79,7 +79,6 @@ int run_builtin(t_cmd *cmd, t_minishell *shell)
     
     if (!cmd->args[0])
         return (FAILURE);
-    
     // Check if this is a parent builtin that needs to run in the parent process
     if (is_parent_builtin(cmd) == SUCCESS)
     {
@@ -161,19 +160,19 @@ int execute_builtin(t_cmd *cmd, t_minishell *shell)
 {
     if (cmd->args[0])
     {
-        if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
+        if (ft_strcmp(cmd->args[0], "cd") == 0)
             return (builtin_cd(cmd, shell));
-		else if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
+		else if (ft_strcmp(cmd->args[0], "echo") == 0)
 			return (builtin_echo(cmd));
-        else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
+        else if (ft_strcmp(cmd->args[0], "pwd") == 0)
 			return (builtin_pwd());
-		else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
+		else if (ft_strcmp(cmd->args[0], "env") == 0)
 			return (builtin_env(shell));
-        else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
+        else if (ft_strcmp(cmd->args[0], "export") == 0)
             return (builtin_export(cmd, shell));
-        else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
+        else if (ft_strcmp(cmd->args[0], "unset") == 0)
             return (builtin_unset(cmd, shell));
-        else if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
+        else if (ft_strcmp(cmd->args[0], "exit") == 0)
             return (builtin_exit(cmd, shell));
         else
             return (FAILURE);

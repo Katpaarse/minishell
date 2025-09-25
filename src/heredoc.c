@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/24 20:04:16 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/25 19:28:33 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static char	*make_tmp_heredoc_filename(int	i)
 	num = ft_itoa(i);
 	if (!num)
 		return (NULL);
-	filename = ft_strjoin_and_free(ft_strdup("/tmp/minishell_heredoc_"), num);
+	filename = ft_strjoin("/tmp/minishell_heredoc_", num);
 	free(num);
 	return (filename);
 }
@@ -45,7 +45,7 @@ char	*handle_heredoc(char const *delimiter, int i)
 		line = readline("> ");
 		if (!line) // user pressed ctrl + D
 			break;
-		if (ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0) // found heredoc char
+		if (ft_strcmp(line, delimiter) == 0) // found heredoc char
 		{
 			free(line);
 			break;
@@ -55,5 +55,25 @@ char	*handle_heredoc(char const *delimiter, int i)
 		free(line);
 	}
 	close(fd);
+	return (tmpfile);
+}
+
+char *process_heredoc(char const *delimiter, int i)
+{
+	pid_t	pid;
+	int 	status;
+	char	*tmpfile;
+	
+	tmpfile = NULL;
+	pid = fork();
+	if (pid < 0)
+		return (NULL);
+	if (pid == 0)
+	{
+		tmpfile = handle_heredoc(delimiter, i);
+		exit(0);
+	}
+	waitpid(pid, &status, 0);
+	tmpfile = make_tmp_heredoc_filename(i);
 	return (tmpfile);
 }

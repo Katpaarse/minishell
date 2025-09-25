@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:45:09 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/08/29 15:40:48 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/25 19:40:51 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ int	builtin_exit(t_cmd *cmd, t_minishell *shell)
 		// free resources if needed
 		exit(shell->exit_code); // Exit with the last command exit code
 	}
-
 
 	i = 0;
 	if (cmd->args[1][0] == '-' || cmd->args[1][0] == '+')

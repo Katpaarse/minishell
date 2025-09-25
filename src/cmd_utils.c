@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/22 15:37:16 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:54:39 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,71 +26,85 @@ t_cmd	*cmd_into_new_node(void)
 	return (cmd);
 }
 
-// add a new argument to a commands argument array (args) in t_cmd struct
 char	**add_argument(char **args, char *new_arg)
 {
-	int		i;
 	int		count;
+	int		i;
 	char	**new_args;
+	char	*dup;
+
+	if (!new_arg)
+		return args;
+
+	dup = ft_strdup(new_arg);
+	if (!dup)
+	{
+		free(new_arg);
+		return NULL;
+	}
+	free(new_arg);
 
 	count = 0;
 	while (args && args[count])
 		count++;
+
 	new_args = malloc(sizeof(char *) * (count + 2));
 	if (!new_args)
-		return (NULL);
+	{
+		free(dup);
+		return NULL;
+	}
+
 	i = 0;
 	while (i < count)
 	{
-		new_args[i] = args[i];
+		new_args[i] = args[i]; // reuse old pointers
 		i++;
 	}
-	new_args[i] = new_arg;
-	new_args[i + 1] = NULL;
-	free(args);
-	return (new_args);
+	new_args[count] = dup;
+	new_args[count + 1] = NULL;
+
+	free(args); // free old array (not the strings)
+	return new_args;
 }
 
-void	free_redirects(t_redirect *list)
+void free_redirects(t_redirect *redirection)
 {
-	int	i;
-	
-	if (!list)
-		return ;
-	i = 0;
-	while (list[i].filename != NULL) // loop through each redirect
-	{
-		free(list[i].filename); // free strdup’d filename
-		i++;
-	}
-	free(list); // free the array itself
+    t_redirect *next;
+    while (redirection)
+    {
+        next = redirection->next;
+        free(redirection->filename);
+        free(redirection);
+        redirection = next;
+    }
 }
 
-void	free_args(char **args)
+void free_args(char **args)
 {
 	int	i;
-	
+
 	if (!args)
 		return ;
 	i = 0;
 	while (args[i])
 	{
-		free(args[i]); // free each argument string
+		free(args[i]);
 		i++;
 	}
-	free(args); // free the array
+	free(args);
 }
 
-void	free_cmds(t_cmd *cmd)
+void free_cmds(t_cmd *cmd)
 {
-	t_cmd	*next;
+    t_cmd *next;
 	
-	while (cmd != NULL)
-	{
-		next = cmd->next; // save the next node
-		free_args(cmd->args); // free arguments
-		free_redirects(cmd->redirects); // free redirects
-		free(cmd); // free this node
-		cmd = next; // move to next
-	}
+    while (cmd)
+    {
+        next = cmd->next; // save the next node
+        free_args(cmd->args); // free arguments
+        free_redirects(cmd->redirects); // free redirects
+        free(cmd); // free this node
+        cmd = next; // move to next
+    }
 }

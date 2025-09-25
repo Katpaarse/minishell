@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/24 18:22:02 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/25 19:40:58 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,5 +158,8 @@ void		free_redirects(t_redirect *list);
 void		free_args(char **args);
 void		free_cmds(t_cmd *cmd);
 char		*handle_heredoc(char const *delimiter, int i);
+char 		*process_heredoc(char const *delimiter, int i);
+char		*ft_strjoin(char const *s1, char const *s2);
+int			ft_strcmp(char const *s1, char const *s2);
 
 # endif

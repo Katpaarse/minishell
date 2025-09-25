@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:24:09 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/24 20:00:34 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/25 16:06:05 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 		print_error(shell, "command not found");
 		return (127);
 	}
-	
 	pid = fork();
 	if (pid < 0)
 	{
