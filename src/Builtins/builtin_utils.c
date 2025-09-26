@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 18:21:49 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/25 17:48:40 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/26 16:55:18 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,8 +137,9 @@ int run_builtin(t_cmd *cmd, t_minishell *shell)
             if (pid == 0)
             {
 				setup_child_signals(); 		// setup default signal handlers for child process
-                if (is_redirect(cmd, shell) == FAILURE)
+                if (is_redirect(cmd, shell) == FAILURE){
                     exit(EXIT_FAILURE);
+                }
 
                 result = execute_builtin(cmd, shell);
                 exit(result);

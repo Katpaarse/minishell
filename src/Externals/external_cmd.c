@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:24:09 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/25 16:06:05 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/26 16:55:01 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,9 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 	if (pid == 0)
 	{
 		setup_child_signals(); 		// setup default signal handlers for child process
-		if (is_redirect(cmd, shell) == FAILURE)
+		if (is_redirect(cmd, shell) == FAILURE){	
 			exit(EXIT_FAILURE); 			// exit child process if redirection fails
+		}
 		execve(cmd_path, cmd->args, shell->envp); 	// replaces child process with new program
 		perror("execve failed"); 		// only reached if execve fails
 		exit(EXIT_FAILURE); 			// exit child process if execve fails

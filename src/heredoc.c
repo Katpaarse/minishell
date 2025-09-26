@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/25 19:28:33 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/26 17:48:51 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,30 @@ static char	*make_tmp_heredoc_filename(int	i)
 	free(num);
 	return (filename);
 }
+
+// static char	*read_line_simple(void)
+// {
+// 	char	*line;
+// 	char	buffer[1024];
+// 	int		i;
+// 	int		c;
+	
+// 	write(1, "> ", 2);
+// 	i = 0;
+// 	while (i < 1023) // buffer can hold 1024 characters
+// 	{
+// 		if (read(0, &c, 1) < 0)
+// 			return (NULL);
+// 		if (c == '\n')
+// 			break ;
+// 		buffer[i] = c;
+// 		i++;
+// 	}
+// 	buffer[i] = '\0';
+// 	line = ft_strdup(buffer);
+// 	return (line);
+// }
+
 char	*handle_heredoc(char const *delimiter, int i)
 {
 	char	*line;
@@ -40,11 +64,15 @@ char	*handle_heredoc(char const *delimiter, int i)
 		free(tmpfile);
 		return (NULL);
 	}
+	setup_heredoc_signal_handlers();
 	while (1)
 	{
 		line = readline("> ");
 		if (!line) // user pressed ctrl + D
+		{
+			printf("minishell: heredoc delimiter not specified\n");
 			break;
+		}
 		if (ft_strcmp(line, delimiter) == 0) // found heredoc char
 		{
 			free(line);
@@ -54,26 +82,13 @@ char	*handle_heredoc(char const *delimiter, int i)
 		write(fd, "\n", 1);
 		free(line);
 	}
+	setup_signal_handlers();
 	close(fd);
 	return (tmpfile);
 }
 
+// deze functie wordt later gebruikt voor splitten van de handle_heredoc functie. So keep it for now.. 
 char *process_heredoc(char const *delimiter, int i)
 {
-	pid_t	pid;
-	int 	status;
-	char	*tmpfile;
-	
-	tmpfile = NULL;
-	pid = fork();
-	if (pid < 0)
-		return (NULL);
-	if (pid == 0)
-	{
-		tmpfile = handle_heredoc(delimiter, i);
-		exit(0);
-	}
-	waitpid(pid, &status, 0);
-	tmpfile = make_tmp_heredoc_filename(i);
-	return (tmpfile);
+	return (handle_heredoc(delimiter, i));
 }

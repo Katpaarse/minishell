@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/25 19:40:58 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/26 15:43:57 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,6 @@
 # define TRUE 1
 # define FALSE 0
 
-// Dit is nodig om meerdere redirections in 1 command te kunnen bijhouden en uitvoeren.
-// Bijvoorbeeld: cmd < infile > outfile >> appendfile
-
 /*
 VOORBEELD:
 command: cat < in.txt > out.txt >> log.txt 
@@ -47,8 +44,6 @@ cmd->redirects[2] = { "log.txt", RED_APPEND }
 */
 
 
-
-
 // IK MOET NOG EEN GLOBAL VARIABLE MAKEN IN SIGNALS.C
 // BIJ ALLE WAITPID CALLS MOET IK DIE GEBRUIKEN
 // ZODAT IK WEET OF IK IN INTERACTIVE MODE BEN OF IN CHILD PROCESS
@@ -58,9 +53,6 @@ cmd->redirects[2] = { "log.txt", RED_APPEND }
 // g_minishell_is_executing for signal handling in interactive mode
 extern int g_minishell_is_executing; 	// 0 = waiting for user input (interactive mode)
 										// 1 = executing a command (child process)
-
-
-
 
 typedef enum e_redirect_type
 {
@@ -98,6 +90,7 @@ void	setup_signal_handlers(void);
 void	setup_child_signals(void);
 void	handle_sigint(int signum);
 void	handle_sigquit(int signum);
+void	setup_heredoc_signal_handlers(void);
 
 // Executor functions
 int 	wait_for_child(pid_t pid);

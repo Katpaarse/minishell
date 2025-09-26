@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lavan-de <lavan-de@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 13:06:17 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/24 13:06:19 by lavan-de         ###   ########.fr       */
+/*   Updated: 2025/09/26 15:41:34 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// global variable definition
+int g_minishell_is_executing = 0;
 /*
 wait, 
 waitpid, 
@@ -35,7 +37,7 @@ void	handle_sigint(int signum)
 
 	//if (g_minishell_is_executing == 0) // only for interactive input
 	//{
-		write(STDOUT_FILENO, "\n", 1);
+		write(1, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
@@ -47,7 +49,8 @@ void	handle_sigint(int signum)
 void	handle_sigquit(int signum)
 {
 	(void)signum;
-	write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
+	if (g_minishell_is_executing == 1)
+		write(1, "Quit (core dumped)\n", 19);
 	// Do nothing on SIGQUIT
 }
 
@@ -61,8 +64,8 @@ void	setup_signal_handlers(void)
 	sigemptyset(&sa_int.sa_mask);
 	sigaction(SIGINT, &sa_int, NULL);
 
-	sa_quit.sa_flags = 0; // No special flags
-	sa_quit.sa_handler = SIG_IGN; // Ignore SIGQUIT
+	sa_quit.sa_flags = SA_RESTART; // No special flags
+	sa_quit.sa_handler = handle_sigquit; // Ignore SIGQUIT
 	sigemptyset(&sa_quit.sa_mask);
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
@@ -84,3 +87,12 @@ void	setup_child_signals(void)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
 
+void	setup_heredoc_signal_handlers(void)
+{
+	struct sigaction	sa_int;
+
+	sa_int.sa_flags = 0;
+	sa_int.sa_handler = SIG_DFL;
+	sigemptyset(&sa_int.sa_mask);
+	sigaction(SIGINT, &sa_int, NULL);
+}

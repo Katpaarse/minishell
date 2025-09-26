@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 14:36:06 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/24 17:57:15 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/26 16:55:07 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,11 @@ pid_t fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, in
 		return (-1);
 	}
 	if (pid == 0) // if pid is 0. Its a child process. Parent process has a original procces id
+	{
+		setup_child_signals();
 		execute_child(shell, current, prev_fd, fd); // In the child -> run execute_child() to set up FDs and run the command.
+		exit(EXIT_FAILURE);
+	}
 	if (pid > 0)
 	{
 		if (prev_fd != -1) // -1 is sentinal. So there was no previous fd used.

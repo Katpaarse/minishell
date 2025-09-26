@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 15:36:19 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/24 19:47:10 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/26 15:39:35 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ void	execute_pipeline(t_minishell *shell, t_cmd *cmds)
 		shell->exit_code = run_builtin(cmds, shell);
 		return ;
 	}
+	g_minishell_is_executing = 1; // set global variable to indicate we're executing commands
 	// Count number of commands
 	num_cmds = 0;
 	current = cmds;
@@ -117,7 +118,10 @@ void	execute_pipeline(t_minishell *shell, t_cmd *cmds)
 	// Allocate array for child PIDs
 	child_pids = malloc(sizeof(pid_t) * num_cmds);
 	if (!child_pids)
+	{
+		g_minishell_is_executing = 0; // reset on error		
 		return ;
+	}
 	// Reset variables
 	current = cmds;
 	prev_fd = -1;
@@ -129,6 +133,7 @@ void	execute_pipeline(t_minishell *shell, t_cmd *cmds)
 		if (pid == -1)
 		{
 			free(child_pids);
+			g_minishell_is_executing = 0; // reset on error
 			return ;
 		}
 		child_pids[i] = pid;
@@ -142,6 +147,7 @@ void	execute_pipeline(t_minishell *shell, t_cmd *cmds)
 	// Wait for all children
 	wait_all_children(shell, child_pids, num_cmds);
 	free(child_pids);
+	g_minishell_is_executing = 0; // reset variable after execution completes
 }
 
 /*
