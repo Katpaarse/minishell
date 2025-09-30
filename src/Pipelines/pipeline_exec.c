@@ -6,22 +6,40 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 15:36:19 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/30 15:25:36 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/30 18:30:37 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	handle_redirects(t_cmd *cmd)
+int	handle_redirects(t_cmd *cmd)
 {
 	int			fd;
 	t_redirect	*redirection;
-
+	t_redirect	*last_heredoc;
+	
+	if (!cmd || !cmd->redirects)
+	return (SUCCESS);
+	last_heredoc = NULL;
+	redirection = cmd->redirects;
+	while (redirection) // First pass is to find the last redirect
+	{
+		if (redirection->type == RED_HEREDOC)
+			last_heredoc = redirection;
+		redirection = redirection->next;
+	}
+	// Second pass: process all redirects, but for heredocs only use the last one
 	redirection = cmd->redirects;
 	while (redirection)
 	{
 		if (redirection->type == RED_HEREDOC || redirection->type == RED_INPUT)
 		{
+			// for heredocs, only use the last one
+			if (redirection->type == RED_HEREDOC && redirection != last_heredoc)
+			{
+				redirection = redirection->next;
+				continue ; //skip non last heredocs
+			}
 			fd = open(redirection->filename, O_RDONLY);
 			if (fd < 0)
 				perror("open input/heredoc");
@@ -55,6 +73,7 @@ static void	handle_redirects(t_cmd *cmd)
 		}
 		redirection = redirection->next;
 	}
+	return (SUCCESS);
 }
 
 //  Execute a child process (builtin or external)

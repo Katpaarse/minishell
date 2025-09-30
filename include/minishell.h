@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/26 15:43:57 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/30 18:16:07 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,12 +114,12 @@ int		builtin_env(t_minishell *shell);
 int 	builtin_export(t_cmd *cmd, t_minishell *shell);
 int		builtin_unset(t_cmd *cmd, t_minishell *shell);
 int		builtin_exit(t_cmd *cmd, t_minishell *shell);
+int		handle_redirects(t_cmd *cmd);
 
 // Builtin helper functions
 int 	execute_builtin(t_cmd *cmd, t_minishell *shell);
 int		is_builtin(char **argv);
 int		run_builtin(t_cmd *cmd, t_minishell *shell);
-int		is_redirect(t_cmd *cmd, t_minishell *shell);
 void	copy_envp(t_minishell *shell, char **envp);
 int		is_parent_builtin(t_cmd *cmd);
 void	add_or_update_exp(t_minishell *shell, char *var);
