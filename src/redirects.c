@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 16:04:35 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/25 15:49:21 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/30 13:21:51 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,23 +79,17 @@ int	is_redirect(t_cmd *cmd, t_minishell *shell)
 		else if (cmd->redirects[i].type == RED_INPUT)
 			fd = open(cmd->redirects[i].filename, O_RDONLY);							// '<' INFILE mode
 		else if (cmd->redirects[i].type == RED_HEREDOC)
-		{																				// '<<' HEREDOC 'EOF' mode
-			// implement heredoc handling
-			i++;
-			continue ;
-		}
+			fd = open(cmd->redirects[i].filename, O_RDONLY); // heredoc is already handled in parsing
 		else
 		{
 			i++;
 			continue ;
 		}
-
 		if (fd < 0)
 		{
 			// error handling here
 			return (FAILURE);
 		}
-
 		// Redirect stdout or stdin depending on type
 		if (cmd->redirects[i].type == RED_OUTPUT || cmd->redirects[i].type == RED_APPEND)
 		{
@@ -115,10 +109,8 @@ int	is_redirect(t_cmd *cmd, t_minishell *shell)
 				return (FAILURE);
 			}
 		}
-
 		close(fd);
 		i++;
 	}
-
 	return (SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/26 17:48:51 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:26:16 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,29 +24,6 @@ static char	*make_tmp_heredoc_filename(int	i)
 	free(num);
 	return (filename);
 }
-
-// static char	*read_line_simple(void)
-// {
-// 	char	*line;
-// 	char	buffer[1024];
-// 	int		i;
-// 	int		c;
-	
-// 	write(1, "> ", 2);
-// 	i = 0;
-// 	while (i < 1023) // buffer can hold 1024 characters
-// 	{
-// 		if (read(0, &c, 1) < 0)
-// 			return (NULL);
-// 		if (c == '\n')
-// 			break ;
-// 		buffer[i] = c;
-// 		i++;
-// 	}
-// 	buffer[i] = '\0';
-// 	line = ft_strdup(buffer);
-// 	return (line);
-// }
 
 char	*handle_heredoc(char const *delimiter, int i)
 {
@@ -84,6 +61,10 @@ char	*handle_heredoc(char const *delimiter, int i)
 	}
 	setup_signal_handlers();
 	close(fd);
+	// Simple readline reset. So it doesnt get in corrupted state if used twice
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 	return (tmpfile);
 }
 

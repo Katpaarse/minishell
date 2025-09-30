@@ -6,45 +6,11 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:22:58 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/25 17:48:20 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/30 13:29:11 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static void setup_redirections(t_cmd *cmd)
-{
-    int fd;
-    t_redirect *redirection;
-
-    redirection = cmd->redirects;
-    while (redirection)
-    {
-        fd = -1;
-        if (!redirection->filename)
-        {
-            redirection = redirection->next;
-            continue;
-        }
-        if (redirection->type == RED_HEREDOC || redirection->type == RED_INPUT)
-            fd = open(redirection->filename, O_RDONLY);
-        else if (redirection->type == RED_OUTPUT)
-            fd = open(redirection->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        else if (redirection->type == RED_APPEND)
-            fd = open(redirection->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-        if (fd < 0)
-            perror(redirection->filename);
-        else
-        {
-            if (redirection->type == RED_OUTPUT || redirection->type == RED_APPEND)
-                dup2(fd, 1);
-            else
-                dup2(fd, 0);
-            close(fd);
-        }
-        redirection = redirection->next;
-    }
-}
 
 int execute_command(t_minishell *shell)
 {
@@ -65,7 +31,7 @@ int execute_command(t_minishell *shell)
         return (SUCCESS);
     }
     // Single external command with redirections
-    setup_redirections(shell->cmds);
+    shell->exit_code = run_external(shell->cmds, shell);
     run_external(shell->cmds, shell);
     return (SUCCESS);
 }

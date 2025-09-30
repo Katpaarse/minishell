@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:37:59 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/09 16:03:04 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/29 14:39:16 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,12 @@ int wait_for_child(pid_t pid)
     int status;
 
     waitpid(pid, &status, 0);
-    return (status / 256);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+    else
+		return (1);
 }
 /* 
 

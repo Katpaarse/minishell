@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:24:09 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/26 16:55:01 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/29 14:41:39 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 	int		status;
 	char 	*cmd_path;
 
-	if (!cmd | !cmd->args || !cmd->args[0])
+	if (!cmd || !cmd->args || !cmd->args[0])
 	{
 		print_error(shell, "invalid command");
 		return (127);
