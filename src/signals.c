@@ -35,64 +35,77 @@ void	handle_sigint(int signum)
 {
 	(void)signum;
 
-	//if (g_minishell_is_executing == 0) // only for interactive input
-	//{
+	if (g_minishell_is_executing == 0) // only for interactive input
+	{
 		write(1, "\n", 1);
+		// rl_free_line_state();
+		// rl_cleanup_after_signal();
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
-	//}
+		// rl_done = 1;	
+	}
+	else
+	{
+		write(1, "\n", 1);
+	}
 	// if g_minishell_is_executing is 1, the handler does nothing
 	// and the SIGINT will simply interrupt the waitpid()
 }
 
-void	handle_sigquit(int signum)
-{
-	(void)signum;
-	if (g_minishell_is_executing == 1)
-		write(1, "Quit (core dumped)\n", 19);
-	// Do nothing on SIGQUIT
-}
+// void	handle_sigquit(int signum)
+// {
+// 	(void)signum;
+// 	if (g_minishell_is_executing == 1)
+// 		write(1, "Quit (core dumped)\n", 19);
+// 	// Do nothing on SIGQUIT
+// }
 
 void	setup_signal_handlers(void)
 {
 	struct sigaction sa_int;
 	struct sigaction sa_quit;
 
-	sa_int.sa_flags = SA_RESTART; // Restart interrupted syscalls
+	ft_memset(&sa_int, 0, sizeof(sa_int));
 	sa_int.sa_handler = handle_sigint;
+	sa_int.sa_flags = 0; // Restart interrupted syscalls
 	sigemptyset(&sa_int.sa_mask);
 	sigaction(SIGINT, &sa_int, NULL);
 
-	sa_quit.sa_flags = SA_RESTART; // No special flags
-	sa_quit.sa_handler = handle_sigquit; // Ignore SIGQUIT
+	ft_memset(&sa_quit, 0, sizeof(sa_quit));
+	sa_quit.sa_handler = SIG_IGN; // Ignore SIGQUIT
+	sa_quit.sa_flags = 0; // No special flags
 	sigemptyset(&sa_quit.sa_mask);
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
 
 void	setup_child_signals(void)
 {
-	struct sigaction sa_int;
-	struct sigaction sa_quit;
+	struct sigaction sa_default;
+	// struct sigaction sa_quit;
 
-	sa_int.sa_flags = 0; // No special flags
-	sa_int.sa_handler = SIG_DFL; // Default action
-	sigemptyset(&sa_int.sa_mask);
+	ft_memset(&sa_default, 0, sizeof(sa_default));
+	sa_default.sa_handler = SIG_DFL; // Default action
+	sa_default.sa_flags = 0; // No special flags
+	sigemptyset(&sa_default.sa_mask);
 
-	sa_quit.sa_flags = 0;
-	sa_quit.sa_handler = SIG_DFL; // Default action
-	sigemptyset(&sa_quit.sa_mask);
+	sigaction(SIGINT, &sa_default, NULL);
+	sigaction(SIGQUIT, &sa_default, NULL);
 
-	sigaction(SIGINT, &sa_int, NULL);
-	sigaction(SIGQUIT, &sa_quit, NULL);
+	// ft_memset(&sa_quit, 0, sizeof(sa_quit));
+	// sa_quit.sa_flags = 0;
+	// sa_quit.sa_handler = SIG_DFL; // Default action
+	// sigemptyset(&sa_quit.sa_mask);
+	// sigaction(SIGQUIT, &sa_quit, NULL);
 }
 
 void	setup_heredoc_signal_handlers(void)
 {
 	struct sigaction	sa_int;
 
-	sa_int.sa_flags = 0;
+	ft_memset(&sa_int, 0, sizeof(sa_int));
 	sa_int.sa_handler = SIG_DFL;
+	sa_int.sa_flags = 0;
 	sigemptyset(&sa_int.sa_mask);
 	sigaction(SIGINT, &sa_int, NULL);
 }

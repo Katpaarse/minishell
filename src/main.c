@@ -41,6 +41,7 @@ int main(int argc, char **argv, char **envp)
 			}
 			else
 			{
+				printf("else TEST\n");
 				g_minishell_is_executing = 0;
 				continue ;
 			}

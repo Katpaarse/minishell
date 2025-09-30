@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+
 int execute_command(t_minishell *shell)
 {
     if (!shell || !shell->cmds)
@@ -32,6 +33,6 @@ int execute_command(t_minishell *shell)
     }
     // Single external command with redirections
     shell->exit_code = run_external(shell->cmds, shell);
-    run_external(shell->cmds, shell);
+    // run_external(shell->cmds, shell);
     return (SUCCESS);
 }

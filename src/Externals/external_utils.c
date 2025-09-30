@@ -90,12 +90,29 @@ char	*find_relative_path(char *cmd, char **envp)
 int wait_for_child(pid_t pid)
 {
     int status;
+	int	signal_num;
 
     waitpid(pid, &status, 0);
+
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
-		return (128 + WTERMSIG(status));
+	{
+		signal_num = WTERMSIG(status);
+
+		if (signal_num == SIGINT)
+		{
+			write(1, "\n", 1);
+			return (128 + SIGINT);
+		}
+		else if (signal_num == SIGQUIT)
+		{
+			write(1, "Quit (core dumped)\n", 19);
+			return (128 + SIGQUIT);
+		}
+		else
+			return (128 + signal_num);
+	}
     else
 		return (1);
 }
