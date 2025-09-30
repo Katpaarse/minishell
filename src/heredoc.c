@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/30 15:26:16 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/09/30 16:32:12 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ char	*handle_heredoc(char const *delimiter, int i)
 	// Simple readline reset. So it doesnt get in corrupted state if used twice
 	rl_on_new_line();
 	rl_replace_line("", 0);
-	rl_redisplay();
 	return (tmpfile);
 }
 
