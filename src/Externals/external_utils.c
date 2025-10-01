@@ -86,7 +86,7 @@ char	*find_relative_path(char *cmd, char **envp)
 	// Free allocated memory for paths
 	return (NULL);
 }
-
+/*
 int wait_for_child(pid_t pid)
 {
     int status;
@@ -116,6 +116,7 @@ int wait_for_child(pid_t pid)
     else
 		return (1);
 }
+		*/
 /* 
 
 It fills status with extra info:

@@ -50,14 +50,34 @@ pid_t fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, in
 }
 
 // Wait for all children (while loop). Use wait_for_child function from builtin utils
-void wait_all_children(t_minishell *shell, pid_t *child_pids, int count)
+int wait_all_children(t_minishell *shell, pid_t *child_pids, int count)
 {
 	int	i;
+	int	status;
+	int	exit_code;
 
+	exit_code = 0;
 	i = 0;
 	while (i < count)
 	{
-		shell->exit_code = wait_for_child(child_pids[i]);
+		waitpid(child_pids[i], &status, 0);
+		if (WIFEXITED(status))
+			exit_code = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			exit_code = 128 + WTERMSIG(status);
+		// shell->exit_code = wait_for_child(child_pids[i]);
 		i++;
 	}
+
+	// if (WIFSIGNALED(status))
+	// {
+		// if (WTERMSIG(status) == SIGINT)
+			// write(1, "\n", 1);
+		if (WTERMSIG(status) == SIGQUIT)
+			write(1, "Quit (core dumped)\n", 19);
+	// }
+
+	shell->exit_code = exit_code;
+	// printf("%d\n", shell->exit_code);
+	return (exit_code);
 }
