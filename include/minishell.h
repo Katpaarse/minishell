@@ -101,7 +101,7 @@ char	*find_relative_path(char *cmd, char **envp);
 int 	execute_command(t_minishell *shell);
 
 // functions for handling pipes
-void 	wait_all_children(t_minishell *shell, pid_t *child_pids, int count);
+int 	wait_all_children(t_minishell *shell, pid_t *child_pids, int count);
 pid_t 	fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd);
 void	execute_pipeline(t_minishell *shell, t_cmd *cmds);
 void 	execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd);

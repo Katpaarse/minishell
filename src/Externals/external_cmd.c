@@ -45,6 +45,6 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 		exit(EXIT_FAILURE); 			// exit child process if execve fails
 	}
 	free(cmd_path);
-	status = wait_for_child(pid);
+	status = wait_all_children(shell, &pid, 1);
 	return (status);
 }
