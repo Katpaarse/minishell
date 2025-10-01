@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 13:06:17 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/26 15:41:34 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/01 16:21:29 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,6 @@ void	handle_sigint(int signum)
 	// and the SIGINT will simply interrupt the waitpid()
 }
 
-// void	handle_sigquit(int signum)
-// {
-// 	(void)signum;
-// 	if (g_minishell_is_executing == 1)
-// 		write(1, "Quit (core dumped)\n", 19);
-// 	// Do nothing on SIGQUIT
-// }
-
 void	setup_signal_handlers(void)
 {
 	struct sigaction sa_int;
@@ -103,9 +95,8 @@ void	setup_heredoc_signal_handlers(void)
 {
 	struct sigaction	sa_int;
 
-	ft_memset(&sa_int, 0, sizeof(sa_int));
-	sa_int.sa_handler = SIG_DFL;
-	sa_int.sa_flags = 0;
-	sigemptyset(&sa_int.sa_mask);
-	sigaction(SIGINT, &sa_int, NULL);
+    sa_int.sa_flags = 0;
+    sa_int.sa_handler = SIG_DFL;  // Let Ctrl+C kill the child process
+    sigemptyset(&sa_int.sa_mask);
+    sigaction(SIGINT, &sa_int, NULL);
 }

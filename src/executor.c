@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:22:58 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/30 18:33:36 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/01 13:20:49 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,5 @@ int execute_command(t_minishell *shell)
     }
     // Single external command with redirections
     shell->exit_code = run_external(shell->cmds, shell);
-    // run_external(shell->cmds, shell);
     return (SUCCESS);
 }

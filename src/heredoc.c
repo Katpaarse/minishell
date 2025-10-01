@@ -6,11 +6,35 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/30 16:32:12 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/01 16:35:18 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	cleanup_heredoc_files(t_redirect *redirects)
+{
+	t_redirect	*current;
+	t_redirect	*last_heredoc;
+
+	if (!redirects)
+		return ;
+	last_heredoc = NULL;
+	current = redirects;
+	while (current) // find the last heredoc
+	{
+		if (current->type == RED_HEREDOC)
+			last_heredoc = current;
+		current = current->next;
+	}
+	current = redirects;
+	while (current) // delete all heredoc tmp files except the last one
+	{
+		if (current->type == RED_HEREDOC && current != last_heredoc && current->filename)
+			unlink(current->filename);
+		current = current->next;
+	}
+}
 
 static char	*make_tmp_heredoc_filename(int	i)
 {
@@ -25,20 +49,15 @@ static char	*make_tmp_heredoc_filename(int	i)
 	return (filename);
 }
 
-char	*handle_heredoc(char const *delimiter, int i)
+char	*handle_heredoc(char const *delimiter, char	*tmpfile)
 {
 	char	*line;
-	char	*tmpfile;
 	int		fd;
 
-	tmpfile = make_tmp_heredoc_filename(i);
-	if (!tmpfile)
-		return (NULL);
 	fd = open(tmpfile, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (fd < 0)
 	{
 		perror("heredoc open");
-		free(tmpfile);
 		return (NULL);
 	}
 	setup_heredoc_signal_handlers();
@@ -59,16 +78,42 @@ char	*handle_heredoc(char const *delimiter, int i)
 		write(fd, "\n", 1);
 		free(line);
 	}
-	setup_signal_handlers();
 	close(fd);
-	// Simple readline reset. So it doesnt get in corrupted state if used twice
-	rl_on_new_line();
-	rl_replace_line("", 0);
 	return (tmpfile);
 }
 
 // deze functie wordt later gebruikt voor splitten van de handle_heredoc functie. So keep it for now.. 
 char *process_heredoc(char const *delimiter, int i)
 {
-	return (handle_heredoc(delimiter, i));
+	pid_t	pid;
+	int		status;
+	char	*tmpfile;
+
+	tmpfile = make_tmp_heredoc_filename(i);
+	if (!tmpfile)
+		return (NULL);
+	pid = fork();
+	if (pid < 0)
+	{
+		free(tmpfile);
+		return (NULL);
+	}
+	if (pid == 0) // child process. Write to the file
+	{
+		setup_heredoc_signal_handlers();
+		handle_heredoc(delimiter, tmpfile); // pass the filename to write to
+		exit(0);
+	}
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+	{
+		free(tmpfile);
+		return (NULL);
+	}
+	if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+    {
+        free(tmpfile);
+        return (NULL);
+    }
+	return (tmpfile);
 }

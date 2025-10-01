@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/30 18:29:42 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/01 16:20:00 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ int main(int argc, char **argv, char **envp)
 			}
 			else
 			{
-				printf("else TEST\n");
 				g_minishell_is_executing = 0;
 				continue ;
 			}
@@ -57,17 +56,30 @@ int main(int argc, char **argv, char **envp)
 		i = 0;
 		while (tokens[i]) // loop through each token
 		{
-			expanded = expand_variables(tokens[i], &shell); // expand_variables replaces $HOME with its value from envp
+			expanded = process_token(tokens[i], &shell); // removes quotes from token input and calls variable expension
 			free(tokens[i]);
 			tokens[i] = expanded;
 			i++;
 		}
 		shell.cmds = tokens_into_cmds(tokens, &shell);
+		if (!shell.cmds)
+		{
+			i = 0;
+			while (tokens[i])
+			{
+				free(tokens[i]);
+				i++;
+			}
+			free(tokens);
+			free(input);
+			continue ;
+		}
 		if (shell.cmds)
 		{
 			g_minishell_is_executing = 1;
 			shell.exit_code = execute_command(&shell);
 			g_minishell_is_executing = 0;
+			cleanup_heredoc_files(shell.cmds->redirects);
 			free_cmds(shell.cmds);
 			shell.cmds = NULL;
 		}

@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/30 18:29:58 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/01 16:35:01 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 			}
 			tmpfile = process_heredoc(tokens[i + 1], heredoc_index);
 			if (!tmpfile)
+			{
+				free_cmds(head);
 				return (NULL);
+			}
 			current->redirects = add_redirect(current->redirects, tmpfile, RED_HEREDOC);
 			i++;
 			heredoc_index++;

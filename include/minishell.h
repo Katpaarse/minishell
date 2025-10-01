@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/30 18:16:07 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/01 16:10:02 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,28 +32,9 @@
 # define TRUE 1
 # define FALSE 0
 
-/*
-VOORBEELD:
-command: cat < in.txt > out.txt >> log.txt 
-
-cmd->args = ["cat", NULL]
-cmd->redirects[0] = { "in.txt", RED_INPUT }
-cmd->redirects[1] = { "out.txt", RED_OUTPUT }
-cmd->redirects[2] = { "log.txt", RED_APPEND }
-
-*/
-
-
-// IK MOET NOG EEN GLOBAL VARIABLE MAKEN IN SIGNALS.C
-// BIJ ALLE WAITPID CALLS MOET IK DIE GEBRUIKEN
-// ZODAT IK WEET OF IK IN INTERACTIVE MODE BEN OF IN CHILD PROCESS
-// ZODAT IK BIJ SIGINT IN INTERACTIVE MODE DE PROMPT KAN HERHALEN
-// EN IN CHILD PROCESS DE WAITPID KAN INTERRUPTEN
-
 // g_minishell_is_executing for signal handling in interactive mode
 extern int g_minishell_is_executing; 	// 0 = waiting for user input (interactive mode)
 										// 1 = executing a command (child process)
-
 typedef enum e_redirect_type
 {
 	RED_NONE,
@@ -89,7 +70,6 @@ typedef struct s_minishell
 void	setup_signal_handlers(void);
 void	setup_child_signals(void);
 void	handle_sigint(int signum);
-void	handle_sigquit(int signum);
 void	setup_heredoc_signal_handlers(void);
 
 // Executor functions
@@ -145,14 +125,16 @@ char		*remove_quotes(char const *token);
 char		*process_token(char *token, t_minishell *shell);
 void		print_syntax_error(t_minishell *shell, char const *token);
 void		print_error(t_minishell *shell, char const *message);
+void		print_error_filename(char const	*filename, char	const *message);
 int			count_redirects(t_redirect *list);
 t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type);
 void		free_redirects(t_redirect *list);
 void		free_args(char **args);
 void		free_cmds(t_cmd *cmd);
-char		*handle_heredoc(char const *delimiter, int i);
+char		*handle_heredoc(char const *delimiter, char *tmpfile);
 char 		*process_heredoc(char const *delimiter, int i);
 char		*ft_strjoin(char const *s1, char const *s2);
 int			ft_strcmp(char const *s1, char const *s2);
+void		cleanup_heredoc_files(t_redirect *redirects);
 
 # endif

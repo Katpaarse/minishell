@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 15:36:19 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/30 18:30:37 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/01 15:19:40 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	handle_redirects(t_cmd *cmd)
 	t_redirect	*last_heredoc;
 	
 	if (!cmd || !cmd->redirects)
-	return (SUCCESS);
+		return (SUCCESS);
 	last_heredoc = NULL;
 	redirection = cmd->redirects;
 	while (redirection) // First pass is to find the last redirect
@@ -42,7 +42,10 @@ int	handle_redirects(t_cmd *cmd)
 			}
 			fd = open(redirection->filename, O_RDONLY);
 			if (fd < 0)
-				perror("open input/heredoc");
+			{
+				print_error_filename(redirection->filename, "No such file or directory");
+				exit(1);
+			}
 			else
 			{
 				dup2(fd, 0);
@@ -53,7 +56,10 @@ int	handle_redirects(t_cmd *cmd)
 		{
 			fd = open(redirection->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd < 0)
-				perror("open output");
+			{
+				print_error_filename(redirection->filename, "Permission denied");
+				exit(1);
+			}
 			else
 			{
 				dup2(fd, 1);
@@ -64,7 +70,10 @@ int	handle_redirects(t_cmd *cmd)
 		{
 			fd = open(redirection->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd < 0)
-				perror("open append");
+			{
+				print_error_filename(redirection->filename, "Permission denied");
+				exit(1);
+			}
 			else
 			{
 				dup2(fd, 1);

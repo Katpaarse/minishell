@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 18:28:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/22 15:35:17 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/01 15:03:58 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,20 @@ void	print_syntax_error(t_minishell *shell, char const *token)
 void	print_error(t_minishell *shell, char const *message)
 {
 	if (!shell || !message)
-		return;
+		return ;
 	write(2, "minishell: ", 11);
 	write(2, message, ft_strlen(message));
 	write(2, "\n", 1);
 	shell->exit_code = 1;
+}
+
+void	print_error_filename(char const	*filename, char	const *message)
+{
+	if (!filename || !message)
+		return ;
+	write(2, "minishell: ", 11);
+	write(2, filename, ft_strlen(filename));
+	write(2, ": ", 2);
+	write(2, message, ft_strlen(message));
+	write(2, "\n", 1);
 }
