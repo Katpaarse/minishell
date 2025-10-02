@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 // global variable definition
-int g_minishell_is_executing = 0;
+volatile sig_atomic_t g_minishell_is_executing = 0;
 /*
 wait, 
 waitpid, 
@@ -94,9 +94,17 @@ void	setup_child_signals(void)
 void	setup_heredoc_signal_handlers(void)
 {
 	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
 
-    sa_int.sa_flags = 0;
+	ft_memset(&sa_int, 0, sizeof(sa_int));
     sa_int.sa_handler = SIG_DFL;  // Let Ctrl+C kill the child process
+    sa_int.sa_flags = 0;
     sigemptyset(&sa_int.sa_mask);
     sigaction(SIGINT, &sa_int, NULL);
+
+	ft_memset(&sa_quit, 0, sizeof(sa_quit));
+	sa_quit.sa_handler = SIG_IGN;
+	sa_quit.sa_flags = 0;
+	sigemptyset(&sa_quit.sa_mask);
+	sigaction(SIGQUIT, &sa_quit, NULL);
 }

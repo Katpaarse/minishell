@@ -32,9 +32,29 @@
 # define TRUE 1
 # define FALSE 0
 
-// g_minishell_is_executing for signal handling in interactive mode
-extern int g_minishell_is_executing; 	// 0 = waiting for user input (interactive mode)
-										// 1 = executing a command (child process)
+/*
+What sig_atomic_t Guarantees:
+
+    Read/write operations are atomic (can't be interrupted mid-operation)
+
+    Works even if signal arrives during access
+
+    Typically maps to int but with atomicity guarantees
+
+Bottom Line:
+
+Always use volatile sig_atomic_t for global variables accessed by signal handlers. Using regular int can lead to:
+
+    Stale values due to compiler optimizations
+
+    Race conditions between signal handler and main code
+
+    Unreliable signal handling behavior
+
+This is especially important in your case since g_minishell_is_executing controls critical signal behavior!
+*/
+extern volatile sig_atomic_t g_minishell_is_executing; 		// 0 = waiting for user input (interactive mode)
+															// 1 = executing a command (child process)
 typedef enum e_redirect_type
 {
 	RED_NONE,

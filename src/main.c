@@ -61,7 +61,9 @@ int main(int argc, char **argv, char **envp)
 			tokens[i] = expanded;
 			i++;
 		}
+		g_minishell_is_executing = 1;
 		shell.cmds = tokens_into_cmds(tokens, &shell);
+		g_minishell_is_executing = 0;
 		if (!shell.cmds)
 		{
 			i = 0;

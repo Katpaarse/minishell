@@ -60,9 +60,10 @@ char	*handle_heredoc(char const *delimiter, char	*tmpfile)
 		perror("heredoc open");
 		return (NULL);
 	}
-	setup_heredoc_signal_handlers();
+	// setup_heredoc_signal_handlers();
 	while (1)
 	{
+		printf("%d", g_minishell_is_executing);
 		line = readline("> ");
 		if (!line) // user pressed ctrl + D
 		{
@@ -74,6 +75,7 @@ char	*handle_heredoc(char const *delimiter, char	*tmpfile)
 			free(line);
 			break;
 		}
+		// printf("GAAT DE LOOP DOOR?\n");
 		write(fd, line, ft_strlen(line));
 		write(fd, "\n", 1);
 		free(line);
@@ -88,10 +90,14 @@ char *process_heredoc(char const *delimiter, int i)
 	pid_t	pid;
 	int		status;
 	char	*tmpfile;
+	struct sigaction old_sa;
+	struct sigaction new_sa;
+
 
 	tmpfile = make_tmp_heredoc_filename(i);
 	if (!tmpfile)
 		return (NULL);
+	
 	pid = fork();
 	if (pid < 0)
 	{
@@ -104,10 +110,20 @@ char *process_heredoc(char const *delimiter, int i)
 		handle_heredoc(delimiter, tmpfile); // pass the filename to write to
 		exit(0);
 	}
+
+	ft_memset(&new_sa, 0, sizeof(new_sa));
+	new_sa.sa_handler = SIG_IGN;
+	new_sa.sa_flags = 0;
+	sigemptyset(&new_sa.sa_mask);
+	sigaction(SIGINT, &new_sa, &old_sa);
+
 	waitpid(pid, &status, 0);
+	
+	sigaction(SIGINT, &old_sa, NULL);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		free(tmpfile);
+		write(1, "\n", 1);
 		return (NULL);
 	}
 	if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
