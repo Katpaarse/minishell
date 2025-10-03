@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/01 16:35:18 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/02 15:24:01 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ char	*handle_heredoc(char const *delimiter, char	*tmpfile)
 	// setup_heredoc_signal_handlers();
 	while (1)
 	{
-		printf("%d", g_minishell_is_executing);
 		line = readline("> ");
 		if (!line) // user pressed ctrl + D
 		{

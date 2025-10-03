@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 14:36:06 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/26 16:55:07 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/03 18:40:25 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ pid_t fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, in
 	return (pid);
 }
 
-// Wait for all children (while loop). Use wait_for_child function from builtin utils
+// used for pipelines, wait for all, track last status
 int wait_all_children(t_minishell *shell, pid_t *child_pids, int count)
 {
 	int	i;

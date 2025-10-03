@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:37:59 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/29 14:39:16 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/03 19:45:54 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,37 +86,29 @@ char	*find_relative_path(char *cmd, char **envp)
 	// Free allocated memory for paths
 	return (NULL);
 }
-/*
+
+// used for single commands, just wait for one process
 int wait_for_child(pid_t pid)
 {
     int status;
-	int	signal_num;
 
     waitpid(pid, &status, 0);
 
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	else if (WIFSIGNALED(status))
-	{
-		signal_num = WTERMSIG(status);
-
-		if (signal_num == SIGINT)
-		{
-			write(1, "\n", 1);
-			return (128 + SIGINT);
-		}
-		else if (signal_num == SIGQUIT)
-		{
-			write(1, "Quit (core dumped)\n", 19);
-			return (128 + SIGQUIT);
-		}
-		else
-			return (128 + signal_num);
-	}
+    // Print signal messages
+    if (WIFSIGNALED(status))
+    {
+        if (WTERMSIG(status) == SIGQUIT)
+            write(1, "Quit (core dumped)\n", 19);
+    }
+    // Return exit code
+    if (WIFEXITED(status))
+        return (WEXITSTATUS(status));
+    else if (WIFSIGNALED(status))
+        return (128 + WTERMSIG(status));
     else
-		return (1);
+        return (1);
 }
-		*/
+
 /* 
 
 It fills status with extra info:

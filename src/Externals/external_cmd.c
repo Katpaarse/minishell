@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:24:09 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/30 18:30:28 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/03 19:45:26 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int	run_external(t_cmd *cmd, t_minishell *shell)
 {
 	pid_t	pid;
-	int		status;
 	char 	*cmd_path;
 
 	if (!cmd || !cmd->args || !cmd->args[0])
@@ -45,6 +44,6 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 		exit(EXIT_FAILURE); 			// exit child process if execve fails
 	}
 	free(cmd_path);
-	status = wait_all_children(shell, &pid, 1);
-	return (status);
+	shell->exit_code = wait_for_child(pid);
+	return (shell->exit_code);
 }

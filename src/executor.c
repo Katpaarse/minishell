@@ -6,12 +6,11 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:22:58 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/01 13:20:49 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/03 19:46:33 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 int execute_command(t_minishell *shell)
 {
