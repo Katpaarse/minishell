@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/03 19:46:13 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/06 14:28:10 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int main(int argc, char **argv, char **envp)
 		if (shell.cmds)
 		{
 			g_minishell_is_executing = 1;
-			shell.exit_code = execute_command(&shell);
+			execute_command(&shell);
 			g_minishell_is_executing = 0;
 			cleanup_heredoc_files(shell.cmds->redirects);
 			free_cmds(shell.cmds);

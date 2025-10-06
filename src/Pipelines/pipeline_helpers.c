@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 14:36:06 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/03 18:40:25 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/06 14:15:49 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,19 +65,11 @@ int wait_all_children(t_minishell *shell, pid_t *child_pids, int count)
 			exit_code = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			exit_code = 128 + WTERMSIG(status);
-		// shell->exit_code = wait_for_child(child_pids[i]);
 		i++;
 	}
-
-	// if (WIFSIGNALED(status))
-	// {
-		// if (WTERMSIG(status) == SIGINT)
-			// write(1, "\n", 1);
 		if (WTERMSIG(status) == SIGQUIT)
 			write(1, "Quit (core dumped)\n", 19);
-	// }
 
 	shell->exit_code = exit_code;
-	// printf("%d\n", shell->exit_code);
 	return (exit_code);
 }
