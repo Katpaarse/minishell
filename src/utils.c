@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:58:19 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/06 18:50:52 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/06 19:03:02 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,12 @@ int	is_whitespace_only(char *str)
 {
 	if (!str)
 		return (FALSE);
-	if (!is_space(*str))
-		return (FALSE);
-	str++;
+	while (*str)
+	{
+		if (!is_space(*str))
+			return (FALSE);	
+		str++;
+	}
 	return (TRUE);
 }
 
@@ -36,13 +39,15 @@ void	copy_envp(t_minishell *shell, char **envp)
 	if (!shell->exp_list)
 	{
 		print_error(shell, "exp_list malloc failed");
-		// Free previously allocated strings
-		// Stop execution
+		return ;
 	}
 	shell->envp = malloc(sizeof(char *) * (i + 1));
 	if (!shell->envp)
 	{
 		print_error(shell,"envp malloc failed");
+		free(shell->exp_list);
+		shell->exp_list = NULL;
+		return ;
 			// Free previously allocated strings
 			// Stop execution
 	}
@@ -53,6 +58,9 @@ void	copy_envp(t_minishell *shell, char **envp)
 		if (!shell->exp_list[i])
 		{
 			print_error(shell, "ft_strdup failed, exp_list");
+			free_args(shell->exp_list);
+			free_args(shell->envp);
+			return ;
 			// Free previously allocated strings
 			// Stop execution
 		}
@@ -60,6 +68,7 @@ void	copy_envp(t_minishell *shell, char **envp)
 		if (!shell->envp[i])
 		{
 			print_error(shell, "ft_strdup failed, envp");
+			free_args(shell->exp_list);
 			// Free previously allocated strings
 			// Stop execution
 		}

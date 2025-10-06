@@ -18,6 +18,14 @@
         Example: cd /home, cd ../documents
 */
 
+// !!!!!!!!!!!!!!!!!!!!!!!!!!
+// FIX DIT \/
+// mkdir test
+// cd test
+// rm -rf test
+// pwd
+// oldpwd
+// !!!!!!!!!!!!!!!!!!!!!!!!!!
 int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 {
 	char	*path;

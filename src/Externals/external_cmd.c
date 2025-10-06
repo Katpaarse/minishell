@@ -28,12 +28,18 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 		print_error(shell, "command not found");
 		return (127);
 	}
+	if (access(cmd_path, X_OK) != 0)
+	{
+		print_error(shell, "permission denied");
+		free(cmd_path);
+		return (126);
+	}
 	pid = fork();
 	if (pid < 0)
 	{
 		perror("fork");
 		free(cmd_path);
-		return (1);
+		return (FAILURE);
 	}
 	if (pid == 0)
 	{
