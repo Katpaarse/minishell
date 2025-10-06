@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 13:06:17 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/01 16:21:29 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/06 18:21:43 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,20 +37,14 @@ void	handle_sigint(int signum)
 
 	if (g_minishell_is_executing == 0) // only for interactive input
 	{
+		g_minishell_is_executing = -1;
 		write(1, "\n", 1);
-		// rl_free_line_state();
-		// rl_cleanup_after_signal();
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
-		// rl_done = 1;	
 	}
 	else
-	{
 		write(1, "\n", 1);
-	}
-	// if g_minishell_is_executing is 1, the handler does nothing
-	// and the SIGINT will simply interrupt the waitpid()
 }
 
 void	setup_signal_handlers(void)

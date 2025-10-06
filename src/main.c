@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/06 14:28:10 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/06 18:50:18 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,23 +27,27 @@ int main(int argc, char **argv, char **envp)
 	setup_signal_handlers(); // setup signal handlers for SIGINT and SIGQUIT
 	shell.exit_code = 0; // set not 0. So the last exit code is succes
 	shell.cmds = NULL; // not parsed into commands yet
-	g_minishell_is_executing = 0; // start in interactive mode
 	
 	while (1) // infinite loop untill user presses cntrl + D(EOF) or "exit" or gets out manually
 	{
+		g_minishell_is_executing = 0; // start in interactive mode
 		input = readline("minishell > "); // shows minishell > and waiting for input
 		if (!input)
 		{
-			if (g_minishell_is_executing == 0)
+			if (g_minishell_is_executing == -1)
 			{
-				write(1, "exit\n", 5);
-				break; // if not input. Exit the loop
-			}
-			else
-			{
+				shell.exit_code = 130;
 				g_minishell_is_executing = 0;
 				continue ;
 			}
+			write(1, "exit\n", 5);
+			break; // if not input. Exit the loop
+		}
+		if (ft_strlen(input) == 0 || is_whitespace_only(input))
+		{
+			free (input);
+			shell.exit_code = 0;
+			continue ;
 		}
 		if (input[0] != '\0') // if there is no empty input. Save it so history in shell
 			add_history(input);

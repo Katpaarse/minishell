@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/25 15:54:39 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/06 16:00:03 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ char	**add_argument(char **args, char *new_arg)
 
 	if (!new_arg)
 		return args;
-
 	dup = ft_strdup(new_arg);
 	if (!dup)
 	{

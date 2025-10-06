@@ -6,12 +6,21 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:58:19 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/25 16:52:39 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/06 18:50:52 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+int	is_whitespace_only(char *str)
+{
+	if (!str)
+		return (FALSE);
+	if (!is_space(*str))
+		return (FALSE);
+	str++;
+	return (TRUE);
+}
 
 void	copy_envp(t_minishell *shell, char **envp)
 {
@@ -23,7 +32,6 @@ void	copy_envp(t_minishell *shell, char **envp)
 	i = 0;
 	while (envp[i] != NULL)
 		i++;
-	
 	shell->exp_list = malloc(sizeof(char *) * (i + 1));
 	if (!shell->exp_list)
 	{
@@ -31,7 +39,6 @@ void	copy_envp(t_minishell *shell, char **envp)
 		// Free previously allocated strings
 		// Stop execution
 	}
-
 	shell->envp = malloc(sizeof(char *) * (i + 1));
 	if (!shell->envp)
 	{
@@ -39,7 +46,6 @@ void	copy_envp(t_minishell *shell, char **envp)
 			// Free previously allocated strings
 			// Stop execution
 	}
-
 	i = 0;
 	while (envp[i] != NULL)
 	{

@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:45:17 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/08/21 19:36:18 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/06 16:13:55 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 			if (ft_strncmp(list[j], cmd->args[i], var_len) == 0
 				&& (list[j][var_len] == '=' || list[j][var_len] == '\0'))
 			{
-				printf("Freeing envp[%d]: %p -> %s\n", j, list[j], list[j]);
 				free(list[j]);
 				// shift to the left
 				while (list[j + 1] != NULL)
@@ -71,7 +70,6 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 			if (ft_strncmp(list[j], cmd->args[i], var_len) == 0
 				&& (list[j][var_len] == '=' || list[j][var_len] == '\0'))
 			{
-				printf("Freeing exp_list[%d]: %p -> %s\n", j, list[j], list[j]);
 				free(list[j]);
 				// shift to the left
 				while (list[j + 1] != NULL)

@@ -6,17 +6,17 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:19:46 by jukerste          #+#    #+#             */
-/*   Updated: 2025/08/25 17:14:16 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/06 18:44:24 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	is_space(char c)
+int	is_space(char c)
 {
 	return (c == ' ' || c == '\t');
 }
-static int	is_special_op(char c)
+int	is_special_op(char c)
 {
 	return (c == '|' || c == '>' || c == '<');
 }

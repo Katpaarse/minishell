@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 14:06:47 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/22 15:31:50 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/06 15:31:26 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,7 @@ char	*process_token(char *token, t_minishell *shell)
 		return (NULL);
 	len = ft_strlen(token);
 	if (len >= 2 && token[0] == '\'' && token[len - 1] == '\'') // single matching quotes in token. No expansion needed. Just remove single quotes
-	{
-		remove_quotes(token);
-		return (token);
-	}
+		return (remove_quotes(token));
 	expanded = expand_variables(token, shell); // the function returns a malloc'ed string. So we need to free it after use
 	if (!expanded)
 		return (NULL);
