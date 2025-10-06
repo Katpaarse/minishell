@@ -12,7 +12,8 @@
 
 #include "minishell.h"
 
-
+// DONT FORGET TO FREE HERE
+// FIX THIS FUNCTION FOR FREEING
 void	copy_envp(t_minishell *shell, char **envp)
 {
 	int i;
@@ -28,14 +29,16 @@ void	copy_envp(t_minishell *shell, char **envp)
 	if (!shell->exp_list)
 	{
 		print_error(shell, "exp_list malloc failed");
-		// Free previously allocated strings
-		// Stop execution
+		return ;
 	}
 
 	shell->envp = malloc(sizeof(char *) * (i + 1));
 	if (!shell->envp)
 	{
 		print_error(shell,"envp malloc failed");
+		free(shell->exp_list);
+		shell->exp_list = NULL;
+		return ;
 			// Free previously allocated strings
 			// Stop execution
 	}
@@ -47,6 +50,11 @@ void	copy_envp(t_minishell *shell, char **envp)
 		if (!shell->exp_list[i])
 		{
 			print_error(shell, "ft_strdup failed, exp_list");
+			free_args(shell->exp_list);
+			free_args(shell->envp);
+			shell->exp_list;
+			shell->envp;
+			return ;
 			// Free previously allocated strings
 			// Stop execution
 		}
@@ -54,6 +62,7 @@ void	copy_envp(t_minishell *shell, char **envp)
 		if (!shell->envp[i])
 		{
 			print_error(shell, "ft_strdup failed, envp");
+			free_args(shell->exp_list);
 			// Free previously allocated strings
 			// Stop execution
 		}

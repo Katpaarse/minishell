@@ -14,31 +14,34 @@
 
 char	*find_cmd_path(char **argv, char **envp)
 {
+	char	*path;
+
 	if (!argv || !argv[0] || argv[0][0] == '\0' || !envp)
 		return (NULL);
 
 	if (ft_strchr(argv[0], '/') != NULL)
-		return (find_absolute_path(argv));
+	{
+		path = find_absolute_path(argv);
+		return (path);
+	}
 	else
-		return (find_relative_path(argv[0], envp));
-
+	{
+		path = find_relative_path(argv[0], envp);
+		return (path);
+	}
 	return (NULL);
 }
 
 char	*find_absolute_path(char **argv)
 {
-	int		i;
-	i = 0;
+	char	*path;
+	
 	if (!argv || !argv[0] || argv[0][0] == '\0')
 		return (NULL);
-
-	if (access(argv[0], X_OK) == 0)
-		return (argv[0]);
-	else
-	{
-		// error handling can be added here if needed
+	if (access(argv[0], F_OK) != 0)
 		return (NULL);
-	}
+	else
+		return (ft_strdup(argv[0]));
 }
 
 char	*find_relative_path(char *cmd, char **envp)
@@ -48,11 +51,11 @@ char	*find_relative_path(char *cmd, char **envp)
 	char	*full_path;
 	int		i;
 
-	path_string = NULL;
 	if (!cmd || !envp)
 		return (NULL);
 
 	i = 0;
+	path_string = NULL;
 	while (envp[i] != NULL)
 	{
 		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
@@ -74,16 +77,21 @@ char	*find_relative_path(char *cmd, char **envp)
 	{
 		full_path = ft_strjoin(paths[i], "/");
 		full_path = ft_strjoin_and_free(full_path, cmd);
+		if (!full_path)
+		{
+			free(full_path);
+			free_args(paths);
+			return (NULL);
+		}
 		if (access(full_path, X_OK) == 0)
 		{
-			// Free allocated memory for paths
+			free_args(paths);
 			return (full_path);
 		}
-		// Free allocated memory for paths
 		free(full_path);
 		i++;
 	}
-	// Free allocated memory for paths
+	free_args(paths);
 	return (NULL);
 }
 
