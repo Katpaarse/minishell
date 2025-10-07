@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/02 15:24:01 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/07 15:58:34 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ char	*handle_heredoc(char const *delimiter, char	*tmpfile)
 			free(line);
 			break;
 		}
-		// printf("GAAT DE LOOP DOOR?\n");
 		write(fd, line, ft_strlen(line));
 		write(fd, "\n", 1);
 		free(line);

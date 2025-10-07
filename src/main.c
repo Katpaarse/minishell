@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/06 18:50:18 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/07 16:11:05 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,11 @@ int main(int argc, char **argv, char **envp)
 			write(1, "exit\n", 5);
 			break; // if not input. Exit the loop
 		}
+		if (g_minishell_is_executing == -1)
+		{
+			shell.exit_code = 130;
+			g_minishell_is_executing = 0;
+		}
 		if (ft_strlen(input) == 0 || is_whitespace_only(input))
 		{
 			free (input);
@@ -55,6 +60,7 @@ int main(int argc, char **argv, char **envp)
 		if (!tokens)
 		{
 			free(input); // frees the input line and goes back to the prompt without crashing
+			shell.exit_code = 258;
 			continue;
 		}
 		i = 0;
@@ -78,6 +84,7 @@ int main(int argc, char **argv, char **envp)
 			}
 			free(tokens);
 			free(input);
+			shell.exit_code = 258;
 			continue ;
 		}
 		if (shell.cmds)

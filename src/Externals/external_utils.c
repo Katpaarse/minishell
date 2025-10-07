@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:37:59 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/06 19:01:06 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/07 15:50:25 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,22 +97,44 @@ char	*find_relative_path(char *cmd, char **envp)
 int wait_for_child(pid_t pid)
 {
     int status;
+    int exit_code;
 
-    waitpid(pid, &status, 0);
-
-    // Print signal messages
-    if (WIFSIGNALED(status))
+    // Use a loop to handle interrupted waitpid (best practice)
+    while (waitpid(pid, &status, 0) == -1) // Continue waiting
     {
-        if (WTERMSIG(status) == SIGQUIT)
-            write(1, "Quit (core dumped)\n", 19);
+    	if (errno != EINTR)
+        {
+            // If the failure reason is not an interruption, something is wrong.
+            return (1); 
+        }
+        // If it was EINTR, the loop repeats the waitpid call.
     }
-    // Return exit code
+    // --- 2. Determine Exit Status ---
+    // Check if the child process exited normally (e.g., via exit() or return from main).
     if (WIFEXITED(status))
-        return (WEXITSTATUS(status));
+    {
+        exit_code = WEXITSTATUS(status);
+    }
+    // Check if the child process was terminated by a signal.
     else if (WIFSIGNALED(status))
-        return (128 + WTERMSIG(status));
+    {
+        int signal_number = WTERMSIG(status);
+        
+        // POSIX Shells: Exit status for termination by signal is 128 + signal number.
+        exit_code = 128 + signal_number; 
+        
+        // Print the "Quit (core dumped)" message only for SIGQUIT (signal 3).
+        if (signal_number == SIGQUIT)
+        {
+            write(1, "Quit (core dumped)\n", 19);
+        }
+    }
+    // Handle all other cases (e.g., WIFSTOPPED, WIFCONTINUED).
     else
-        return (1);
+    {
+        exit_code = 1; 
+    }
+    return (exit_code);
 }
 
 /* 

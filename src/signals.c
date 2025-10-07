@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 13:06:17 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/06 18:21:43 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/07 15:44:47 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	handle_sigint(int signum)
 {
 	(void)signum;
 
-	if (g_minishell_is_executing == 0) // only for interactive input
+	if (g_minishell_is_executing <= 0) // only for interactive input
 	{
 		g_minishell_is_executing = -1;
 		write(1, "\n", 1);
@@ -44,7 +44,10 @@ void	handle_sigint(int signum)
 		rl_redisplay();
 	}
 	else
+	{
+		kill(g_minishell_is_executing, SIGINT); // manually kill tghe entire process group
 		write(1, "\n", 1);
+	}
 }
 
 void	setup_signal_handlers(void)

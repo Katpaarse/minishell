@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:24:09 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/03 19:45:26 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/07 15:44:05 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 		exit(EXIT_FAILURE); 			// exit child process if execve fails
 	}
 	free(cmd_path);
+	g_minishell_is_executing = pid;
 	shell->exit_code = wait_for_child(pid);
+	g_minishell_is_executing = 0;
 	return (shell->exit_code);
 }
