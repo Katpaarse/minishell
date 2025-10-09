@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/06 18:48:51 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/09 15:00:00 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ typedef struct s_redirect
 {
 	char 					*filename;		// name of the file for redirection
 	t_redirect_type 		type;			// type of redirection
+	int						expand;			// 1 if variable expansion is allowed, 0 if quoted delimiter
 	struct s_redirect		*next;
 }	t_redirect;
 
@@ -147,13 +148,12 @@ void		print_syntax_error(t_minishell *shell, char const *token);
 void		print_error(t_minishell *shell, char const *message);
 void		print_error_filename(char const	*filename, char	const *message);
 int			count_redirects(t_redirect *list);
-t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type);
+t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type, int expand);
 void		free_redirects(t_redirect *list);
 void		free_args(char **args);
 void		free_cmds(t_cmd *cmd);
-char		*handle_heredoc(char const *delimiter, char *tmpfile);
-char 		*process_heredoc(char const *delimiter, int i);
-char		*ft_strjoin(char const *s1, char const *s2);
+void		handle_heredoc(char const *delimiter, char	*tmpfile, t_minishell *shell, int expand);
+char 		*process_heredoc(char const *delimiter, int i, t_minishell *shell, int expand);
 int			ft_strcmp(char const *s1, char const *s2);
 void		cleanup_heredoc_files(t_redirect *redirects);
 int			is_space(char c);

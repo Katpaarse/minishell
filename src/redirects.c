@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 16:04:35 by jukerste          #+#    #+#             */
-/*   Updated: 2025/09/30 18:12:46 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/09 14:32:51 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	count_redirects(t_redirect *list)
 }
 
 // // add a new redirect to the list of redirects
-t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type)
+t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type, int expand)
 {
 	t_redirect	*new_redirection;
 	t_redirect	*current;
@@ -35,7 +35,6 @@ t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type)
 
 	if (!filename)
 		return (list);
-
 	dup = ft_strdup(filename);
 	if (!dup)
 	{
@@ -51,6 +50,7 @@ t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type)
 	}
 	new_redirection->filename = dup;
 	new_redirection->type = type;
+	new_redirection->expand = expand;
 	new_redirection->next = NULL;
 	if (!list)
 		return (new_redirection);

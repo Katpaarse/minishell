@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/07 15:58:34 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/09 18:10:41 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,20 @@ static char	*make_tmp_heredoc_filename(int	i)
 	return (filename);
 }
 
-char	*handle_heredoc(char const *delimiter, char	*tmpfile)
+void	handle_heredoc(char const *delimiter, char	*tmpfile, t_minishell *shell, int expand)
 {
 	char	*line;
 	int		fd;
+	char	*clean_delim;
+	char	*to_write;
 
 	fd = open(tmpfile, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (fd < 0)
 	{
 		perror("heredoc open");
-		return (NULL);
+		exit(1);
 	}
-	// setup_heredoc_signal_handlers();
+	clean_delim = remove_quotes(delimiter);
 	while (1)
 	{
 		line = readline("> ");
@@ -74,23 +76,28 @@ char	*handle_heredoc(char const *delimiter, char	*tmpfile)
 			free(line);
 			break;
 		}
-		write(fd, line, ft_strlen(line));
+		to_write = line;
+		if (expand)
+		{
+			to_write = expand_variables(line, shell);
+			free(line);
+		}
+		write(fd, to_write, ft_strlen(to_write));
 		write(fd, "\n", 1);
-		free(line);
+		if (expand)
+			free(to_write);
 	}
+	free(clean_delim);
 	close(fd);
-	return (tmpfile);
 }
 
-// deze functie wordt later gebruikt voor splitten van de handle_heredoc functie. So keep it for now.. 
-char *process_heredoc(char const *delimiter, int i)
+char *process_heredoc(char const *delimiter, int i, t_minishell *shell, int expand)
 {
 	pid_t	pid;
 	int		status;
 	char	*tmpfile;
 	struct sigaction old_sa;
 	struct sigaction new_sa;
-
 
 	tmpfile = make_tmp_heredoc_filename(i);
 	if (!tmpfile)
@@ -105,18 +112,15 @@ char *process_heredoc(char const *delimiter, int i)
 	if (pid == 0) // child process. Write to the file
 	{
 		setup_heredoc_signal_handlers();
-		handle_heredoc(delimiter, tmpfile); // pass the filename to write to
+		handle_heredoc(delimiter, tmpfile, shell, expand); // pass the filename to write to
 		exit(0);
 	}
-
 	ft_memset(&new_sa, 0, sizeof(new_sa));
 	new_sa.sa_handler = SIG_IGN;
 	new_sa.sa_flags = 0;
 	sigemptyset(&new_sa.sa_mask);
 	sigaction(SIGINT, &new_sa, &old_sa);
-
 	waitpid(pid, &status, 0);
-	
 	sigaction(SIGINT, &old_sa, NULL);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{

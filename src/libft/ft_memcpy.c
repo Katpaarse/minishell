@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 22:08:22 by jukerste          #+#    #+#             */
-/*   Updated: 2024/10/30 15:57:37 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/09 12:42:47 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	unsigned char		*d;
 	const unsigned char	*s;
 
+	if (n == 0 || dest == src)
+		return (dest);
+	if (!dest || !src)
+		return (NULL);
 	d = (unsigned char *)dest;
 	s = (const unsigned char *)src;
-	{
-		if (dest == NULL || src == NULL || n == 0)
-			return (dest);
-	}
 	i = 0;
 	while (i < n)
 	{

@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/07 16:11:05 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/09 18:52:35 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,13 @@ int main(int argc, char **argv, char **envp)
 		i = 0;
 		while (tokens[i]) // loop through each token
 		{
+			// skip expanding the token after << (heredoc delimiter)
+			if (tokens[i][0] == '<' && tokens[i][1] == '<' && tokens[i][2] == '\0')
+			{
+				i = i + 2; // advance past << and its delimiter
+				continue ;
+			}
+			// normal variable expansion and quote removal for other tokens
 			expanded = process_token(tokens[i], &shell); // removes quotes from token input and calls variable expension
 			free(tokens[i]);
 			tokens[i] = expanded;
