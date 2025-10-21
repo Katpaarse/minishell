@@ -24,41 +24,39 @@ Anything in a pipeline (even parent builtins) → fork, because that’s how pip
 int	is_parent_builtin(t_cmd *cmd)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
-		return (FALSE);
-	if (ft_strcmp(cmd->args[0], "cd") == 0)
-		return (TRUE);
-	if (ft_strcmp(cmd->args[0], "export") == 0)
-		return (TRUE);
-	if (ft_strcmp(cmd->args[0], "unset") == 0)
-		return (TRUE);
-	if (ft_strcmp(cmd->args[0], "exit") == 0)
-		return (TRUE);
-	return (FALSE);
+		return (FAILURE);
+	else if (ft_strcmp(cmd->args[0], "cd") == 0)
+		return (SUCCESS);
+	else if (ft_strcmp(cmd->args[0], "export") == 0)
+		return (SUCCESS);
+	else if (ft_strcmp(cmd->args[0], "unset") == 0)
+		return (SUCCESS);
+	else if (ft_strcmp(cmd->args[0], "exit") == 0)
+		return (SUCCESS);
+	else
+		return (FAILURE);
 }
 
-int is_builtin(char **argv)
+int is_builtin(t_cmd *cmd)
 {
-    if (argv[0])
-    {
-        if (ft_strcmp(argv[0], "cd") == 0)
-            return (TRUE);
-		else if (ft_strcmp(argv[0], "echo") == 0)
-			return (TRUE);
-        else if (ft_strcmp(argv[0], "pwd") == 0)
-			return (TRUE);
-		else if (ft_strcmp(argv[0], "env") == 0)
-			return (TRUE);
-        else if (ft_strcmp(argv[0], "export") == 0)
-            return (TRUE);
-        else if (ft_strcmp(argv[0], "unset") == 0)
-            return (TRUE);
-        else if (ft_strcmp(argv[0], "exit") == 0)
-            return (TRUE);
-        else
-            return (FALSE);
-    }
+    if (!cmd || !cmd->args || !cmd->args[0])
+		return (FAILURE);
+    else if (ft_strcmp(cmd->args[0], "cd") == 0)
+        return (SUCCESS);
+	else if (ft_strcmp(cmd->args[0], "echo") == 0)
+		return (SUCCESS);
+	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
+		return (SUCCESS);
+	else if (ft_strcmp(cmd->args[0], "env") == 0)
+		return (SUCCESS);
+    else if (ft_strcmp(cmd->args[0], "export") == 0)
+        return (SUCCESS);
+    else if (ft_strcmp(cmd->args[0], "unset") == 0)
+        return (SUCCESS);
+    else if (ft_strcmp(cmd->args[0], "exit") == 0)
+        return (SUCCESS);
     else
-        return (FALSE);
+        return (FAILURE);
 }
 
 

@@ -32,69 +32,87 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 	char	*new_pwd;
 	char	*old_pwd;
 	int 	i;
-	int		oldpwd_i;
+	int		pwd_i;
 
 	if (!cmd || !cmd->args || !shell)
 		return (FAILURE);
+
 	if (cmd->args[1] && cmd->args[2])
 	{
 		write(2, "cd: too many arguments\n", 24);
 		return (FAILURE);
 	}
+
+	new_pwd = NULL;
 	old_pwd = getcwd(NULL, 0); // MALLOC so free it later
 	if (!old_pwd)
-		return (FAILURE);
+		old_pwd = NULL;
 
 	if (cmd->args[1] == NULL)
 		path = get_env_value("HOME", shell->envp);
 	else if (ft_strncmp(cmd->args[1], "-", 2) == 0)
-	{
 		path = get_env_value("OLDPWD", shell->envp);
-	}
 	else	
 		path = cmd->args[1];
+
 	if (!path)
 	{
 		write(2, "cd: HOME/OLDPWD not set\n", 24);
 		free(old_pwd);
 		return (FAILURE);
 	}
+
 	if (chdir(path) != 0)
 	{
 		write(2, "cd: no such file or directory\n", 31);
 		free(old_pwd);
 		return (FAILURE);
 	}
-	new_pwd = getcwd(NULL, 0);
-	if (!new_pwd)
+	
+	if (old_pwd)
 	{
-		free(old_pwd);
-		return (FAILURE);
+		new_pwd = getcwd(NULL, 0);
+		if (!new_pwd)
+		{
+			free(old_pwd);
+			return (FAILURE);
+		}
 	}
-	oldpwd_i = -1;
+	else if (!old_pwd && !new_pwd)
+		new_pwd = path;
+
+	// printf("\nnew_pwd \t= %s\n", new_pwd);
+	// printf("old_pwd \t= %s\n", old_pwd);
+	// printf("path \t\t= %s\n\n", path);
+	pwd_i = -1;
 	i = 0;
 	while (shell->envp[i])
 	{
-		if (ft_strncmp(shell->envp[i], "PWD=", 4) == 0)
+		if (ft_strncmp(shell->envp[i], "PWD=", 4) == 0 && new_pwd) // SEGFAULT HERE ft_strncmp
 		{
 			free(shell->envp[i]);
 			shell->envp[i] = ft_strjoin("PWD=", new_pwd);
+			pwd_i = i;
 		}
-		else if (ft_strncmp(shell->envp[i], "OLDPWD=", 7) == 0)
+		else if (ft_strncmp(shell->envp[i], "OLDPWD=", 7) == 0 && old_pwd)
 		{
 			free(shell->envp[i]);
 			shell->envp[i] = ft_strjoin("OLDPWD=", old_pwd);
-			oldpwd_i = i;
 		}
 		i++;
 	}
-	if (cmd->args[1] && ft_strncmp(cmd->args[1], "-", 2) == 0 && oldpwd_i != -1)
+
+	if (cmd->args[1] && ft_strncmp(cmd->args[1], "-", 2) == 0 && pwd_i != -1)
 	{
-		write(1, shell->envp[oldpwd_i], ft_strlen(shell->envp[oldpwd_i]));
+		write(1, shell->envp[pwd_i], ft_strlen(shell->envp[pwd_i]));
 		write(1, "\n", 1);
 	}
-	free(new_pwd);
-	free(old_pwd);
+
+	// if (new_pwd)
+		// free(new_pwd);
+
+	// if (old_pwd)
+		// free(old_pwd);
 	return (SUCCESS);
 }
 /*

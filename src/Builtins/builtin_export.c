@@ -171,12 +171,31 @@ int	builtin_export(t_cmd *cmd, t_minishell *shell)
 		return (SUCCESS);
 	}
 
+	// int x;
 	i = 1;
 	while (cmd->args[i])
 	{
+		// x = 0;
+		// while (cmd->args[x])
+		// {
+		// 	printf("ARG[%d]: %s\n", x, cmd->args[x]);
+		// 	x++;
+		// }
 		j = 0;
-		if (cmd->args[i][0] == '_' || ft_isalpha(cmd->args[i][0]) == 1)
+		if ((cmd->args[i][0] == '_' || ft_isalpha(cmd->args[i][0])) == 1)
 		{
+			// printf("TEST\n");
+			while (cmd->args[i][j] && cmd->args[i][j] != '=')
+			{
+				if (cmd->args[i][j] != '_' && ft_isalpha(cmd->args[i][j]) == 0
+					&& ft_isdigit(cmd->args[i][j]) == 0)
+				{
+					// invalid variable name
+					print_error(shell, "not a valid identifier");
+					return (FAILURE);
+				}
+				j++;
+			}
 			if (ft_strchr(cmd->args[i], '=') != NULL)
 			{
 				// handle 'space' values in var_value
@@ -184,17 +203,38 @@ int	builtin_export(t_cmd *cmd, t_minishell *shell)
 				// should be in " " quotes when printed with export
 				// example: export VAR=" "
 				while (cmd->args[i][j] && cmd->args[i][j] != '=')
+				{
+					if (cmd->args[i][j] != '_' || ft_isalpha(cmd->args[i][j]) == 0
+						|| ft_isdigit(cmd->args[i][j]) == 0)
+					{
+						// invalid variable name
+						print_error(shell, "not a valid identifier");
+						return (FAILURE);
+					}
 					j++;
+				}
 				if (cmd->args[i][j + 1] != '\0') // there is a value after '='
+				{
 					check = 0; // name=value
+				}
 				else // no value after '='
+				{
 					check = 1; // name=
+				}
 			}
 			else // no '=' in argument, just a variable name
+			{
 				check = 2; // name
+			}
+		}
+		else
+		{
+			// invalid variable name
+			print_error(shell, "not a valid identifier");
+			return (FAILURE);
 		}
 
-		if (check == 0 || check == 1) // NAME=VALUE or NAME=
+		if (check == 0 || check == 1) // NAME=VALUE or NAME= | 
 		{
 			add_or_update_exp(shell, cmd->args[i]);
 			add_or_update_env(shell, cmd->args[i]);

@@ -19,7 +19,7 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 
 	if (!cmd || !cmd->args || !cmd->args[0])
 	{
-		print_error(shell, "invalid command");
+		print_error(shell, "Invalid command");
 		return (127);
 	}
 	cmd_path = find_cmd_path(cmd->args, shell->envp);
@@ -30,7 +30,7 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 	}
 	if (access(cmd_path, X_OK) != 0)
 	{
-		print_error(shell, "permission denied");
+		print_error(shell, "Permission denied");
 		free(cmd_path);
 		return (126);
 	}

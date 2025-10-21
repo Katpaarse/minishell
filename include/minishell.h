@@ -119,7 +119,7 @@ int		handle_redirects(t_cmd *cmd);
 
 // Builtin helper functions
 int 	execute_builtin(t_cmd *cmd, t_minishell *shell);
-int		is_builtin(char **argv);
+int		is_builtin(t_cmd *cmd);
 int		run_builtin(t_cmd *cmd, t_minishell *shell);
 void	copy_envp(t_minishell *shell, char **envp);
 int		is_parent_builtin(t_cmd *cmd);

@@ -31,6 +31,12 @@ int	builtin_echo(t_cmd *cmd)
 	args = cmd->args;
 	first_word = TRUE;
 
+	// int x = 0;
+	// while (args[x])
+	// {
+	// 	printf("ARG[%d]: %s\n", x, args[x]);
+	// 	x++;
+	// }
 	// If no arguments are provided, print a newline
 	if (!args || !args[0])
 	{
