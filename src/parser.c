@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/09 18:57:32 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/15 14:37:25 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,12 +125,12 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 		else
 			current->args = add_argument(current->args, ft_strdup(tokens[i]));
 		i++;
-		if (!current->args && !current->redirects) // final check: empty last command after a pipe
-		{
-			print_syntax_error(shell, NULL);
-			free_cmds(head);
-			return (NULL);
-		}
+	}
+	if (!current->args && !current->redirects) // final check: empty last command after a pipe
+	{
+		print_syntax_error(shell, NULL);
+		free_cmds(head);
+		return (NULL);
 	}
 	return (head);
 }
