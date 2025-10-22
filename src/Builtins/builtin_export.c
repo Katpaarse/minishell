@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:45:11 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/02 16:40:11 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/22 15:44:55 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,49 +170,60 @@ int	builtin_export(t_cmd *cmd, t_minishell *shell)
 		}
 		return (SUCCESS);
 	}
-
-	// int x;
 	i = 1;
 	while (cmd->args[i])
 	{
-		// x = 0;
-		// while (cmd->args[x])
-		// {
-		// 	printf("ARG[%d]: %s\n", x, cmd->args[x]);
-		// 	x++;
-		// }
+		if (ft_strchr(cmd->args[i], '=') != NULL && cmd->args[i + 1] != NULL)
+		{
+			// Merge current and next token
+			size_t len1 = ft_strlen(cmd->args[i]);
+			size_t len2 = ft_strlen(cmd->args[i + 1]);
+			char *merged = malloc(len1 + len2 + 2); // +2 for space and null terminator
+			if (!merged)
+				return (FAILURE);
+			// Manual copy with space between tokens
+			size_t j = 0;
+			for (size_t k = 0; k < len1; k++, j++)
+				merged[j] = cmd->args[i][k];
+			merged[j++] = ' '; // Add space between merged parts
+			for (size_t k = 0; k < len2; k++, j++)
+				merged[j] = cmd->args[i + 1][k];
+			merged[j] = '\0';
+					
+			// Replace current token with merged version
+			free(cmd->args[i]);
+			cmd->args[i] = merged;
+			
+			// Shift remaining arguments left to remove the merged token
+			int k = i + 1;
+			while (cmd->args[k + 1])
+			{
+				cmd->args[k] = cmd->args[k + 1];
+				k++;
+			}
+			cmd->args[k] = NULL;
+			// Don't increment i here - we need to process the merged token
+		}
 		j = 0;
 		if ((cmd->args[i][0] == '_' || ft_isalpha(cmd->args[i][0])) == 1)
 		{
-			// printf("TEST\n");
 			while (cmd->args[i][j] && cmd->args[i][j] != '=')
 			{
 				if (cmd->args[i][j] != '_' && ft_isalpha(cmd->args[i][j]) == 0
 					&& ft_isdigit(cmd->args[i][j]) == 0)
 				{
 					// invalid variable name
-					print_error(shell, "not a valid identifier");
+					print_error(shell, "not a valid identifier\n");
 					return (FAILURE);
 				}
 				j++;
-			}
+			}			
 			if (ft_strchr(cmd->args[i], '=') != NULL)
 			{
 				// handle 'space' values in var_value
 				// Example: export VAR="value with spaces"
 				// should be in " " quotes when printed with export
 				// example: export VAR=" "
-				while (cmd->args[i][j] && cmd->args[i][j] != '=')
-				{
-					if (cmd->args[i][j] != '_' || ft_isalpha(cmd->args[i][j]) == 0
-						|| ft_isdigit(cmd->args[i][j]) == 0)
-					{
-						// invalid variable name
-						print_error(shell, "not a valid identifier");
-						return (FAILURE);
-					}
-					j++;
-				}
 				if (cmd->args[i][j + 1] != '\0') // there is a value after '='
 				{
 					check = 0; // name=value
@@ -233,7 +244,6 @@ int	builtin_export(t_cmd *cmd, t_minishell *shell)
 			print_error(shell, "not a valid identifier");
 			return (FAILURE);
 		}
-
 		if (check == 0 || check == 1) // NAME=VALUE or NAME= | 
 		{
 			add_or_update_exp(shell, cmd->args[i]);
@@ -245,11 +255,3 @@ int	builtin_export(t_cmd *cmd, t_minishell *shell)
 	}
 	return (SUCCESS);
 }
-
-// int builtin_export(char **args, char ***env)
-// {
-//     (void)args;
-//     (void)env;
-//     // Temporary stub — will implement later
-//     return 0;
-// }
