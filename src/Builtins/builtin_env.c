@@ -25,7 +25,7 @@ int	builtin_env(t_minishell *shell)
 	while (shell->envp[i] != NULL)
 	{
 		write(1, shell->envp[i], ft_strlen(shell->envp[i]));
-		write(1, "\n", 1); // Print newline after each
+		write(1, "\n", 1);
 		i++;
 	}
 	return (0);
