@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/09 15:00:00 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/22 20:01:03 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,13 @@ typedef enum e_redirect_type
 	RED_APPEND,     // >>
 	RED_HEREDOC     // <<
 }	t_redirect_type;
+
+typedef enum e_token_state 
+{
+    STATE_NORMAL,       // This is 0
+    STATE_IN_SQUOTE,    // This is 1  
+    STATE_IN_DQUOTE     // This is 2
+} 	t_token_state;
 
 typedef struct s_redirect
 {
@@ -159,5 +166,6 @@ void		cleanup_heredoc_files(t_redirect *redirects);
 int			is_space(char c);
 int			is_whitespace_only(char *str);
 int			is_special_op(char c);
+void 		debug_tokens(char **tokens);
 
 # endif

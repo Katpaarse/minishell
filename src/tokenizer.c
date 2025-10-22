@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:19:46 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/06 18:44:24 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/22 20:03:06 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	is_space(char c)
 {
 	return (c == ' ' || c == '\t');
 }
+
 int	is_special_op(char c)
 {
 	return (c == '|' || c == '>' || c == '<');
@@ -57,8 +58,20 @@ static int	count_tokens(char *input)
 		}
 		else
 		{
-			while (input[i] && !is_space(input[i]) && !is_special_op(input[i]) && input[i] != '\'' && input[i] != '"')
-				i++;
+			while (input[i] && !is_space(input[i]) && !is_special_op(input[i]))
+			{
+				if (input[i] == '\'' || input[i] == '"')
+				{
+					quote = input[i];
+					i++;
+					while (input[i] && input[i] != quote)
+						i++;
+					if (input[i] == quote)
+						i++;
+				}
+				else
+					i++;
+			}
 		}
 	}
 	return (count);
@@ -114,8 +127,20 @@ char	**tokenize_input(char *input)
 		else
 		{
 			start = i;
-			while (input[i] && !is_space(input[i]) && !is_special_op(input[i]) && input[i] != '\'' && input[i] != '"')
-				i++;
+			while (input[i] && !is_space(input[i]) && !is_special_op(input[i]))
+			{
+				if (input[i] == '\'' || input[i] == '"')
+				{
+					quote = input[i];
+					i++;
+					while (input[i] && input[i] != quote)
+						i++;
+					if (input[i] == quote)
+						i++;
+				}
+				else
+					i++;
+			}
 			tokens[ti] = ft_strndup(input + start, i - start);
 			ti++;
 		}

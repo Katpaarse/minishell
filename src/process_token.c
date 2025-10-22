@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_token.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 14:06:47 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/09 12:43:18 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/22 20:26:34 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,50 @@
 char	*remove_quotes(char const *token)
 {
 	size_t	len;
-	
+	char	*result;
+	int		i;
+	int		j;
+	char	in_quote;
+
 	if (!token)
 		return (NULL);
+	
 	len = ft_strlen(token);
-	if (len < 2)
-		return (ft_strdup(token)); // token is too short to have matching quotes. So just copy the token as is
-	if (token[0] != '\'' && token[0] != '"')
-		return (ft_strdup(token)); // token with no quotes. So just copy the token as is
-	if (token[len - 1] != token[0])
-		return (ft_strdup(token)); // if the token doesnt have matching quotes before '\0' at the end compared to first char which should be quote. Just copy the token as is
-	return (ft_substr(token, 1, len - 2)); // quotes removed from token string
+	result = malloc(len + 1);
+	if (!result)
+		return (NULL);
+	
+	i = 0;
+	j = 0;
+	in_quote = 0;
+	
+	while (token[i])
+	{
+		if (!in_quote && (token[i] == '\'' || token[i] == '"'))
+		{
+			// Start of a quote - remember which type and skip it
+			in_quote = token[i];
+		}
+		else if (in_quote && token[i] == in_quote)
+		{
+			// End of the current quote - skip it
+			in_quote = 0;
+		}
+		else
+		{
+			// Regular character or inside quotes - copy it
+			result[j++] = token[i];
+		}
+		i++;
+	}
+	result[j] = '\0';
+	// If we removed everything, return empty string instead of freeing
+	if (j == 0)
+	{
+		free(result);
+		return (ft_strdup(""));
+	}
+	return (result);
 }
 
 // function to process the new token with or without quotes. Only when double quotes are found then expansion is needed
