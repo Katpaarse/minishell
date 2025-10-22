@@ -18,67 +18,55 @@
         Example: echo hello, echo -n hello world
 */
 
-int	builtin_echo(t_cmd *cmd)
+int	skip_nl(t_cmd *cmd, int i)
 {
-	int i;
 	int	j;
-	int nl;
-	char **args;
-	int first_word;
-	
-	i = 1; // Start from 1 to skip the command name
-	nl = TRUE; // bash default behavior is to print newline
-	args = cmd->args;
-	first_word = TRUE;
 
-	// int x = 0;
-	// while (args[x])
-	// {
-	// 	printf("ARG[%d]: %s\n", x, args[x]);
-	// 	x++;
-	// }
-	// If no arguments are provided, print a newline
-	if (!args || !args[0])
-	{
-		write(1, "\n", 1); // Print newline
-		return (SUCCESS); // If no arguments, just print newline
-	}
-
-	// BASH HANDLES MULTIPLE '-n', SO FOR EXAMPLE:
-	// echo -n -n -n hello world
-	// will print "hello world" without a newline at the end.	
-
-	// is first argument -n, if so, do not print newline
-	//
-	// echo -nnn hello
 	j = 1;
-	while (args[1][0] == '-' && args[1][j] == 'n') 
+	while (cmd->args[1][0] == '-' && cmd->args[1][j] == 'n')
 	{
-		nl = FALSE; // Set nl to FALSE to skip newline
-		if (args[1][j + 1] == '\0')
+		if (cmd->args[1][j + 1] == '\0')
 		{
 			i++;
-			break;
+			break ;
 		}
 		j++;
 	}
+	return (i);
+}
 
-	// HANDLE INFILE AND OUTFILE REDIRECTS
-	// If infile or outfile are set, we should not print anything
-	// to stdout, but redirect the output to the specified file.
-	// >, <, >>, <<.
-	// Print arguments
-	while (args[i] != NULL)
+void	write_echo(t_cmd *cmd, int i)
+{
+	int	first_word;
+
+	first_word = TRUE;
+	while (cmd->args[i] != NULL)
 	{
 		if (!first_word)
 			write(1, " ", 1);
-		write(1, args[i], strlen(args[i]));
-		//printf("%s\n", args[i]);
+		write(1, cmd->args[i], strlen(cmd->args[i]));
 		first_word = FALSE;
 		i++;
 	}
+}
+
+int	builtin_echo(t_cmd *cmd)
+{
+	int	i;
+	int	nl;
+
+	i = 1;
+	nl = TRUE;
+	if (!cmd->args || !cmd->args[0])
+	{
+		write(1, "\n", 1);
+		return (SUCCESS);
+	}
+	i = skip_nl(cmd, i);
+	if (i > 1)
+		nl = FALSE;
+	write_echo(cmd, i);
 	if (nl == TRUE)
 		write(1, "\n", 1);
-
 	return (SUCCESS);
 }
