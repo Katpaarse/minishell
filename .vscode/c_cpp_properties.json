@@ -3,10 +3,12 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/include",   // Add this to point to your include folder
-                "${workspaceFolder}/src",       // Optionally, you can add the src folder as well
-                "${workspaceFolder}/**",        // This will include all directories in your workspace
-                "/usr/include/**"               // System headers
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/**",
+                "/usr/include",
+                "/usr/include/x86_64-linux-gnu",
+                "/usr/include/readline"   // ✅ Add this line
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
