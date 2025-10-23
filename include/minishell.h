@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/22 20:01:03 by jul              ###   ########.fr       */
+/*   Updated: 2025/10/23 19:08:46 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,5 @@ void		cleanup_heredoc_files(t_redirect *redirects);
 int			is_space(char c);
 int			is_whitespace_only(char *str);
 int			is_special_op(char c);
-void 		debug_tokens(char **tokens);
 
 # endif

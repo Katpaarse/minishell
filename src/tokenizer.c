@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:19:46 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/22 20:03:06 by jul              ###   ########.fr       */
+/*   Updated: 2025/10/23 19:14:51 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,40 +38,33 @@ static int	count_tokens(char *input)
 		if (input[i] == '\0')
 			break;
 		count++;
-		if (input[i] == '\'' || input[i] == '"')
+		
+		// Use the SAME logic as tokenize_input
+		while (input[i] && !is_space(input[i]) && !is_special_op(input[i]))
 		{
-			quote = input[i];
-			i++;
-			while (input[i] && input[i] != quote)
+			if (input[i] == '\'' || input[i] == '"')
+			{
+				quote = input[i];
 				i++;
-			if (input[i] == '\0')
-				return (-1); // unclosed quote
-			i++;
+				while (input[i] && input[i] != quote)
+					i++;
+				if (input[i] == '\0')
+					return (-1); // unclosed quote
+				if (input[i] == quote)
+					i++;
+			}
+			else
+				i++;
 		}
-		else if (is_special_op(input[i]))
+		
+		// Handle operators separately
+		if (is_special_op(input[i]))
 		{
 			if ((input[i] == '>' && input[i + 1] == '>') ||
 				(input[i] == '<' && input[i + 1] == '<'))
 				i = i + 2;
 			else
 				i++;
-		}
-		else
-		{
-			while (input[i] && !is_space(input[i]) && !is_special_op(input[i]))
-			{
-				if (input[i] == '\'' || input[i] == '"')
-				{
-					quote = input[i];
-					i++;
-					while (input[i] && input[i] != quote)
-						i++;
-					if (input[i] == quote)
-						i++;
-				}
-				else
-					i++;
-			}
 		}
 	}
 	return (count);
@@ -81,14 +74,14 @@ static int	count_tokens(char *input)
 char	**tokenize_input(char *input)
 {
 	int		i;
-	int		ti; // token output || token index
+	int		ti;
 	int		start;
 	int		num_tokens;
 	char	**tokens;
 	char	quote;
 	
 	num_tokens = count_tokens(input);
-	if (num_tokens == -1) // unclosed quote
+	if (num_tokens == -1)
 		return (NULL);
 	tokens = malloc(sizeof(char *) * (num_tokens + 1));
 	if (tokens == NULL)
@@ -101,49 +94,39 @@ char	**tokenize_input(char *input)
 			i++;
 		if (input[i] == '\0')
 			break;
-		else if (input[i] == '\'' || input[i] == '"')
+		start = i;
+		// ALWAYS use the else case logic - handle everything as one token
+		while (input[i] && !is_space(input[i]) && !is_special_op(input[i]))
 		{
-			quote = input[i];
-			start = i;
-			i++;
-			while (input[i] && input[i] != quote)
+			if (input[i] == '\'' || input[i] == '"')
+			{
+				quote = input[i];
+				i++; // skip opening quote
+				while (input[i] && input[i] != quote)
+					i++;
+				if (input[i] == quote)
+					i++; // skip closing quote
+			}
+			else
 				i++;
-			if (input[i] == quote)
-				i++;
-			tokens[ti] = ft_strndup(input + start, i - start);
-			ti++;
 		}
-		else if (is_special_op(input[i]))
+		
+		// Special case: if we stopped at an operator, handle it separately
+		if (i == start && is_special_op(input[i]))
 		{
-			start = i;
 			if ((input[i] == '>' && input[i + 1] == '>') ||
 				(input[i] == '<' && input[i + 1] == '<'))
 				i = i + 2;
 			else
 				i++;
 			tokens[ti] = ft_strndup(input + start, i - start);
-			ti++;
 		}
 		else
 		{
-			start = i;
-			while (input[i] && !is_space(input[i]) && !is_special_op(input[i]))
-			{
-				if (input[i] == '\'' || input[i] == '"')
-				{
-					quote = input[i];
-					i++;
-					while (input[i] && input[i] != quote)
-						i++;
-					if (input[i] == quote)
-						i++;
-				}
-				else
-					i++;
-			}
 			tokens[ti] = ft_strndup(input + start, i - start);
-			ti++;
 		}
+		
+		ti++;
 	}
 	tokens[ti] = NULL;
 	return (tokens);

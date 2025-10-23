@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 15:27:24 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/09 12:43:11 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/23 15:28:52 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,9 @@ char    *expand_variables(const char *input, t_minishell *shell)
         if (input[i] == '$') // if $ char is found. Variable expansion is needed
         {
 			i++; // skip $ char first then check for ? or another char
-            if (input[i] == '?') 
+			if (input[i] == '\0' || (!ft_isalpha(input[i]) && input[i] != '_' && input[i] != '?')) // // Lone $ or $ followed by invalid char - treat as literal $
+				result = ft_strjoin_and_free(result, ft_strdup("$"));
+            else if (input[i] == '?') 
             {
                 result = expand_exit_code(result, shell->exit_code); // If next character is ? -> append last exit code using expand_exit_code
                 i++;
