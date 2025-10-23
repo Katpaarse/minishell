@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_exec.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 15:36:19 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/23 15:58:51 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/23 22:52:05 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,35 +15,35 @@
 int	handle_redirects(t_cmd *cmd)
 {
 	int			fd;
-	t_redirect	*redirection;
+	t_redirect	*redirect;
 	t_redirect	*last_heredoc;
 	
 	if (!cmd || !cmd->redirects)
 		return (SUCCESS);
 	last_heredoc = NULL;
-	redirection = cmd->redirects;
-	while (redirection) // First pass is to find the last redirect
+	redirect = cmd->redirects;
+	while (redirect) // First pass is to find the last redirect
 	{
-		if (redirection->type == RED_HEREDOC)
-			last_heredoc = redirection;
-		redirection = redirection->next;
+		if (redirect->type == RED_HEREDOC)
+			last_heredoc = redirect;
+		redirect = redirect->next;
 	}
 	// Second pass: process all redirects, but for heredocs only use the last one
-	redirection = cmd->redirects;
-	while (redirection)
+	redirect = cmd->redirects;
+	while (redirect)
 	{
-		if (redirection->type == RED_HEREDOC || redirection->type == RED_INPUT)
+		if (redirect->type == RED_HEREDOC || redirect->type == RED_INPUT)
 		{
 			// for heredocs, only use the last one
-			if (redirection->type == RED_HEREDOC && redirection != last_heredoc)
+			if (redirect->type == RED_HEREDOC && redirect != last_heredoc)
 			{
-				redirection = redirection->next;
+				redirect = redirect->next;
 				continue ; //skip non last heredocs
 			}
-			fd = open(redirection->filename, O_RDONLY);
+			fd = open(redirect->filename, O_RDONLY);
 			if (fd < 0)
 			{
-				print_error_filename(redirection->filename, "No such file or directory");
+				print_error_filename(redirect->filename, "No such file or directory");
 				exit(1);
 			}
 			else
@@ -52,12 +52,12 @@ int	handle_redirects(t_cmd *cmd)
 				close(fd);
 			}
 		}
-		else if (redirection->type == RED_OUTPUT)
+		else if (redirect->type == RED_OUTPUT)
 		{
-			fd = open(redirection->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			fd = open(redirect->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd < 0)
 			{
-				print_error_filename(redirection->filename, "Permission denied");
+				print_error_filename(redirect->filename, "Permission denied");
 				exit(1);
 			}
 			else
@@ -66,12 +66,12 @@ int	handle_redirects(t_cmd *cmd)
 				close(fd);
 			}
 		}
-		else if (redirection->type == RED_APPEND)
+		else if (redirect->type == RED_APPEND)
 		{
-			fd = open(redirection->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			fd = open(redirect->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd < 0)
 			{
-				print_error_filename(redirection->filename, "Permission denied");
+				print_error_filename(redirect->filename, "Permission denied");
 				exit(1);
 			}
 			else
@@ -80,7 +80,7 @@ int	handle_redirects(t_cmd *cmd)
 				close(fd);
 			}
 		}
-		redirection = redirection->next;
+		redirect = redirect->next;
 	}
 	return (SUCCESS);
 }

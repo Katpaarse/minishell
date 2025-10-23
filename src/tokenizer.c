@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:19:46 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/23 19:14:51 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/23 22:26:15 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,12 @@ static int	count_tokens(char *input)
 				i++;
 				while (input[i] && input[i] != quote)
 					i++;
-				if (input[i] == '\0')
-					return (-1); // unclosed quote
 				if (input[i] == quote)
 					i++;
 			}
 			else
 				i++;
 		}
-		
 		// Handle operators separately
 		if (is_special_op(input[i]))
 		{
@@ -81,10 +78,8 @@ char	**tokenize_input(char *input)
 	char	quote;
 	
 	num_tokens = count_tokens(input);
-	if (num_tokens == -1)
-		return (NULL);
 	tokens = malloc(sizeof(char *) * (num_tokens + 1));
-	if (tokens == NULL)
+	if (!tokens)
 		return (NULL);
 	i = 0;
 	ti = 0;
@@ -95,7 +90,6 @@ char	**tokenize_input(char *input)
 		if (input[i] == '\0')
 			break;
 		start = i;
-		// ALWAYS use the else case logic - handle everything as one token
 		while (input[i] && !is_space(input[i]) && !is_special_op(input[i]))
 		{
 			if (input[i] == '\'' || input[i] == '"')
@@ -110,7 +104,6 @@ char	**tokenize_input(char *input)
 			else
 				i++;
 		}
-		
 		// Special case: if we stopped at an operator, handle it separately
 		if (i == start && is_special_op(input[i]))
 		{
@@ -122,10 +115,7 @@ char	**tokenize_input(char *input)
 			tokens[ti] = ft_strndup(input + start, i - start);
 		}
 		else
-		{
 			tokens[ti] = ft_strndup(input + start, i - start);
-		}
-		
 		ti++;
 	}
 	tokens[ti] = NULL;

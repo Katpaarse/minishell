@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirects.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 16:04:35 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/09 14:32:51 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/23 22:48:18 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	count_redirects(t_redirect *list)
 // // add a new redirect to the list of redirects
 t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type, int expand)
 {
-	t_redirect	*new_redirection;
+	t_redirect	*new_redirect;
 	t_redirect	*current;
 	char		*dup;
 
@@ -42,21 +42,21 @@ t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type,
 		return NULL;
 	}
 	free(filename);
-	new_redirection = malloc(sizeof(t_redirect));
-	if (!new_redirection)
+	new_redirect = malloc(sizeof(t_redirect));
+	if (!new_redirect)
 	{
 		free(dup);
 		return (NULL);
 	}
-	new_redirection->filename = dup;
-	new_redirection->type = type;
-	new_redirection->expand = expand;
-	new_redirection->next = NULL;
+	new_redirect->filename = dup;
+	new_redirect->type = type;
+	new_redirect->expand = expand;
+	new_redirect->next = NULL;
 	if (!list)
-		return (new_redirection);
+		return (new_redirect);
 	current = list;
 	while (current->next)
 		current = current->next;
-	current->next = new_redirection;
+	current->next = new_redirect;
 	return (list);
 }

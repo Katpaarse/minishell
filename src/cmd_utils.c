@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/06 16:00:03 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/23 22:49:58 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,15 @@ char	**add_argument(char **args, char *new_arg)
 	return new_args;
 }
 
-void free_redirects(t_redirect *redirection)
+void free_redirects(t_redirect *redirect)
 {
     t_redirect *next;
-    while (redirection)
+    while (redirect)
     {
-        next = redirection->next;
-        free(redirection->filename);
-        free(redirection);
-        redirection = next;
+        next = redirect->next;
+        free(redirect->filename);
+        free(redirect);
+        redirect = next;
     }
 }
 

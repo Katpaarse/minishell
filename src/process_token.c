@@ -6,7 +6,7 @@
 /*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 14:06:47 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/22 20:26:34 by jul              ###   ########.fr       */
+/*   Updated: 2025/10/23 19:53:27 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,9 @@ char	*remove_quotes(char const *token)
 	result = malloc(len + 1);
 	if (!result)
 		return (NULL);
-	
 	i = 0;
 	j = 0;
 	in_quote = 0;
-	
 	while (token[i])
 	{
 		if (!in_quote && (token[i] == '\'' || token[i] == '"'))
