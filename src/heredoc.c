@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/24 17:19:13 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/24 20:54:32 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,12 @@ void	handle_heredoc(char const *delimiter, char	*tmpfile, t_minishell *shell, in
 		if (!line) // user pressed ctrl + D
 		{
 			printf("minishell: heredoc delimiter not specified\n");
-			break;
+			break ;
 		}
 		if (ft_strcmp(line, delimiter) == 0) // found heredoc char
 		{
 			free(line);
-			break;
+			break ;
 		}
 		to_write = line;
 		if (expand)

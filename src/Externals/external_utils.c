@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   external_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 16:37:59 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/07 15:50:25 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/24 20:47:59 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 char	*find_cmd_path(char **argv, char **envp)
 {
 	char	*path;
-
+	
 	if (!argv || !argv[0] || argv[0][0] == '\0' || !envp)
 		return (NULL);
 

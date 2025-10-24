@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_exec.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 15:36:19 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/24 17:12:01 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/24 20:47:49 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	handle_redirects(t_cmd *cmd)
 //  Execute a child process (builtin or external)
 void execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
 {
-	char	*cmd_path;
+	char		*cmd_path;
 
 	setup_child_signals(); 		// setup default signal handlers for child process
 	if (prev_fd != -1)
@@ -111,9 +111,9 @@ void execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
 		print_error(shell, "command not found");
 		exit(127);
 	}
-	execve(cmd_path, current->args, shell->envp); // If found -> replace the child process with the program.
-	print_error(shell, "execve failed");
-	exit(126);
+		execve(cmd_path, current->args, shell->envp); // If found -> replace the child process with the program.
+		print_error(shell, "execve failed");
+		exit(126);
 }
 
 void	execute_pipeline(t_minishell *shell, t_cmd *cmds)
