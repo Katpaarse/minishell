@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirects.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 16:04:35 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/23 22:48:18 by jul              ###   ########.fr       */
+/*   Updated: 2025/10/24 17:38:50 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	count_redirects(t_redirect *list)
 	int	len;
 
 	len = 0;
-	if (list) // if list == NULL then there is no redirects found in list
+	if (list)
 	{
 		while (list[len].filename != NULL)
 			len++;

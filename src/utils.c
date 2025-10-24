@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:58:19 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/09 12:46:26 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:28:19 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,17 @@ int	ft_strcmp(char const *s1, char const *s2)
 	int	i;
 
 	i = 0;
-	while(s1[i] && s1[i] == s2[i])
+	while (s1[i] && s1[i] == s2[i])
 		i++;
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
+int	is_space(char c)
+{
+	return (c == ' ' || c == '\t');
+}
+
+int	is_special_op(char c)
+{
+	return (c == '|' || c == '>' || c == '<');
 }

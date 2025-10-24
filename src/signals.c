@@ -6,30 +6,13 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 13:06:17 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/07 15:44:47 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:35:18 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// global variable definition
 volatile sig_atomic_t g_minishell_is_executing = 0;
-/*
-wait, 
-waitpid, 
-wait3, 
-wait4, 
-signal,
-sigaction, 
-sigemptyset, 
-sigaddset, 
-kill, 
-exit,
-*/
-
-// HANDLE GLOBAL VARIABLE FOR SIGINT
-// 0 = waiting for user input (interactive mode)
-// 1 = executing a command (child process)
 
 void	handle_sigint(int signum)
 {
@@ -60,7 +43,6 @@ void	setup_signal_handlers(void)
 	sa_int.sa_flags = 0; // Restart interrupted syscalls
 	sigemptyset(&sa_int.sa_mask);
 	sigaction(SIGINT, &sa_int, NULL);
-
 	ft_memset(&sa_quit, 0, sizeof(sa_quit));
 	sa_quit.sa_handler = SIG_IGN; // Ignore SIGQUIT
 	sa_quit.sa_flags = 0; // No special flags
@@ -71,7 +53,6 @@ void	setup_signal_handlers(void)
 void	setup_child_signals(void)
 {
 	struct sigaction sa_default;
-	// struct sigaction sa_quit;
 
 	ft_memset(&sa_default, 0, sizeof(sa_default));
 	sa_default.sa_handler = SIG_DFL; // Default action
@@ -80,12 +61,6 @@ void	setup_child_signals(void)
 
 	sigaction(SIGINT, &sa_default, NULL);
 	sigaction(SIGQUIT, &sa_default, NULL);
-
-	// ft_memset(&sa_quit, 0, sizeof(sa_quit));
-	// sa_quit.sa_flags = 0;
-	// sa_quit.sa_handler = SIG_DFL; // Default action
-	// sigemptyset(&sa_quit.sa_mask);
-	// sigaction(SIGQUIT, &sa_quit, NULL);
 }
 
 void	setup_heredoc_signal_handlers(void)
@@ -98,7 +73,6 @@ void	setup_heredoc_signal_handlers(void)
     sa_int.sa_flags = 0;
     sigemptyset(&sa_int.sa_mask);
     sigaction(SIGINT, &sa_int, NULL);
-
 	ft_memset(&sa_quit, 0, sizeof(sa_quit));
 	sa_quit.sa_handler = SIG_IGN;
 	sa_quit.sa_flags = 0;

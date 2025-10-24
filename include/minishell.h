@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/23 19:08:46 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:34:13 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,29 +32,9 @@
 # define TRUE 1
 # define FALSE 0
 
-/*
-What sig_atomic_t Guarantees:
-
-    Read/write operations are atomic (can't be interrupted mid-operation)
-
-    Works even if signal arrives during access
-
-    Typically maps to int but with atomicity guarantees
-
-Bottom Line:
-
-Always use volatile sig_atomic_t for global variables accessed by signal handlers. Using regular int can lead to:
-
-    Stale values due to compiler optimizations
-
-    Race conditions between signal handler and main code
-
-    Unreliable signal handling behavior
-
-This is especially important in your case since g_minishell_is_executing controls critical signal behavior!
-*/
-extern volatile sig_atomic_t g_minishell_is_executing; 		// 0 = waiting for user input (interactive mode)
+extern volatile sig_atomic_t g_minishell_is_executing;		// 0 = waiting for user input (interactive mode)
 															// 1 = executing a command (child process)
+															// < 0 = signal received
 typedef enum e_redirect_type
 {
 	RED_NONE,
@@ -63,13 +43,6 @@ typedef enum e_redirect_type
 	RED_APPEND,     // >>
 	RED_HEREDOC     // <<
 }	t_redirect_type;
-
-typedef enum e_token_state 
-{
-    STATE_NORMAL,       // This is 0
-    STATE_IN_SQUOTE,    // This is 1  
-    STATE_IN_DQUOTE     // This is 2
-} 	t_token_state;
 
 typedef struct s_redirect
 {

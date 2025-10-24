@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process_token.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 14:06:47 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/23 19:53:27 by jul              ###   ########.fr       */
+/*   Updated: 2025/10/24 15:39:49 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ char	*remove_quotes(char const *token)
 
 	if (!token)
 		return (NULL);
-	
 	len = ft_strlen(token);
 	result = malloc(len + 1);
 	if (!result)
@@ -34,24 +33,14 @@ char	*remove_quotes(char const *token)
 	while (token[i])
 	{
 		if (!in_quote && (token[i] == '\'' || token[i] == '"'))
-		{
-			// Start of a quote - remember which type and skip it
-			in_quote = token[i];
-		}
+			in_quote = token[i]; // Start of a quote - remember which type and skip it
 		else if (in_quote && token[i] == in_quote)
-		{
-			// End of the current quote - skip it
-			in_quote = 0;
-		}
+			in_quote = 0; // End of the current quote - skip it
 		else
-		{
-			// Regular character or inside quotes - copy it
-			result[j++] = token[i];
-		}
+			result[j++] = token[i]; // Regular character or inside quotes - copy it
 		i++;
 	}
-	result[j] = '\0';
-	// If we removed everything, return empty string instead of freeing
+	result[j] = '\0'; // If we removed everything, return empty string instead of freeing
 	if (j == 0)
 	{
 		free(result);

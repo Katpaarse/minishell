@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/09 18:10:41 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/24 17:19:13 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	handle_heredoc(char const *delimiter, char	*tmpfile, t_minishell *shell, in
 {
 	char	*line;
 	int		fd;
-	char	*clean_delim;
 	char	*to_write;
 
 	fd = open(tmpfile, O_WRONLY | O_CREAT | O_TRUNC, 0600);
@@ -62,7 +61,6 @@ void	handle_heredoc(char const *delimiter, char	*tmpfile, t_minishell *shell, in
 		perror("heredoc open");
 		exit(1);
 	}
-	clean_delim = remove_quotes(delimiter);
 	while (1)
 	{
 		line = readline("> ");
@@ -87,7 +85,6 @@ void	handle_heredoc(char const *delimiter, char	*tmpfile, t_minishell *shell, in
 		if (expand)
 			free(to_write);
 	}
-	free(clean_delim);
 	close(fd);
 }
 
