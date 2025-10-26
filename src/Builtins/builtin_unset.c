@@ -12,16 +12,11 @@
 
 #include "minishell.h"
 
-/*
-    unset: unset with no options requires 0 arguments.
-        Example: unset
-*/
-
 int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 {
-	int i;
-	int j;
-	int var_len;
+	int		i;
+	int		j;
+	int		var_len;
 	char	**list;
 
 	if (!cmd || !cmd->args || !shell)
@@ -32,12 +27,11 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 		if (cmd->args[i][0] == '\0')
 		{
 			i++;
-			continue;
+			continue ;
 		}
 		var_len = 0;
 		while (cmd->args[i][var_len] != '=' && cmd->args[i][var_len] != '\0')
 			var_len++;
-		// Remove from envp
 		list = shell->envp;
 		j = 0;
 		while (list[j] != NULL)
@@ -52,12 +46,11 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 					j++;
 				}
 				list[j] = NULL;
-				break;
+				break ;
 			}
 			else
 				j++;
 		}
-		// Remove from exp_list
 		list = shell->exp_list;
 		j = 0;
 		while (list[j] != NULL)
@@ -72,12 +65,12 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 					j++;
 				}
 				list[j] = NULL;
-				break;
+				break ;
 			}
 			else
 				j++;
 		}
 		i++;
 	}
-	return (SUCCESS); // Always return success unless there's a real error
+	return (SUCCESS);
 }

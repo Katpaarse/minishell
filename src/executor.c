@@ -17,7 +17,10 @@ int execute_command(t_minishell *shell)
     if (!shell || !shell->cmds)
         return (FAILURE);
     if (!shell->cmds->args || !shell->cmds->args[0] || shell->cmds->args[0][0] == '\0')
+	{
         return (FAILURE);
+	}
+
     // Single parent-only builtin (like cd, export, unset)
     if (!shell->cmds->next && is_builtin(shell->cmds) == SUCCESS /*&& is_parent_builtin(shell->cmds)*/)
     {

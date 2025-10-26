@@ -12,17 +12,11 @@
 
 #include "minishell.h"
 
-/*
-    echo: echo with tht to be printee -n option requires 0 or more arguments 
-	(including the -n option itself and any texd).
-        Example: echo hello, echo -n hello world
-*/
-
 int	skip_nl(t_cmd *cmd, int i)
 {
 	int	j;
 
-	if (!cmd->args[1]) // check if args[1] exists before accesing it. echo without input was crashing
+	if (!cmd->args[1])
 		return (i);
 	j = 1;
 	while (cmd->args[1][0] == '-' && cmd->args[1][j] == 'n')

@@ -91,7 +91,7 @@ int main(int argc, char **argv, char **envp)
 			}
 			free(tokens);
 			free(input);
-			shell.exit_code = 258;
+			shell.exit_code = 0; // NIEUW
 			continue ;
 		}
 		if (shell.cmds)

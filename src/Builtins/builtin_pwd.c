@@ -12,18 +12,6 @@
 
 #include "minishell.h"
 
-	// Get the pathname of the current working directory,
-	// 		extern char *getcwd (char *__buf, size_t __size) __THROW __wur;
-
-	// Returns NULL if the directory couldn't be determined or SIZE was too small.
-	// If successful, returns BUF.  In GNU, if BUF is NULL, an array is allocated with `malloc';
-	// the array is SIZE bytes long, unless SIZE == 0, in which case it is as big as necessary.  
-
-/*
-    pwd: pwd with no options requires 0 arguments.
-        Example: pwd
-*/
-
 int	builtin_pwd(void)
 {
 	char	*cwd;
@@ -42,6 +30,6 @@ int	builtin_pwd(void)
 		return (FAILURE);
 	}
 	if (cwd)
-		free(cwd); // Free the allocated memory for cwd
+		free(cwd);
 	return (SUCCESS);
 }

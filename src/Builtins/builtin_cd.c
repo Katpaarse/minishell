@@ -12,15 +12,9 @@
 
 #include "minishell.h"
 
-/*
-    cd: cd with a relative or absolute path requires exactly 1 argument. 
-	The path is that argument.
-        Example: cd /home, cd ../documents
-*/
-
-char *change_dir(t_cmd *cmd, t_minishell *shell, char *old_pwd)
+char	*change_dir(t_cmd *cmd, t_minishell *shell, char *old_pwd)
 {
-	char *path;
+	char	*path;
 
 	if (!shell)
 		return (NULL);
@@ -28,52 +22,47 @@ char *change_dir(t_cmd *cmd, t_minishell *shell, char *old_pwd)
 		path = get_env_value("HOME", shell->envp);
 	else if (ft_strncmp(cmd->args[1], "-", 2) == 0)
 		path = get_env_value("OLDPWD", shell->envp);
-	else	
+	else
 		path = cmd->args[1];
-
 	if (!path)
 	{
 		print_error(shell, "cd: HOME/OLDPWD not set");
 		free(old_pwd);
 		return (NULL);
 	}
-
 	if (chdir(path) != 0)
 	{
-		print_error(shell, "cd: no such file or directory");
+		print_error(shell, "cd: No such file or directory");
 		free(old_pwd);
 		return (NULL);
 	}
-	
 	return (path);
 }
 
-void	set_pwd_env(t_cmd *cmd, t_minishell *shell, char *new_pwd, char *old_pwd)
+void	set_pwd_env(t_cmd *cmd, t_minishell *shell, char *n_p, char *o_p)
 {
-	int 	pwd_i;
-	int 	i;
+	int	pwd_i;
+	int	i;
 
 	if (!shell)
-		return;
-
+		return ;
 	pwd_i = -1;
 	i = 0;
 	while (shell->envp[i])
 	{
-		if (ft_strncmp(shell->envp[i], "PWD=", 4) == 0 && new_pwd)
+		if (ft_strncmp(shell->envp[i], "PWD=", 4) == 0 && n_p)
 		{
 			free(shell->envp[i]);
-			shell->envp[i] = ft_strjoin("PWD=", new_pwd);
+			shell->envp[i] = ft_strjoin("PWD=", n_p);
 			pwd_i = i;
 		}
-		else if (ft_strncmp(shell->envp[i], "OLDPWD=", 7) == 0 && old_pwd)
+		else if (ft_strncmp(shell->envp[i], "OLDPWD=", 7) == 0 && o_p)
 		{
 			free(shell->envp[i]);
-			shell->envp[i] = ft_strjoin("OLDPWD=", old_pwd);
+			shell->envp[i] = ft_strjoin("OLDPWD=", o_p);
 		}
 		i++;
 	}
-
 	if (cmd->args[1] && ft_strncmp(cmd->args[1], "-", 2) == 0 && pwd_i != -1)
 	{
 		write(1, shell->envp[pwd_i], ft_strlen(shell->envp[pwd_i]));
@@ -89,22 +78,18 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 
 	if (!cmd || !cmd->args || !shell)
 		return (FAILURE);
-
 	if (cmd->args[1] && cmd->args[2])
 	{
 		print_error(shell, "cd: too many arguments");
 		return (FAILURE);
 	}
-
 	new_pwd = NULL;
-	old_pwd = getcwd(NULL, 0); // MALLOC so free it later
+	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
 		old_pwd = NULL;
-
 	path = change_dir(cmd, shell, old_pwd);
 	if (!path)
 		return (FAILURE);
-
 	if (old_pwd)
 	{
 		new_pwd = getcwd(NULL, 0);
@@ -116,7 +101,6 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 	}
 	else if (!old_pwd && !new_pwd)
 		new_pwd = path;
-
 	set_pwd_env(cmd, shell, new_pwd, old_pwd);
 	return (SUCCESS);
 }

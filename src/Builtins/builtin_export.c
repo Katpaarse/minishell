@@ -10,36 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-export explanation:
-The main benefit of having a variable in the export list is that it becomes available to child processes your shell spawns.
-
-In Unix-like systems, each process has its own environment.
-
-By default, a variable you define in the shell (e.g., VAR=value) is local to the shell process.
-
-When you export VAR, it’s added to the environment array. Then, if you run a command like ./program or ls, the child process inherits that environment, and can read VAR.
-
-Example:
-$ MYVAR=hello
-$ ./print_var_program  # this program prints MYVAR
-# Nothing printed, because MYVAR isn't exported
-
-$ export MYVAR
-$ ./print_var_program
-hello  # now the child process sees it
-*/
-
 #include "minishell.h"
-
-// ft_strncmp
-// ft_strlen
-// malloc/free
-// write
-/*
-    export: export with no options requires 0 arguments.
-        Example: export
-*/
 
 void	add_or_update_env(t_minishell *shell, char *var)
 {
@@ -133,8 +104,6 @@ int	builtin_export(t_cmd *cmd, t_minishell *shell)
 	int i;
 	int j;
 	int check;
-	// char *var_name;
-	// char *var_value;
 	char *equal_sign;
 
 	if (!cmd || !shell)
@@ -143,14 +112,6 @@ int	builtin_export(t_cmd *cmd, t_minishell *shell)
 	i = 1;
 	if (cmd->args[1] == NULL)
 	{
-		// print all env variables in shell->envp
-		// each variable should be prefixed with "declare -x "
-		// Example: declare -x PATH="/usr/bin:/bin"
-
-		// Dont forget to print the variables in sorted order
-		// And to handle variables without values correctly
-		// Example: declare -x VAR without '=' and value
-		// Example: declare -x VAR="value" with '=' and
 		j = 0;
 		while (shell->exp_list && shell->exp_list[j] != NULL)
 		{

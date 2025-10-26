@@ -12,30 +12,22 @@
 
 #include "minishell.h"
 
-/*
-    exit: exit with no options requires 0 arguments.
-        Example: exit
-*/
-
 int	builtin_exit(t_cmd *cmd, t_minishell *shell)
 {
 	int		i;
 	long	exit_code;
 
 	write(1, "exit\n", 5);
-
 	if (cmd->args[1] && cmd->args[2])
 	{
 		write(2, "minishell: exit: too many arguments\n", 36);
 		return (FAILURE);
 	}
-
 	if (!cmd->args[1])
 	{
 		// free resources if needed
 		exit(shell->exit_code); // Exit with the last command exit code
 	}
-
 	i = 0;
 	if (cmd->args[1][0] == '-' || cmd->args[1][0] == '+')
 		i++;
@@ -59,8 +51,6 @@ int	builtin_exit(t_cmd *cmd, t_minishell *shell)
 		}
 		i++;
 	}
-
 	exit_code = ft_atol(cmd->args[1]);
-
 	exit(exit_code % 256); // Exit with the provided exit code modulo 256
 }

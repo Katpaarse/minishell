@@ -112,7 +112,7 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 			i++;
 			heredoc_index++;
 		}
-		else if ((tokens[i][0] == '<') ||
+		else if ((tokens[i][0] == '<' && tokens[i][1] == '\0') || // NIEUW
 				(tokens[i][0] == '>' && tokens[i][1] == '\0') ||
 				(tokens[i][0] == '>' && tokens[i][1] == '>' && tokens[i][2] == '\0'))
 		{
@@ -123,12 +123,19 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 			}
 		}
 		else
+		{
+			if (tokens[i][0] == '\0' && !current->args) // NIEUW skip empty tokens unless they are part of arguments
+			{	// NIEUW
+				i++;	// NIEUW
+				continue ;	// NIEUW
+			}	// NIEUW
 			current->args = add_argument(current->args, ft_strdup(tokens[i]));
+		}
 		i++;
 	}
 	if (!current->args && !current->redirects) // final check: empty last command after a pipe
 	{
-		print_syntax_error(shell, NULL);
+		// print_syntax_error(shell, NULL);
 		free_cmds(head);
 		return (NULL);
 	}
