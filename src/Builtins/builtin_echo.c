@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_echo.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:45:04 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/08/21 19:35:51 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/26 14:05:50 by jul              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /*
-    echo: echo with the -n option requires 0 or more arguments 
-	(including the -n option itself and any text to be printed).
+    echo: echo with tht to be printee -n option requires 0 or more arguments 
+	(including the -n option itself and any texd).
         Example: echo hello, echo -n hello world
 */
 
@@ -22,6 +22,8 @@ int	skip_nl(t_cmd *cmd, int i)
 {
 	int	j;
 
+	if (!cmd->args[1]) // check if args[1] exists before accesing it. echo without input was crashing
+		return (i);
 	j = 1;
 	while (cmd->args[1][0] == '-' && cmd->args[1][j] == 'n')
 	{
@@ -57,7 +59,7 @@ int	builtin_echo(t_cmd *cmd)
 
 	i = 1;
 	nl = TRUE;
-	if (!cmd->args || !cmd->args[0])
+	if (!cmd || !cmd->args || !cmd->args[0])
 	{
 		write(1, "\n", 1);
 		return (SUCCESS);
