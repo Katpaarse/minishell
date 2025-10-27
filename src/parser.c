@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/24 17:38:45 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/27 14:25:28 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ static int	handle_heredoc_token(t_cmd *current, char *raw_token, int heredoc_ind
 	free(clean_delim);
 	if (!tmpfile)
 	{
+		if (shell->exit_code == 130)
+			return (-2);
 		print_syntax_error(shell, NULL);		
 		return (-1);
 	}
@@ -84,6 +86,7 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 	t_cmd	*head;
 	int		i;
 	int		heredoc_index;
+	int		result;
 
 	if (!tokens || !*tokens) // first check is for pointer to the array is NULL second check to see if the array exists and the first element is NULL. For example when user just presses enter with no input
 		return (NULL);
@@ -104,10 +107,17 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 		}
 		else if (tokens[i][0] == '<' && tokens[i][1] == '<' && tokens[i][2] == '\0')
 		{
-			if (handle_heredoc_token(current, tokens[i + 1], heredoc_index, shell) != 0)
+			result = handle_heredoc_token(current, tokens[i + 1], heredoc_index, shell);
+			if (result == -2)
 			{
 				free_cmds(head);
-				return NULL;
+				shell->exit_code = 130;
+				return (NULL);
+			}
+			else if (result != 0)
+			{
+				free_cmds(head);
+				return (NULL);
 			}
 			i++;
 			heredoc_index++;
@@ -135,7 +145,6 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 	}
 	if (!current->args && !current->redirects) // final check: empty last command after a pipe
 	{
-		// print_syntax_error(shell, NULL);
 		free_cmds(head);
 		return (NULL);
 	}

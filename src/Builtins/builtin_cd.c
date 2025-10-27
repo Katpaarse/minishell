@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:45:01 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/25 17:25:17 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/27 11:14:02 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,5 +102,6 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 	else if (!old_pwd && !new_pwd)
 		new_pwd = path;
 	set_pwd_env(cmd, shell, new_pwd, old_pwd);
+	free(new_pwd);
 	return (SUCCESS);
 }

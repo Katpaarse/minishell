@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/24 17:38:36 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:20:51 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,9 @@ int main(int argc, char **argv, char **envp)
 		if (!input)
 		{
 			if (g_minishell_is_executing == -1)
-			{
 				shell.exit_code = 130;
-				g_minishell_is_executing = 0;
-				continue ;
-			}
 			write(1, "exit\n", 5);
-			break; // if not input. Exit the loop
+			break ; // if not input. Exit the loop
 		}
 		if (g_minishell_is_executing == -1)
 		{
@@ -112,5 +108,7 @@ int main(int argc, char **argv, char **envp)
 		free(tokens);
 		free(input);
 	}
+	free_args(shell.envp);
+	free_args(shell.exp_list);
 	return (shell.exit_code);
 }

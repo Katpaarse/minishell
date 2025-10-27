@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:58:19 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/24 15:28:19 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/27 14:41:14 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ void	copy_envp(t_minishell *shell, char **envp)
 		{
 			print_error(shell, "ft_strdup failed, envp");
 			free_args(shell->exp_list);
-			// Free previously allocated strings
-			// Stop execution
+			free_args(shell->envp);
+			return ;
 		}
 		i++;
 	}

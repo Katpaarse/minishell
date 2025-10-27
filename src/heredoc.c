@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/24 20:54:32 by jul              ###   ########.fr       */
+/*   Updated: 2025/10/27 14:17:44 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,30 +99,34 @@ char *process_heredoc(char const *delimiter, int i, t_minishell *shell, int expa
 	tmpfile = make_tmp_heredoc_filename(i);
 	if (!tmpfile)
 		return (NULL);
-	
-	pid = fork();
-	if (pid < 0)
-	{
-		free(tmpfile);
-		return (NULL);
-	}
-	if (pid == 0) // child process. Write to the file
-	{
-		setup_heredoc_signal_handlers();
-		handle_heredoc(delimiter, tmpfile, shell, expand); // pass the filename to write to
-		exit(0);
-	}
 	ft_memset(&new_sa, 0, sizeof(new_sa));
 	new_sa.sa_handler = SIG_IGN;
 	new_sa.sa_flags = 0;
 	sigemptyset(&new_sa.sa_mask);
 	sigaction(SIGINT, &new_sa, &old_sa);
+	pid = fork();
+	if (pid < 0)
+	{
+		free(tmpfile);
+		sigaction(SIGINT, &old_sa, NULL);
+		return (NULL);
+	}
+	if (pid == 0) // child process. Write to the file
+	{
+		sigaction(SIGINT, &old_sa, NULL);
+		setup_heredoc_signal_handlers();
+		handle_heredoc(delimiter, tmpfile, shell, expand); // pass the filename to write to
+		exit(0);
+	}
+	// Parent continues with signals ignored
 	waitpid(pid, &status, 0);
+	// RESTORE ORIGINAL SIGNAL HANDLER
 	sigaction(SIGINT, &old_sa, NULL);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		free(tmpfile);
 		write(1, "\n", 1);
+		shell->exit_code = 130;
 		return (NULL);
 	}
 	if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
