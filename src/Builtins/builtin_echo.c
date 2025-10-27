@@ -12,12 +12,31 @@
 
 #include "minishell.h"
 
+int	builtin_echo(t_cmd *cmd)
+{
+	int	i;
+	int	nl;
+
+	if (!cmd->args[1])
+	{
+		write(1, "\n", 1);
+		return (SUCCESS);
+	}
+	nl = TRUE;
+	i = 1;
+	i = skip_nl(cmd, i);
+	if (i > 1)
+		nl = FALSE;
+	write_echo(cmd, i);
+	if (nl == TRUE)
+		write(1, "\n", 1);
+	return (SUCCESS);
+}
+
 int	skip_nl(t_cmd *cmd, int i)
 {
 	int	j;
 
-	if (!cmd->args[1])
-		return (i);
 	j = 1;
 	while (cmd->args[1][0] == '-' && cmd->args[1][j] == 'n')
 	{
@@ -44,25 +63,4 @@ void	write_echo(t_cmd *cmd, int i)
 		first_word = FALSE;
 		i++;
 	}
-}
-
-int	builtin_echo(t_cmd *cmd)
-{
-	int	i;
-	int	nl;
-
-	i = 1;
-	nl = TRUE;
-	if (!cmd || !cmd->args || !cmd->args[0])
-	{
-		write(1, "\n", 1);
-		return (SUCCESS);
-	}
-	i = skip_nl(cmd, i);
-	if (i > 1)
-		nl = FALSE;
-	write_echo(cmd, i);
-	if (nl == TRUE)
-		write(1, "\n", 1);
-	return (SUCCESS);
 }

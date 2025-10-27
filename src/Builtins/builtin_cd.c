@@ -12,12 +12,51 @@
 
 #include "minishell.h"
 
+int	builtin_cd(t_cmd *cmd, t_minishell *shell)
+{
+	if (cmd->args[1] && cmd->args[2])
+	{
+		print_error(shell, "cd: too many arguments");
+		return (FAILURE);
+	}
+	if (new_old_pwd(cmd, shell) == FAILURE)
+		return (FAILURE);
+	return (SUCCESS);
+}
+
+int	new_old_pwd(t_cmd *cmd, t_minishell *shell)
+{
+	char	*path;
+	char	*new_pwd;
+	char	*old_pwd;
+
+	new_pwd = NULL;
+	old_pwd = getcwd(NULL, 0);
+	if (!old_pwd)
+		old_pwd = NULL;
+	path = change_dir(cmd, shell, old_pwd);
+	if (!path)
+		return (FAILURE);
+	if (old_pwd)
+	{
+		new_pwd = getcwd(NULL, 0);
+		if (!new_pwd)
+		{
+			free(old_pwd);
+			return (FAILURE);
+		}
+	}
+	else if (!old_pwd && !new_pwd)
+		new_pwd = path;
+	set_pwd_env(cmd, shell, new_pwd, old_pwd);
+	free(new_pwd);
+	return (SUCCESS);
+}
+
 char	*change_dir(t_cmd *cmd, t_minishell *shell, char *old_pwd)
 {
 	char	*path;
 
-	if (!shell)
-		return (NULL);
 	if (cmd->args[1] == NULL)
 		path = get_env_value("HOME", shell->envp);
 	else if (ft_strncmp(cmd->args[1], "-", 2) == 0)
@@ -44,8 +83,6 @@ void	set_pwd_env(t_cmd *cmd, t_minishell *shell, char *n_p, char *o_p)
 	int	pwd_i;
 	int	i;
 
-	if (!shell)
-		return ;
 	pwd_i = -1;
 	i = 0;
 	while (shell->envp[i])
@@ -68,40 +105,4 @@ void	set_pwd_env(t_cmd *cmd, t_minishell *shell, char *n_p, char *o_p)
 		write(1, shell->envp[pwd_i], ft_strlen(shell->envp[pwd_i]));
 		write(1, "\n", 1);
 	}
-}
-
-int	builtin_cd(t_cmd *cmd, t_minishell *shell)
-{
-	char	*path;
-	char	*new_pwd;
-	char	*old_pwd;
-
-	if (!cmd || !cmd->args || !shell)
-		return (FAILURE);
-	if (cmd->args[1] && cmd->args[2])
-	{
-		print_error(shell, "cd: too many arguments");
-		return (FAILURE);
-	}
-	new_pwd = NULL;
-	old_pwd = getcwd(NULL, 0);
-	if (!old_pwd)
-		old_pwd = NULL;
-	path = change_dir(cmd, shell, old_pwd);
-	if (!path)
-		return (FAILURE);
-	if (old_pwd)
-	{
-		new_pwd = getcwd(NULL, 0);
-		if (!new_pwd)
-		{
-			free(old_pwd);
-			return (FAILURE);
-		}
-	}
-	else if (!old_pwd && !new_pwd)
-		new_pwd = path;
-	set_pwd_env(cmd, shell, new_pwd, old_pwd);
-	free(new_pwd);
-	return (SUCCESS);
 }

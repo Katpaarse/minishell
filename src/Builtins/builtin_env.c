@@ -12,15 +12,12 @@
 
 #include "minishell.h"
 
-/*
-    env: env with no options or arguments requires 0 arguments.
-        Example: env
-*/
-
 int	builtin_env(t_minishell *shell)
 {
 	int	i;
 
+	if (!shell->envp)
+		return (FAILURE);
 	i = 0;
 	while (shell->envp[i] != NULL)
 	{
@@ -28,5 +25,5 @@ int	builtin_env(t_minishell *shell)
 		write(1, "\n", 1);
 		i++;
 	}
-	return (0);
+	return (SUCCESS);
 }

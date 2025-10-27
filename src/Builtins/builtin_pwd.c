@@ -20,8 +20,14 @@ int	builtin_pwd(void)
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
-		//error
-		return (FAILURE);
+		// if (get_env_name("PWD", shell->envp) != NULL)
+		// {
+		// 	cwd = get_env_value("PWD", shell->envp);
+		// }
+		// else
+		// {
+			return (FAILURE);
+		// }
 	}
 	len = strlen(cwd);
 	if (write(1, cwd, len) < 0 || write(1, "\n", 1) < 0)

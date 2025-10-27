@@ -88,14 +88,34 @@ pid_t 	fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, i
 void	execute_pipeline(t_minishell *shell, t_cmd *cmds);
 void 	execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd);
 
-// Builtin functions
+// Builtin cd
 int		builtin_cd(t_cmd *cmd, t_minishell *shell);
-int		builtin_pwd(void);
+int		new_old_pwd(t_cmd *cmd, t_minishell *shell);
+char	*change_dir(t_cmd *cmd, t_minishell *shell, char *old_pwd);
+void	set_pwd_env(t_cmd *cmd, t_minishell *shell, char *n_p, char *o_p);
+
+// Builtin echo
 int		builtin_echo(t_cmd *cmd);
+int 	skip_nl(t_cmd *cmd, int i);
+void	write_echo(t_cmd *cmd, int i);
+
+// Builtin env
 int		builtin_env(t_minishell *shell);
-int 	builtin_export(t_cmd *cmd, t_minishell *shell);
-int		builtin_unset(t_cmd *cmd, t_minishell *shell);
+
+// Builtin exit
 int		builtin_exit(t_cmd *cmd, t_minishell *shell);
+
+// Builtin export
+int 	builtin_export(t_cmd *cmd, t_minishell *shell);
+
+// Builtin pwd
+int		builtin_pwd(void);
+
+// Builtin unset
+int		builtin_unset(t_cmd *cmd, t_minishell *shell);
+
+
+//
 int		handle_redirects(t_cmd *cmd);
 
 // Builtin helper functions
