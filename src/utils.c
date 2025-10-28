@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:58:19 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/27 14:41:14 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/28 12:28:37 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,16 +127,6 @@ char	**ft_arrayjoin_and_free(char **arr, char *str)
 	new_arr [i + 1] = NULL;
 	free(arr);
 	return (new_arr);
-}
-
-int	ft_strcmp(char const *s1, char const *s2)
-{
-	int	i;
-
-	i = 0;
-	while (s1[i] && s1[i] == s2[i])
-		i++;
-	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
 int	is_space(char c)
