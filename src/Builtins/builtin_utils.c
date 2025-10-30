@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-// Must run in parent: cd, export, unset, exit -> they change shell state. Can run in child process: echo, pwd, env -> they output stuff
+// Must run in parent: cd, export, unset, exit
 int	is_parent_builtin(t_cmd *cmd)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
@@ -51,80 +51,6 @@ int	is_builtin(t_cmd *cmd)
 		return (FAILURE);
 }
 
-int	run_builtin(t_cmd *cmd, t_minishell *shell)
-{
-	int		saved_stdout;
-	int		saved_stdin;
-	int		result;
-	int		status;
-	pid_t	pid;
-
-	saved_stdout = -1;
-	saved_stdin = -1;
-	if (!cmd->args[0])
-		return (FAILURE);
-	if (is_parent_builtin(cmd) == SUCCESS)
-	{
-		if (cmd->redirects)
-		{
-			saved_stdout = dup(STDOUT_FILENO);
-			saved_stdin = dup(STDIN_FILENO);
-			if (saved_stdout < 0 || saved_stdin < 0)
-			{
-				if (saved_stdout >= 0)
-					close(saved_stdout);
-				if (saved_stdin >= 0)
-					close(saved_stdin);
-				return (FAILURE);
-			}
-		}
-		if (handle_redirects(cmd) == FAILURE)
-		{
-			if (saved_stdout >= 0)
-				close(saved_stdout);
-			if (saved_stdin >= 0)
-				close(saved_stdin);
-			return (FAILURE);
-		}
-		result = execute_builtin(cmd, shell);
-		if (cmd->redirects)
-		{
-			if (saved_stdout >= 0)
-			{
-				dup2(saved_stdout, STDOUT_FILENO);
-				close(saved_stdout);
-			}
-			if (saved_stdin >= 0)
-			{
-				dup2(saved_stdin, STDIN_FILENO);
-				close(saved_stdin);
-			}
-		}
-		return (result);
-	}
-	else
-	{
-		if (cmd->redirects)
-		{
-			pid = fork();
-			if (pid < 0)
-				return (1);
-			if (pid == 0)
-			{
-				setup_child_signals();
-				if (handle_redirects(cmd) == FAILURE)
-					exit(EXIT_FAILURE);
-				result = execute_builtin(cmd, shell);
-				exit(result);
-			}
-			waitpid(pid, &status, 0);
-			return (status / 256);
-		}
-		else
-			return (execute_builtin(cmd, shell));
-	}
-}
-
 int	execute_builtin(t_cmd *cmd, t_minishell *shell)
 {
 	if (cmd->args[0])
@@ -148,4 +74,29 @@ int	execute_builtin(t_cmd *cmd, t_minishell *shell)
 	}
 	else
 		return (FAILURE);
+}
+
+void	write_export(t_minishell *shell)
+{
+	int		j;
+	char	*equal_sign;
+
+	j = 0;
+	while (shell->exp_list && shell->exp_list[j] != NULL)
+	{
+		write(1, "declare -x ", 11);
+		if (ft_strchr(shell->exp_list[j], '='))
+		{
+			equal_sign = ft_strchr(shell->exp_list[j], '=');
+			write(1, shell->exp_list[j], equal_sign - shell->exp_list[j] + 1);
+			write(1, "\"", 1);
+			write(1, equal_sign + 1, ft_strlen(equal_sign + 1));
+			write(1, "\"", 1);
+		}
+		else
+			write(1, shell->exp_list[j], ft_strlen(shell->exp_list[j]));
+		write(1, "\n", 1);
+		j++;
+	}
+	return ;
 }

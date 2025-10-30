@@ -12,15 +12,66 @@
 
 #include "minishell.h"
 
+void	shift_list(char **list, int index)
+{
+	free(list[index]);
+	while (list[index] != NULL)
+	{
+		list[index] = list[index + 1];
+		index++;
+	}
+	list[index] = NULL;
+}
+
+char	*check_env(t_cmd *cmd, t_minishell *shell, int var_len, int i)
+{
+	int		j;
+	char	**env_list;
+
+	while (cmd->args[i][var_len] != '=' && cmd->args[i][var_len] != '\0')
+		var_len++;
+	env_list = shell->envp;
+	j = 0;
+	while (env_list[j] != NULL)
+	{
+		if (ft_strncmp(env_list[j], cmd->args[i], var_len) == 0
+			&& (env_list[j][var_len] == '=' || env_list[j][var_len] == '\0'))
+		{
+			shift_list(env_list, j);
+			return (env_list[j]);
+		}
+		j++;
+	}
+	return (NULL);
+}
+
+char	*check_exp(t_cmd *cmd, t_minishell *shell, int var_len, int i)
+{
+	int		j;
+	char	**exp_list;
+
+	while (cmd->args[i][var_len] != '=' && cmd->args[i][var_len] != '\0')
+		var_len++;
+	exp_list = shell->exp_list;
+	j = 0;
+	while (exp_list[j] != NULL)
+	{
+		if (ft_strncmp(exp_list[j], cmd->args[i], var_len) == 0
+			&& (exp_list[j][var_len] == '=' || exp_list[j][var_len] == '\0'))
+		{
+			shift_list(exp_list, j);
+			return (exp_list[j]);
+		}
+		j++;
+	}
+	return (NULL);
+}
+
 int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 {
 	int		i;
-	int		j;
 	int		var_len;
-	char	**list;
 
-	if (!cmd || !cmd->args || !shell)
-		return (FAILURE);
 	i = 1;
 	while (cmd->args[i] != NULL)
 	{
@@ -32,44 +83,8 @@ int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 		var_len = 0;
 		while (cmd->args[i][var_len] != '=' && cmd->args[i][var_len] != '\0')
 			var_len++;
-		list = shell->envp;
-		j = 0;
-		while (list[j] != NULL)
-		{
-			if (ft_strncmp(list[j], cmd->args[i], var_len) == 0
-				&& (list[j][var_len] == '=' || list[j][var_len] == '\0'))
-			{
-				free(list[j]);
-				while (list[j + 1] != NULL)
-				{
-					list[j] = list[j + 1];
-					j++;
-				}
-				list[j] = NULL;
-				break ;
-			}
-			else
-				j++;
-		}
-		list = shell->exp_list;
-		j = 0;
-		while (list[j] != NULL)
-		{
-			if (ft_strncmp(list[j], cmd->args[i], var_len) == 0
-				&& (list[j][var_len] == '=' || list[j][var_len] == '\0'))
-			{
-				free(list[j]);
-				while (list[j + 1] != NULL)
-				{
-					list[j] = list[j + 1];
-					j++;
-				}
-				list[j] = NULL;
-				break ;
-			}
-			else
-				j++;
-		}
+		check_env(cmd, shell, var_len, i);
+		check_exp(cmd, shell, var_len, i);
 		i++;
 	}
 	return (SUCCESS);

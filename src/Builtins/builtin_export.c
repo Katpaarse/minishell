@@ -12,39 +12,73 @@
 
 #include "minishell.h"
 
-void	add_or_update_env(t_minishell *shell, char *var)
+int	check_input(t_cmd *cmd, int i)
+{
+	int	j;
+	int	check;
+
+	j = 0;
+	check = -1;
+	if ((cmd->args[i][0] == '_' || ft_isalpha(cmd->args[i][0])) == 1)
+	{
+		while (cmd->args[i][j] && cmd->args[i][j] != '=')
+		{
+			if (cmd->args[i][j] != '_' && ft_isalpha(cmd->args[i][j]) == 0
+				&& ft_isdigit(cmd->args[i][j]) == 0)
+				return (check);
+			j++;
+		}
+		if (ft_strchr(cmd->args[i], '=') != NULL)
+		{
+			if (cmd->args[i][j + 1] != '\0')
+				check = 0;
+			else
+				check = 1;
+		}
+		else
+			check = 2;
+	}
+	return (check);
+}
+
+int	check_list(char **list, char *var)
 {
 	int		i;
 	int		len;
 	int		size;
-	char	**new_env;
 
-	if (!shell || !var)
-		return;
-	// find length before '='
 	len = 0;
 	while (var[len] && var[len] != '=')
 		len++;
-	// search for existing var
 	i = 0;
-	while (shell->envp && shell->envp[i])
+	while (list && list[i])
 	{
-		if (ft_strncmp(shell->envp[i], var, len) == 0
-			&& (shell->envp[i][len] == '=' || shell->envp[i][len] == '\0'))
+		if (ft_strncmp(list[i], var, len) == 0
+			&& (list[i][len] == '=' || list[i][len] == '\0'))
 		{
-			free(shell->envp[i]);
-			shell->envp[i] = ft_strdup(var);
-			return;
+			free(list[i]);
+			list[i] = ft_strdup(var);
 		}
 		i++;
 	}
-	// count current size
 	size = 0;
-	while (shell->envp && shell->envp[size])
+	while (list && list[size])
 		size++;
+	return (size);
+}
+
+void	add_or_update_env(t_minishell *shell, char *var)
+{
+	int		i;
+	int		size;
+	char	**new_env;
+
+	if (!var)
+		return ;
+	size = check_list(shell->envp, var);
 	new_env = malloc(sizeof(char *) * (size + 2));
 	if (!new_env)
-		return;
+		return ;
 	i = 0;
 	while (i < size)
 	{
@@ -60,33 +94,15 @@ void	add_or_update_env(t_minishell *shell, char *var)
 void	add_or_update_exp(t_minishell *shell, char *var)
 {
 	int		i;
-	int		len;
 	int		size;
 	char	**new_exp;
 
-	if (!shell || !var)
-		return;
-	len = 0;
-	while (var[len] && var[len] != '=')
-		len++;
-	i = 0;
-	while (shell->exp_list && shell->exp_list[i])
-	{
-		if (ft_strncmp(shell->exp_list[i], var, len) == 0
-			&& (shell->exp_list[i][len] == '=' || shell->exp_list[i][len] == '\0'))
-		{
-			free(shell->exp_list[i]);
-			shell->exp_list[i] = ft_strdup(var);
-			return;
-		}
-		i++;
-	}
-	size = 0;
-	while (shell->exp_list && shell->exp_list[size])
-		size++;
+	if (!var)
+		return ;
+	size = check_list(shell->exp_list, var);
 	new_exp = malloc(sizeof(char *) * (size + 2));
 	if (!new_exp)
-		return;
+		return ;
 	i = 0;
 	while (i < size)
 	{
@@ -101,86 +117,30 @@ void	add_or_update_exp(t_minishell *shell, char *var)
 
 int	builtin_export(t_cmd *cmd, t_minishell *shell)
 {
-	int i;
-	int j;
-	int check;
-	char *equal_sign;
+	int	i;
+	int	check;
 
-	if (!cmd || !shell)
-		return (FAILURE);
-
-	i = 1;
 	if (cmd->args[1] == NULL)
 	{
-		j = 0;
-		while (shell->exp_list && shell->exp_list[j] != NULL)
-		{
-			write(1, "declare -x ", 11);
-			if (ft_strchr(shell->exp_list[j], '=') != NULL)
-			{
-				equal_sign = ft_strchr(shell->exp_list[j], '=');
-				write(1, shell->exp_list[j], equal_sign - shell->exp_list[j] + 1); // include '='
-				write(1, "\"", 1);
-				write(1, equal_sign + 1, ft_strlen(equal_sign + 1));
-				write(1, "\"", 1);
-			}
-			else
-				write(1, shell->exp_list[j], ft_strlen(shell->exp_list[j]));
-			write(1, "\n", 1);
-			j++;
-		}
+		write_export(shell);
 		return (SUCCESS);
 	}
 	i = 1;
 	while (cmd->args[i])
 	{
-		j = 0;
-		if ((cmd->args[i][0] == '_' || ft_isalpha(cmd->args[i][0])) == 1)
-		{
-			while (cmd->args[i][j] && cmd->args[i][j] != '=')
-			{
-				if (cmd->args[i][j] != '_' && ft_isalpha(cmd->args[i][j]) == 0
-					&& ft_isdigit(cmd->args[i][j]) == 0)
-				{
-					// invalid variable name
-					print_error(shell, "not a valid identifier\n");
-					return (FAILURE);
-				}
-				j++;
-			}			
-			if (ft_strchr(cmd->args[i], '=') != NULL)
-			{
-				// handle 'space' values in var_value
-				// Example: export VAR="value with spaces"
-				// should be in " " quotes when printed with export
-				// example: export VAR=" "
-				if (cmd->args[i][j + 1] != '\0') // there is a value after '='
-				{
-					check = 0; // name=value
-				}
-				else // no value after '='
-				{
-					check = 1; // name=
-				}
-			}
-			else // no '=' in argument, just a variable name
-			{
-				check = 2; // name
-			}
-		}
-		else
-		{
-			// invalid variable name
-			print_error(shell, "not a valid identifier");
-			return (FAILURE);
-		}
-		if (check == 0 || check == 1) // NAME=VALUE or NAME= | 
+		check = check_input(cmd, i);
+		if (check == 0 || check == 1)
 		{
 			add_or_update_exp(shell, cmd->args[i]);
 			add_or_update_env(shell, cmd->args[i]);
 		}
-		else if (check == 2) // NAME
+		else if (check == 2)
 			add_or_update_exp(shell, cmd->args[i]);
+		else
+		{
+			print_error(shell, "not a valid identifier\n");
+			return (FAILURE);
+		}
 		i++;
 	}
 	return (SUCCESS);

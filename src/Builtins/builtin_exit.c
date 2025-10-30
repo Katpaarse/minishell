@@ -12,9 +12,37 @@
 
 #include "minishell.h"
 
-int	builtin_exit(t_cmd *cmd, t_minishell *shell)
+void	check_exit(t_cmd *cmd, t_minishell *shell)
 {
 	int		i;
+
+	i = 0;
+	if (cmd->args[1][0] == '-' || cmd->args[1][0] == '+')
+		i++;
+	if (cmd->args[1][i] == '\0')
+	{
+		write(2, "1minishell: exit: ", 17);
+		write(2, cmd->args[1], ft_strlen(cmd->args[1]));
+		write(2, ": numeric argument required\n", 28);
+		free_minishell(shell);
+		exit(2);
+	}
+	while (cmd->args[1][i] != '\0')
+	{
+		if (!ft_isdigit(cmd->args[1][i]))
+		{
+			write(2, "2minishell: exit: ", 17);
+			write(2, cmd->args[1], ft_strlen(cmd->args[1]));
+			write(2, ": numeric argument required\n", 28);
+			free_minishell(shell);
+			exit(2);
+		}
+		i++;
+	}
+}
+
+int	builtin_exit(t_cmd *cmd, t_minishell *shell)
+{
 	long	exit_code;
 
 	write(1, "exit\n", 5);
@@ -25,32 +53,11 @@ int	builtin_exit(t_cmd *cmd, t_minishell *shell)
 	}
 	if (!cmd->args[1])
 	{
-		// free resources if needed
-		exit(shell->exit_code); // Exit with the last command exit code
+		free_minishell(shell);
+		exit(shell->exit_code);
 	}
-	i = 0;
-	if (cmd->args[1][0] == '-' || cmd->args[1][0] == '+')
-		i++;
-	if (cmd->args[1][i] == '\0') // check if there's at least one digit
-	{
-		write(2, "minishell: exit: ", 17);
-		write(2, cmd->args[1], ft_strlen(cmd->args[1]));
-		write(2, ": numeric argument required\n", 28);
-		// free resources
-		exit(2); // exit with status 2 for non-numeric argument
-	}
-	while (cmd->args[1][i] != '\0')
-	{
-		if (!ft_isdigit(cmd->args[1][i]))
-		{
-			write(2, "minishell: exit: ", 17);
-			write(2, cmd->args[1], ft_strlen(cmd->args[1]));
-			write(2, ": numeric argument required\n", 28);
-			// free resources
-			exit(2); // exit with status 2 for non-numeric argument
-		}
-		i++;
-	}
+	check_exit(cmd, shell);
 	exit_code = ft_atol(cmd->args[1]);
-	exit(exit_code % 256); // Exit with the provided exit code modulo 256
+	free_minishell(shell);
+	exit(exit_code % 256);
 }

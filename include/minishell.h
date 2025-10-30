@@ -68,6 +68,12 @@ typedef struct s_minishell
 	int		exit_code; // last command exit code
 }	t_minishell;
 
+// Free functions
+void	free_redirects(t_redirect *redirect);
+void	free_args(char **args);
+void	free_cmds(t_cmd *cmd);
+void	free_minishell(t_minishell *shell);
+
 // Signal handling functions
 void	setup_signal_handlers(void);
 void	setup_child_signals(void);
@@ -81,6 +87,8 @@ char	*find_cmd_path(char **argv, char **envp);
 char	*find_absolute_path(char **argv);
 char	*find_relative_path(char *cmd, char **envp);
 int 	execute_command(t_minishell *shell);
+int		execute_path_cmd(t_cmd *cmd, t_minishell *shell);
+int		cmd_fork(t_cmd *cmd, t_minishell *shell, char *cmd_path);
 
 // functions for handling pipes
 int 	wait_all_children(t_minishell *shell, pid_t *child_pids, int count);
@@ -107,6 +115,7 @@ int		builtin_exit(t_cmd *cmd, t_minishell *shell);
 
 // Builtin export
 int 	builtin_export(t_cmd *cmd, t_minishell *shell);
+void	write_export(t_minishell *shell);
 
 // Builtin pwd
 int		builtin_pwd(void);

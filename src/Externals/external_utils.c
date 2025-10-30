@@ -103,18 +103,14 @@ int wait_for_child(pid_t pid)
     while (waitpid(pid, &status, 0) == -1) // Continue waiting
     {
     	if (errno != EINTR)
-        {
             // If the failure reason is not an interruption, something is wrong.
             return (1); 
-        }
         // If it was EINTR, the loop repeats the waitpid call.
     }
     // --- 2. Determine Exit Status ---
     // Check if the child process exited normally (e.g., via exit() or return from main).
     if (WIFEXITED(status))
-    {
         exit_code = WEXITSTATUS(status);
-    }
     // Check if the child process was terminated by a signal.
     else if (WIFSIGNALED(status))
     {
@@ -125,15 +121,11 @@ int wait_for_child(pid_t pid)
         
         // Print the "Quit (core dumped)" message only for SIGQUIT (signal 3).
         if (signal_number == SIGQUIT)
-        {
             write(1, "Quit (core dumped)\n", 19);
-        }
     }
     // Handle all other cases (e.g., WIFSTOPPED, WIFCONTINUED).
     else
-    {
         exit_code = 1; 
-    }
     return (exit_code);
 }
 
