@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/27 14:45:33 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/10/31 18:26:01 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,38 +31,27 @@ char	**add_argument(char **args, char *new_arg)
 	int		count;
 	int		i;
 	char	**new_args;
-	char	*dup;
 
 	if (!new_arg)
 		return args;
-	dup = ft_strdup(new_arg);
-	if (!dup)
-	{
-		free(new_arg);
-		return NULL;
-	}
-	free(new_arg);
-
 	count = 0;
 	while (args && args[count])
 		count++;
-
 	new_args = malloc(sizeof(char *) * (count + 2));
 	if (!new_args)
 	{
-		free(dup);
-		return NULL;
+		free(new_arg);
+		return (NULL);
 	}
-
 	i = 0;
 	while (i < count)
 	{
 		new_args[i] = args[i]; // reuse old pointers
 		i++;
 	}
-	new_args[count] = dup;
+	new_args[count] = new_arg;
 	new_args[count + 1] = NULL;
 
 	free(args); // free old array (not the strings)
-	return new_args;
+	return (new_args);
 }
