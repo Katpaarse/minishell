@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lavan-de <lavan-de@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 17:53:00 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/30 17:53:02 by lavan-de         ###   ########.fr       */
+/*   Updated: 2025/11/05 16:44:35 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	child_redirects(t_cmd *cmd, t_minishell *shell, int result)
 
 int	check_redirects(t_cmd *cmd, int s_stdin, int s_stdout)
 {
-	if (cmd->redirects)
+	if (cmd->redir)
 	{
 		s_stdout = dup2(s_stdout, STDOUT_FILENO);
 		s_stdin = dup2(s_stdin, STDIN_FILENO);
@@ -77,7 +77,7 @@ int	run_builtin(t_cmd *cmd, t_minishell *shell)
 	}
 	else
 	{
-		if (cmd->redirects)
+		if (cmd->redir)
 			return (child_redirects(cmd, shell, result));
 		else
 			return (execute_builtin(cmd, shell));

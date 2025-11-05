@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/28 12:29:00 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/05 17:54:41 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ typedef struct s_redirect
 typedef struct s_cmd
 {
 	char			**args; //command and arguments
-	t_redirect		*redirects; // array of redirections
+	t_redirect		*redir; // array of redirections
 	struct s_cmd	*next; //linked list to next command
 }	t_cmd;
 
@@ -67,6 +67,15 @@ typedef struct s_minishell
 	char	**exp_list; // exported variables list
 	int		exit_code; // last command exit code
 }	t_minishell;
+
+typedef struct s_parsing
+{
+	t_cmd		**current;
+	char		**tokens;
+	int			*i;
+	int			*hi;
+	t_minishell	*shell;
+}	t_parsing;
 
 // Free functions
 void	free_redirects(t_redirect *redirect);
@@ -123,7 +132,6 @@ int		builtin_pwd(void);
 // Builtin unset
 int		builtin_unset(t_cmd *cmd, t_minishell *shell);
 
-
 //
 int		handle_redirects(t_cmd *cmd);
 
@@ -138,6 +146,10 @@ void	add_or_update_env(t_minishell *shell, char *var);
 
 //parsing functions
 char		**tokenize_input(char *input);
+int			handle_pipe_token(t_parsing *p);
+int			handle_redirect_token(t_parsing *p);
+int			handle_heredoc_wrapper(t_parsing *p);
+int			handle_heredoc_token(t_cmd *current, char *raw_token, int heredoc_index, t_minishell *shell);
 t_cmd		*cmd_into_new_node(void);
 char		**add_argument(char **args, char *arg);
 t_cmd		*tokens_into_cmds(char **tokens, t_minishell *shell);
@@ -153,7 +165,6 @@ char		*expand_variable(char const *input, int *i, char **envp, char *result);
 char		*expand_normal_char(char const *input, int *i, char *result);
 char    	*expand_variables(const char *input, t_minishell *shell);
 char		*remove_quotes(char const *token);
-char		*process_token(char *token, t_minishell *shell);
 void		print_syntax_error(t_minishell *shell, char const *token);
 void		print_error(t_minishell *shell, char const *message);
 void		print_error_filename(char const	*filename, char	const *message);

@@ -13,7 +13,7 @@ SRC_FILES   = Builtins/builtin_cd.c Builtins/builtin_echo.c Builtins/builtin_env
 			Executor/executor.c Executor/executor_utils.c \
 			Externals/external_cmd.c Externals/external_utils.c \
 			Pipelines/pipeline_exec.c Pipelines/pipeline_helpers.c \
-			free.c cmd_utils.c env_utils.c expand_variables.c heredoc.c main.c parser.c process_token.c redirects.c signals.c tokenizer.c utils.c error_messages.c
+			free.c cmd_utils.c env_utils.c expand_variables.c heredoc.c main.c Parsing/tokens_into_cmds.c Parsing/parser_helpers.c process_token.c redirects.c signals.c tokenizer.c utils.c error_messages.c
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
 OBJS        = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))

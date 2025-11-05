@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/31 18:26:01 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/05 17:53:13 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_cmd	*cmd_into_new_node(void)
 	if (cmd == NULL)
 		return (NULL);
 	cmd->args = NULL; // no argument yet and sets it to NULL
-	cmd->redirects = NULL; // no redirects yet
+	cmd->redir = NULL; // no redirects yet
 	cmd->next = NULL; // no next command yet
 	return (cmd);
 }
