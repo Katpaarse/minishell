@@ -63,11 +63,11 @@ int main(int argc, char **argv, char **envp)
 		while (tokens[i]) // loop through each token
 		{
 			// skip expanding the token after << (heredoc delimiter)
-			if (tokens[i][0] == '<' && tokens[i][1] == '<' && tokens[i][2] == '\0')
-			{
-				i = i + 2; // advance past << and its delimiter
-				continue ;
-			}
+			// if (tokens[i][0] == '<' && tokens[i][1] == '<' && tokens[i][2] == '\0')
+			// {
+			// 	i = i + 2; // advance past << and its delimiter
+			// 	continue ;
+			// }
 			// normal variable expansion and quote removal for other tokens
 			expanded = process_token(tokens[i], &shell); // removes quotes from token input and calls variable expension
 			free(tokens[i]);
