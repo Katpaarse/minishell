@@ -1,4 +1,5 @@
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=minishell.supp ./minishell
+valgrind --trace-children=yes --leak-check=full --show-leak-kinds=all --suppressions=minishell.supp ./minishell
 
 PARSING
 - cat << EOF
