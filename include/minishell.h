@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/05 17:54:41 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/05 18:38:13 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,7 @@ void		free_args(char **args);
 void		free_cmds(t_cmd *cmd);
 void		handle_heredoc(char const *delimiter, char	*tmpfile, t_minishell *shell, int expand);
 char 		*process_heredoc(char const *delimiter, int i, t_minishell *shell, int expand);
+char		*process_token(char *token, t_minishell *shell);
 void		cleanup_heredoc_files(t_redirect *redirects);
 int			is_space(char c);
 int			is_whitespace_only(char *str);

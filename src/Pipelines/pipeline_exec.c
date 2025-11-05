@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_exec.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jul <jul@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 15:36:19 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/24 20:47:49 by jul              ###   ########.fr       */
+/*   Updated: 2025/11/05 18:34:04 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ int	handle_redirects(t_cmd *cmd)
 	t_redirect	*redirect;
 	t_redirect	*last_heredoc;
 	
-	if (!cmd || !cmd->redirects)
+	if (!cmd || !cmd->redir)
 		return (SUCCESS);
 	last_heredoc = NULL;
-	redirect = cmd->redirects;
+	redirect = cmd->redir;
 	while (redirect) // First pass is to find the last redirect
 	{
 		if (redirect->type == RED_HEREDOC)
@@ -29,7 +29,7 @@ int	handle_redirects(t_cmd *cmd)
 		redirect = redirect->next;
 	}
 	// Second pass: process all redirects, but for heredocs only use the last one
-	redirect = cmd->redirects;
+	redirect = cmd->redir;
 	while (redirect)
 	{
 		if (redirect->type == RED_HEREDOC || redirect->type == RED_INPUT)
@@ -177,81 +177,3 @@ void	execute_pipeline(t_minishell *shell, t_cmd *cmds)
 	free(child_pids);
 	g_minishell_is_executing = 0; // reset variable after execution completes
 }
-
-/*
-We’ll use the example command:
-echo hello | grep h | wc -c
-Your minishell builds a linked list:
-cmd1: echo hello
-cmd2: grep h
-cmd3: wc -c
-Step 0: Initial FDs
-
-At the very beginning, each process has at least:
-0 → stdin (terminal input)
-1 → stdout (terminal output)
-2 → stderr (terminal error)
-Everything else is unused (FD 3+).
-
-Step 1: First command (echo hello)
-Parent creates pipe1 → returns 2 new FDs:
-fd[0] = 3 (read end)
-fd[1] = 4 (write end)
-Child1 (echo)
-dup2(fd[1], 1) → duplicate 4 onto 1 (stdout now points to pipe write).
-Close original pipe FDs (3 and 4).
-Now child1 has:
-stdin = 0 (terminal)
-stdout = 1 (really pipe write end)
-Runs echo hello, writes into pipe1.
-Parent
-Closes old prev_fd (none yet).
-Closes fd[1] = 4 (write end of pipe1).
-Keeps fd[0] = 3 for next child.
-Step 2: Second command (grep h)
-Parent creates pipe2 → returns new FDs:
-fd[0] = 5 (read end)
-fd[1] = 6 (write end)
-Child2 (grep)
-dup2(prev_fd, 0) → dup2(3, 0) → stdin now comes from pipe1 read end.
-dup2(fd[1], 1) → dup2(6, 1) → stdout now points to pipe2 write end.
-Close FDs 3, 5, 6.
-Now child2 has:
-stdin = 0 (pipe1 read end)
-stdout = 1 (pipe2 write end)
-Runs grep h, reads from echo output, writes into pipe2.
-Parent
-Closes prev_fd = 3 (pipe1 read end).
-Closes fd[1] = 6 (pipe2 write end).
-Keeps fd[0] = 5 for next child.
-Step 3: Third command (wc -c)
-current->next == NULL → no new pipe.
-Child3 (wc)
-dup2(prev_fd, 0) → dup2(5, 0) → stdin now comes from pipe2 read end.
-stdout remains = 1 (terminal).
-Close FD 5.
-Now child3 has:
-stdin = 0 (pipe2 read end)
-stdout = 1 (terminal)
-Runs wc -c, reads from grep output, writes to terminal.
-Parent
-Closes prev_fd = 5.
-
-Step 4: Parent waits
-
-Parent calls waitpid on all 3 children.
-shell->exit_code is updated to the exit code of the last child (wc -c).
-
-Child1	terminal	pipe1 (fd=4 → dup’d to 1)	writes hello\n
-Child2	pipe1 (fd=3 → dup’d to 0)	pipe2 (fd=6 → dup’d to 1)	filters text
-Child3	pipe2 (fd=5 → dup’d to 0)	terminal	counts characters
-Parent	closes unused ends, only waits	terminal	coordinates
-
-After execution:
-Parent has closed all pipe ends (3, 4, 5, 6).
-
-Only 0, 1, 2 remain.
-
-That’s how your pipeline wiring works under the hood.
-Every pipe adds two new FDs. You duplicate (dup2) the one you need (read for stdin, write for stdout), then close both originals so only the correct processes keep the pipe ends they need.
-*/

@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/27 15:23:30 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/05 18:36:22 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int main(int argc, char **argv, char **envp)
 			g_minishell_is_executing = 1;
 			execute_command(&shell);
 			g_minishell_is_executing = 0;
-			cleanup_heredoc_files(shell.cmds->redirects);
+			cleanup_heredoc_files(shell.cmds->redir);
 			free_cmds(shell.cmds);
 			shell.cmds = NULL;
 		}

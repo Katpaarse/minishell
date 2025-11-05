@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/05 17:43:34 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/05 18:42:11 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static int	is_redirect_token(char *str)
 		(str[0] == '>' && str[1] == '>' && str[2] == '\0'));
 }
 
-static int	process_token(t_parsing *p)
+static int	handle_token(t_parsing *p)
 {
 	char *token;
 
@@ -69,7 +69,7 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 
 	while (tokens[i])
 	{
-		if (process_token(&p) != 0)
+		if (handle_token(&p) != 0)
 		{
 			free_cmds(head);
 			return (NULL);
