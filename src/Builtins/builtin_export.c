@@ -121,10 +121,7 @@ int	builtin_export(t_cmd *cmd, t_minishell *shell)
 	int	check;
 
 	if (cmd->args[1] == NULL)
-	{
-		write_export(shell);
-		return (SUCCESS);
-	}
+		return (write_export(shell), SUCCESS);
 	i = 1;
 	while (cmd->args[i])
 	{
