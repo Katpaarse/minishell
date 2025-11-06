@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/05 18:38:13 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/06 13:34:07 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,10 @@ typedef struct s_minishell
 
 typedef struct s_parsing
 {
-	t_cmd		**current;
+	t_cmd		*current;
 	char		**tokens;
-	int			*i;
-	int			*hi;
+	int			i;
+	int			hi;
 	t_minishell	*shell;
 }	t_parsing;
 
