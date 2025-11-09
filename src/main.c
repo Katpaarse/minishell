@@ -12,6 +12,30 @@
 
 #include "minishell.h"
 
+static void	clear_shell_cmds(t_minishell *shell)
+{
+	if (!shell || !shell->cmds)
+		return ;
+	cleanup_heredoc_files(shell->cmds->redir);
+	free_cmds(shell->cmds);
+	shell->cmds = NULL;
+}
+
+static void	free_tokens(char **tokens)
+{
+	int	i;
+
+	if (!tokens)
+		return ;
+	i = 0;
+	while (tokens[i])
+	{
+		free(tokens[i]);
+		i++;
+	}
+	free(tokens);
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	t_minishell shell;
@@ -31,9 +55,12 @@ int main(int argc, char **argv, char **envp)
 	while (1) // infinite loop untill user presses cntrl + D(EOF) or "exit" or gets out manually
 	{
 		g_minishell_is_executing = 0; // start in interactive mode
+		tokens = NULL;
 		input = readline("minishell > "); // shows minishell > and waiting for input
 		if (!input)
 		{
+			clear_shell_cmds(&shell);
+			rl_clear_history();
 			if (g_minishell_is_executing == -1)
 				shell.exit_code = 130;
 			write(1, "exit\n", 5);
@@ -75,39 +102,29 @@ int main(int argc, char **argv, char **envp)
 			i++;
 		}
 		g_minishell_is_executing = 1;
+		clear_shell_cmds(&shell);
 		shell.cmds = tokens_into_cmds(tokens, &shell);
 		g_minishell_is_executing = 0;
 		if (!shell.cmds)
 		{
-			i = 0;
-			while (tokens[i])
-			{
-				free(tokens[i]);
-				i++;
-			}
-			free(tokens);
+			free_tokens(tokens);
 			free(input);
 			shell.exit_code = 0; // NIEUW
 			continue ;
 		}
+		free_tokens(tokens);
+		tokens = NULL;
+		free(input);
+		input = NULL;
 		if (shell.cmds)
 		{
 			g_minishell_is_executing = 1;
 			execute_command(&shell);
 			g_minishell_is_executing = 0;
-			cleanup_heredoc_files(shell.cmds->redir);
-			free_cmds(shell.cmds);
-			shell.cmds = NULL;
+			clear_shell_cmds(&shell);
 		}
-		i = 0;
-		while (tokens[i]) // cleanup frees all the tokens and input
-		{
-			free(tokens[i]);
-			i++;
-		}
-		free(tokens);
-		free(input);
 	}
+	clear_shell_cmds(&shell);
 	free_args(shell.envp);
 	free_args(shell.exp_list);
 	return (shell.exit_code);
