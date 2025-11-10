@@ -76,7 +76,19 @@ char    *expand_variables(const char *input, t_minishell *shell)
         {
 			i++; // skip $ char first then check for ? or another char
 			if (input[i] == '\0' || (!ft_isalpha(input[i]) && input[i] != '_' && input[i] != '?')) // // Lone $ or $ followed by invalid char - treat as literal $
-				result = ft_strjoin(result, ft_strdup("$"));
+			{
+				char	*dollar;
+
+				dollar = ft_strdup("$");
+				if (!dollar)
+				{
+					free(result);
+					return (NULL);
+				}
+				result = ft_strjoin_and_free(result, dollar);
+				if (!result)
+					return (NULL);
+			}
             else if (input[i] == '?') 
             {
                 result = expand_exit_code(result, shell->exit_code); // If next character is ? -> append last exit code using expand_exit_code
@@ -85,7 +97,19 @@ char    *expand_variables(const char *input, t_minishell *shell)
             else if (ft_isalpha(input[i]) || input[i] == '_') // If next character is a letter/underscore -> expand variable using expand_variable. Otherwise -> just copy $ literally
                 result = expand_variable(input, &i, shell->envp, result);
             else
-                result = ft_strjoin_and_free(result, ft_strdup("$"));
+			{
+				char	*dollar;
+
+				dollar = ft_strdup("$");
+				if (!dollar)
+				{
+					free(result);
+					return (NULL);
+				}
+				result = ft_strjoin_and_free(result, dollar);
+				if (!result)
+					return (NULL);
+			}
         }
         else
             result = expand_normal_char(input, &i, result);

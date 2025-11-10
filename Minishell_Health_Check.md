@@ -1,183 +1,105 @@
-# 🩺 Minishell Health Check – Critical Analysis & Recommendations
+# 🩺 Minishell Health Check – November 2025 (Post-Fixes)
 
-Your minishell is **solid** and leak‑free. Here's a thorough breakdown of what's working well and where you can make refinements:
-
----
-
-## ✅ **What's Working Well**
-
-1. **Memory Management:** Zero leaks in final Valgrind run; proper cleanup on all exit paths.
-2. **Signal Handling:** Clean separation between interactive/child signals; heredoc interrupts handled correctly.
-3. **Heredoc Implementation:** Proper forking, temp file cleanup, expansion logic.
-4. **Parser Structure:** Clean token → command pipeline; handles pipes, redirects, heredocs.
-5. **Builtin Exit:** Correctly frees all resources before terminating.
+Your minishell now satisfies the 42 “mandatory” feature set: prompt, history, pipelines, redirects (`<`, `>`, `>>`, `<<`), environment expansion (including `$?`), and all required builtins. Recent updates tightened redirect handling, heredoc allocation checks, literal `$` expansion, and `exit` overflow detection. Memory usage remains leak-free in normal runs. Below is a detailed status report: strengths, remaining issues, and regression tests to run before hand-in.
 
 ---
 
-## ⚠️ **Issues & Refinements**
+## ✅ Strengths
 
-### **1. Critical: Missing NULL-check in `tokens_into_cmds`**
-**Location:** `tokens_into_cmds.c:56`
+- **Redirect safety**  
+  `handle_redirects` returns `FAILURE` on `open`/`dup2` errors, prints `strerror(errno)`, and callers `_exit()` immediately with a non-zero status. Parent-only builtins in `run_builtin` dup/restore stdio when redirects are present, preventing persistent descriptor corruption.
 
-head = cmd_into_new_node();
-p.current = head;  // No check if malloc failed**Problem:** If `malloc` fails, you dereference NULL immediately.
+- **Heredoc robustness**  
+  `process_heredoc` forks with dedicated signal handlers, translates SIGINT into exit code `130`, and `cleanup_heredoc_files` removes superseded heredoc files. `handle_heredoc_token` now checks `add_redirect` success, so allocation failures abort parsing cleanly instead of leaving inconsistent state.
 
-**Fix:**
-head = cmd_into_new_node();
-if (!head)
-    return (NULL);
-p.current = head;---
+- **Environment duplication & teardown**  
+  `copy_envp` NULL-terminates incrementally and frees both arrays on partial failure, keeping Valgrind output clean even under ENOMEM paths.
 
-### **2. Critical: Missing NULL-check in `add_argument`**
-**Location:** `cmd_utils.c:36`
+- **Literal `$` handling**  
+  `expand_variables` uses `ft_strjoin_and_free` for every literal-dollar branch, checks every allocation, and frees `result` on error—no more leaks or NULL derefs.
 
-if (!new_arg)
-    return args;  // Returns old array, but caller expects success/failure signal**Problem:** When `new_arg` is NULL, you return the old array—but the caller at `tokens_into_cmds.c:45` doesn't check if the `ft_strdup` succeeded. If it fails, you silently ignore it.
+- **`exit` numeric validation**  
+  `builtin_exit` rejects overflow inputs via an explicit `LONG_MAX`/`LONG_MIN` check, printing “numeric argument required” like Bash.
 
-**Fix:** Check `ft_strdup` return before calling `add_argument`:
-// In tokens_into_cmds.c handle_token():
-char *dup = ft_strdup(token);
-if (!dup)
-    return (-1);  // Signal malloc failure
-p->current->args = add_argument(p->current->args, dup);
+---
+
+## ❗ Critical Issues (Fix Before Submission)
+
+1. **Double-free on argument allocation failure**  
+   `handle_token` frees `token_copy` when `add_argument` fails, but `add_argument` already owns (and frees) that pointer. Under malloc failure this will crash.
+```46:54:src/Parsing/tokens_into_cmds.c
+p->current->args = add_argument(p->current->args, token_copy);
 if (!p->current->args)
 {
-    free(dup);
+    free(token_copy);
     return (-1);
-}---
-
-### **3. ✅ FIXED: `add_redirect` unnecessary duplicate**
-**Location:** `redirects.c:38–44`
-
-**Original Problem:** The function duplicated `filename` with `ft_strdup()`, then immediately freed the original:
-```c
-dup = ft_strdup(filename);  // Duplicate
-free(filename);              // Free original
-new_redirect->filename = dup;
+}
 ```
-
-This was wasteful because both callers (`parser_helpers.c:48` and `heredoc.c:165`) already passed freshly allocated strings via `ft_strdup()` or `make_tmp_heredoc_filename()`.
-
-**The Fix:** Removed the extra duplication. Now `add_redirect` simply takes ownership of the passed string:
-```c
-// Just use the string directly - no duplicate needed
-new_redirect->filename = filename;
-```
-
-**Why This is Better:**
-- **Before:** Caller allocates → `add_redirect` duplicates → frees original (wasted allocation)
-- **After:** Caller allocates → `add_redirect` takes ownership (efficient)
-
-Added a comment clarifying the ownership contract: `// Takes ownership of filename (caller must pass malloc'd string)`
-
----
-
-### **4. ✅ FIXED: `copy_envp` partial-failure handling**
-**Location:** `utils.c:48–71`
-
-**Problem:** If `ft_strdup` failed midway, `free_args` was called on a partially filled array that wasn't NULL-terminated, causing potential crashes.
-
-**Fix Applied:**
-- NULL-terminate incrementally: `shell->exp_list[i + 1] = NULL;` after each strdup
-- Removed redundant final NULL-termination (already handled in loop)
-- Removed redundant comments and print_error calls
-- Set pointers to NULL after freeing on error paths
-- Cleaner, more robust error handling
-
----
-
-### **5. Minor: `expand_variables` leaks on error path**
-**Location:** `expand_variables.c:78–79, 88`
-
-if (input[i] == '\0' || ...)
-    result = ft_strjoin(result, ft_strdup("$"));  // Leaks result if strjoin fails
-...
-else
-    result = ft_strjoin_and_free(result, ft_strdup("$"));**Problem:** Line 79 uses `ft_strjoin` (not `_and_free`), so if it returns NULL, the old `result` is leaked. Also, if `ft_strdup` fails, you pass NULL to `strjoin`.
-
-**Fix:** Use `ft_strjoin_and_free` consistently, or check `ft_strdup` return:
-char *dollar = ft_strdup("$");
-if (!dollar)
+```29:43:src/cmd_utils.c
+if (!new_args)
 {
-    free(result);
+    free(new_arg);
     return (NULL);
 }
-result = ft_strjoin_and_free(result, dollar);
-if (!result)
-    return (NULL);---
+```
+   **Action:** Remove the extra `free(token_copy);` and simply return `-1`; `free_cmds` already releases the partially built command list.
 
-### **6. Minor: `check_redirects` logic flaw**
-**Location:** `executor_utils.c:35–59`
+2. **Pipeline builtins exit with stale `$?`**  
+   In pipeline children, `_exit(shell->exit_code)` reuses the previous command’s status rather than the builtin’s result.
+```98:104:src/Pipelines/pipeline_exec.c
+if (run_builtin(current, shell) != FAILURE)
+    _exit(shell->exit_code);
+```
+```61:100:src/Executor/executor_utils.c
+/* non-parent builtins */
+return (execute_builtin(cmd, shell));
+```
+   **Action:** Capture the return value (`int rc = run_builtin(...); shell->exit_code = rc; _exit(rc);`) or have `run_builtin` update `shell->exit_code` internally before returning.
 
-int check_redirects(t_cmd *cmd, int s_stdin, int s_stdout)
+3. **Child builtin helper uses `exit()` instead of `_exit()`**  
+   `child_redirects` calls `exit(result);` after running a builtin with redirects, risking double-flush of stdio buffers.
+```15:33:src/Executor/executor_utils.c
+if (pid == 0)
 {
-    if (cmd->redir)
-    {
-        s_stdout = dup2(s_stdout, STDOUT_FILENO);  // Overwrites s_stdout with dup2 result
-        s_stdin = dup2(s_stdin, STDIN_FILENO);
-        ...
-    }
-}**Problem:** You pass `s_stdin`/`s_stdout` as `-1` (from caller line 67–68), then call `dup2(-1, STDOUT_FILENO)`, which fails. The intention seems to be saving/restoring, but you never actually `dup` the original FDs before redirecting.
-
-**Fix:** Either:
-- Save FDs *before* calling this function: `saved_stdout = dup(STDOUT_FILENO);`
-- Or remove this function entirely if parent builtins don't need FD restoration (since you fork for non-parent builtins).
+    ...
+    result = execute_builtin(cmd, shell);
+    exit(result);
+}
+```
+   **Action:** Replace with `_exit(result);` for the forked helper.
 
 ---
 
-### **7. Minor: Debug strings in `builtin_exit`**
-**Location:** `builtin_exit.c:24, 34`
+## ⚠️ High-Priority Follow-Ups
 
-write(2, "1minishell: exit: ", 17);
-...
-write(2, "2minishell: exit: ", 17);**Problem:** The `1` and `2` prefixes look like debug markers. Remove them for production.
-
----
-
-### **8. Minor: `error_messages.c:19` wrong byte count**
-**Location:** `error_messages.c:19`
-
-write(2, "minishell: unexpected token ", 46);**Problem:** `"minishell: unexpected token "` is 29 bytes, not 46. This writes garbage or crashes if the string is in a read-only segment near the end of a page.
-
-**Fix:**
-write(2, "minishell: syntax error near unexpected token ", 46);Or correct the count:
-write(2, "minishell: unexpected token ", 29);---
-
-### **9. Style: Redundant comments**
-**Examples:**
-- `main.c:55`: "infinite loop untill user presses cntrl + D..."
-- `utils.c:51–52`: "// Free previously allocated strings // Stop execution"
-
-**Suggestion:** Remove or condense verbose comments that restate the obvious. Keep high-level intent comments only.
+- After removing the double-free, re-test parser failure paths (malloc hooks / ASAN) to confirm `tokens_into_cmds` still frees partially built command lists correctly.
+- Once pipeline exit codes are fixed, verify `$?` for cases like `false | true`, `export X=1 | cat`, and `exit 7 | cat`.
+- Ensure `_exit` is used in every forked path (helpers, pipeline children) to keep stdio buffers consistent.
 
 ---
 
-### **10. Style: Magic number in `cmd_fork`**
-**Location:** `executor_utils.c:127`
+## 🔍 Additional Observations
 
-exit(126);**Suggestion:** Use a named constant for exit codes:
-#define EXIT_CMD_NOT_EXECUTABLE 126
-exit(EXIT_CMD_NOT_EXECUTABLE);---
-
-## 🔧 **Additional Robustness Tips**
-
-1. **Add `handle_redirects` error checking in `cmd_fork`:**  
-   Line 124 calls `handle_redirects(cmd)` but ignores the return. If it fails, the child should exit non-zero instead of trying `execve`.
-
-2. **Consider using `_exit()` in child processes:**  
-   Replace `exit(...)` with `_exit(...)` in forked children to skip flushing stdio buffers (which can cause double-output bugs).
-
-3. **Test edge cases:**
-   - Empty heredoc delimiter
-   - Command with 100+ arguments (stress-test `add_argument`)
-   - Redirects to `/dev/full` (write failure)
-   - Signals during `waitpid` (check `EINTR`)
-
-4. **Audit `ft_atol` for overflow:**  
-   `builtin_exit.c:60` uses `ft_atol` without checking if the input overflows `long`. Bash treats overflow as a non-numeric argument.
+- Error reporting preserves `errno` in `handle_redirects`; keep that pattern in other helpers (`execute_path_cmd`, `find_cmd_path`) when modifying them.
+- `g_minishell_is_executing` toggles correctly around execution; continue testing `Ctrl-C` during heredoc input and active pipelines to confirm prompt behaviour.
+- Optional cleanup: trim outdated comments or debug notes (e.g. in `main.c`) for clearer peer review.
 
 ---
 
-## 📊 **Overall Grade: 8.5/10**
+## 🧪 Suggested Regression Tests
 
-Your minishell is **production-ready** for the 42 assignment. The critical fixes (NULL-checks in parsing) will prevent rare crashes, and the minor refinements improve robustness. Great work on achieving zero leaks!
+1. **Parser OOM** – Inject malloc failure for `add_argument`; expect graceful error with no double-free (ASAN/valgrind).
+2. **Pipeline builtin status** – `false | true`, `export X=1 | cat`, `exit 7 | cat`; `$?` should match the builtin’s return.
+3. **Parent builtin redirects** – `cd /tmp >out` then `pwd`; ensure descriptors are restored after execution.
+4. **Heredoc interrupt** – `cat <<EOF` followed by `Ctrl-C`; expect cleanup and exit code `130`.
+5. **Exit overflow** – `exit 9223372036854775808` and `exit -9223372036854775809`; expect “numeric argument required” and exit status `2`.
+
+---
+
+## Summary & Next Steps
+
+- ✅ Core functionality matches the subject requirements; recent robustness improvements look strong.
+- ❗ Address the outstanding critical items (parser double-free, pipeline builtin exit code, `_exit` in child helper) before evaluation.
+- 🔁 Re-run the regression tests above and do a final Valgrind/ASAN sweep once those fixes land.
+
+Ping me when the blockers are resolved and I’ll run a final sanity check. Great work—keep it up! 💪

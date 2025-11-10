@@ -162,6 +162,13 @@ int	handle_heredoc_token(t_cmd *current, char *raw_token, int heredoc_index, t_m
 		print_syntax_error(shell, NULL);
 		return (-1);
 	}
-	current->redir = add_redirect(current->redir, tmpfile, RED_HEREDOC, expand);
+	{
+		t_redirect	*new_list;
+
+		new_list = add_redirect(current->redir, tmpfile, RED_HEREDOC, expand);
+		if (!new_list)
+			return (-1);
+		current->redir = new_list;
+	}
 	return (0);
 }

@@ -15,9 +15,11 @@
 int	handle_redirects(t_cmd *cmd)
 {
 	int			fd;
+	int			target_fd;
+	int			saved_errno;
 	t_redirect	*redirect;
 	t_redirect	*last_heredoc;
-	
+
 	if (!cmd || !cmd->redir)
 		return (SUCCESS);
 	last_heredoc = NULL;
@@ -38,48 +40,39 @@ int	handle_redirects(t_cmd *cmd)
 			if (redirect->type == RED_HEREDOC && redirect != last_heredoc)
 			{
 				redirect = redirect->next;
-				continue ; //skip non last heredocs
+				continue ;
 			}
 			fd = open(redirect->filename, O_RDONLY);
-			if (fd < 0)
-			{
-				print_error_filename(redirect->filename, "No such file or directory");
-				exit(1);
-			}
-			else
-			{
-				dup2(fd, 0);
-				close(fd);
-			}
+			target_fd = STDIN_FILENO;
 		}
 		else if (redirect->type == RED_OUTPUT)
 		{
 			fd = open(redirect->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd < 0)
-			{
-				print_error_filename(redirect->filename, "Permission denied");
-				exit(1);
-			}
-			else
-			{
-				dup2(fd, 1);
-				close(fd);
-			}
+			target_fd = STDOUT_FILENO;
 		}
 		else if (redirect->type == RED_APPEND)
 		{
 			fd = open(redirect->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fd < 0)
-			{
-				print_error_filename(redirect->filename, "Permission denied");
-				exit(1);
-			}
-			else
-			{
-				dup2(fd, 1);
-				close(fd);
-			}
+			target_fd = STDOUT_FILENO;
 		}
+		else
+		{
+			redirect = redirect->next;
+			continue ;
+		}
+		if (fd < 0)
+		{
+			print_error_filename(redirect->filename, strerror(errno));
+			return (FAILURE);
+		}
+		if (dup2(fd, target_fd) == -1)
+		{
+			saved_errno = errno;
+			close(fd);
+			print_error_filename(redirect->filename, strerror(saved_errno));
+			return (FAILURE);
+		}
+		close(fd);
 		redirect = redirect->next;
 	}
 	return (SUCCESS);
@@ -102,18 +95,24 @@ void execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
 		close(fd[0]); // close read end
 		close(fd[1]); // close write end after dup
 	}
-	handle_redirects(current);
+	if (handle_redirects(current) == FAILURE)
+	{
+		shell->exit_code = 1;
+		_exit(shell->exit_code);
+	}
 	if (run_builtin(current, shell) != FAILURE) // Builtins like echo, pwd, etc. are executed directly. If a builtin was run, you exit the child process immediately with the builtin’s exit code.
-		exit(shell->exit_code);
+		_exit(shell->exit_code);
 	cmd_path = find_cmd_path(current->args, shell->envp); // If it’s not a builtin, you look for an executable in $PATH
 	if (!cmd_path)
 	{
 		print_error(shell, "command not found");
-		exit(127);
+		shell->exit_code = 127;
+		_exit(shell->exit_code);
 	}
-		execve(cmd_path, current->args, shell->envp); // If found -> replace the child process with the program.
-		print_error(shell, "execve failed");
-		exit(126);
+	execve(cmd_path, current->args, shell->envp); // If found -> replace the child process with the program.
+	print_error(shell, "execve failed");
+	shell->exit_code = 126;
+	_exit(shell->exit_code);
 }
 
 void	execute_pipeline(t_minishell *shell, t_cmd *cmds)

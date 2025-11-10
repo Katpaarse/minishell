@@ -14,20 +14,27 @@
 
 int	handle_pipe_token(t_parsing *p)
 {
+	t_cmd	*next_node;
+
 	if (!p->current->args && !p->current->redir)
 	{
 		print_syntax_error(p->shell, "|");
 		return (-1);
 	}
-	p->current->next = cmd_into_new_node();
-	p->current = p->current->next;
+	next_node = cmd_into_new_node();
+	if (!next_node)
+		return (-1);
+	p->current->next = next_node;
+	p->current = next_node;
 	return (0);
 }
 
 int	handle_redirect_token(t_parsing *p)
 {
 	int	type;
-	char *token;
+	char	*token;
+	char	*filename;
+	t_redirect	*new_list;
 
 	token = p->tokens[p->i];
 
@@ -45,7 +52,13 @@ int	handle_redirect_token(t_parsing *p)
 	(p->i)++;
 	if (!p->tokens[p->i])
 		return (print_syntax_error(p->shell, NULL), -1);
-	p->current->redir = add_redirect(p->current->redir, ft_strdup(p->tokens[p->i]), type, 0);
+	filename = ft_strdup(p->tokens[p->i]);
+	if (!filename)
+		return (-1);
+	new_list = add_redirect(p->current->redir, filename, type, 0);
+	if (!new_list)
+		return (-1);
+	p->current->redir = new_list;
 	return (0);
 }
 
