@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 15:27:24 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/28 13:17:19 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/10 16:26:37 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,20 +31,24 @@ char	*expand_variable(char const *input, int *i, char **envp, char *result)
 	int		start;
 	char	*name;
 	char	*value;
-	
-	start = *i; // stores the current index in the input string, right after $    Example: for $HOME, *i points to 'H'.
-	while (ft_isalnum(input[*i]) || input[*i] == '_') // moves the pointer forward to read the full variable name. Stops when it hits a character that isn’t alphanumeric or underscore
+	char	*joined;
+
+	start = *i;
+	while (ft_isalnum(input[*i]) || input[*i] == '_')
 		(*i)++;
-	name = ft_substr(input, start, *i - start); // extract the variable name. Example: HOME from $HOME
+	name = ft_substr(input, start, *i - start);
 	if (!name)
-		return (result);
-	value = get_env_value(name, envp); // looks up the environment variable. Returns an empty string or new string depending on the result
+		return (result); // We cannot safely free result here
+	value = get_env_value(name, envp);
 	free(name);
-	if (value == NULL)
+
+	if (!value) // No variable found → no change
 		return (result);
-	result = ft_strjoin_and_free(result, value); // appends the variable value to the current result string
+	joined = ft_strjoin_and_free(result, value);
 	free(value);
-	return (result);
+	if (!joined) // join failed → both result and value are already freed
+		return (NULL);
+	return (joined);
 }
 // copy one normal character (not part of $…) into result string
 char	*expand_normal_char(char const *input, int *i, char *result)
@@ -63,32 +67,57 @@ char	*expand_normal_char(char const *input, int *i, char *result)
 // It scans input left to right and decides what to do for each character
 char    *expand_variables(const char *input, t_minishell *shell)
 {
-    char    *result;
-    int     i;
+	char	*result;
+	char	*dollar;
+	int		i;
 
-    if (!input)
-        return (NULL);
-    result = ft_strdup(""); // initialize result as an empty string
-    i = 0;
-    while (input[i])
-    {
-        if (input[i] == '$') // if $ char is found. Variable expansion is needed
-        {
-			i++; // skip $ char first then check for ? or another char
-			if (input[i] == '\0' || (!ft_isalpha(input[i]) && input[i] != '_' && input[i] != '?')) // // Lone $ or $ followed by invalid char - treat as literal $
-				result = ft_strjoin(result, ft_strdup("$"));
-            else if (input[i] == '?') 
-            {
-                result = expand_exit_code(result, shell->exit_code); // If next character is ? -> append last exit code using expand_exit_code
-                i++;
-            }
-            else if (ft_isalpha(input[i]) || input[i] == '_') // If next character is a letter/underscore -> expand variable using expand_variable. Otherwise -> just copy $ literally
-                result = expand_variable(input, &i, shell->envp, result);
-            else
-                result = ft_strjoin_and_free(result, ft_strdup("$"));
-        }
-        else
-            result = expand_normal_char(input, &i, result);
-    }
-    return (result);
+	if (!input)
+		return (NULL);
+	result = ft_strdup(""); // initialize result as an empty string
+	if (!result)
+		return (NULL);
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] == '$')
+		{
+			i++; // skip '$'
+			// Case 1: "$" with no valid variable follows → literal '$'
+			if (input[i] == '\0'
+				|| (!ft_isalpha(input[i]) && input[i] != '_' && input[i] != '?'))
+			{
+				dollar = ft_strdup("$");
+				if (!dollar)
+				{
+					free(result);
+					return (NULL);
+				}
+				result = ft_strjoin_and_free(result, dollar);
+				if (!result)
+					return (NULL);
+			}
+			// Case 2: "$?"
+			else if (input[i] == '?')
+			{
+				result = expand_exit_code(result, shell->exit_code);
+				if (!result)
+					return (NULL);
+				i++;
+			}
+			// Case 3: "$VAR"
+			else if (ft_isalpha(input[i]) || input[i] == '_')
+			{
+				result = expand_variable(input, &i, shell->envp, result);
+				if (!result)
+					return (NULL);
+			}
+		}
+		else
+		{
+			result = expand_normal_char(input, &i, result);
+			if (!result)
+				return (NULL);
+		}
+	}
+	return (result);
 }
