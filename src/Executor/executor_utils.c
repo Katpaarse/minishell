@@ -26,7 +26,7 @@ int	child_redirects(t_cmd *cmd, t_minishell *shell, int result)
 		if (handle_redirects(cmd) == FAILURE)
 			_exit(EXIT_FAILURE);
 		result = execute_builtin(cmd, shell);
-		exit(result);
+		_exit(result);
 	}
 	waitpid(pid, &status, 0);
 	return (status / 256);
@@ -74,6 +74,7 @@ int	run_builtin(t_cmd *cmd, t_minishell *shell)
 		if (check_redirects(cmd, saved_stdin, saved_stdout) == FAILURE)
 			return (FAILURE);
 		result = execute_builtin(cmd, shell);
+		shell->exit_code = result;
 		if (cmd->redir)
 		{
 			if (saved_stdout != -1)
@@ -94,9 +95,17 @@ int	run_builtin(t_cmd *cmd, t_minishell *shell)
 	else
 	{
 		if (cmd->redir)
-			return (child_redirects(cmd, shell, result));
+		{
+			result = child_redirects(cmd, shell, result);
+			shell->exit_code = result;
+			return (result);
+		}
 		else
-			return (execute_builtin(cmd, shell));
+		{
+			result = execute_builtin(cmd, shell);
+			shell->exit_code = result;
+			return (result);
+		}
 	}
 }
 

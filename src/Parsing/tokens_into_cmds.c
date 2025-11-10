@@ -48,10 +48,7 @@ static int	handle_token(t_parsing *p)
 		return (-1);
 	p->current->args = add_argument(p->current->args, token_copy);
 	if (!p->current->args)
-	{
-		free(token_copy);
 		return (-1);
-	}
 	return (0);
 }
 

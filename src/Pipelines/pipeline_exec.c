@@ -16,7 +16,6 @@ int	handle_redirects(t_cmd *cmd)
 {
 	int			fd;
 	int			target_fd;
-	int			saved_errno;
 	t_redirect	*redirect;
 	t_redirect	*last_heredoc;
 
@@ -62,14 +61,16 @@ int	handle_redirects(t_cmd *cmd)
 		}
 		if (fd < 0)
 		{
-			print_error_filename(redirect->filename, strerror(errno));
+			if (errno == EACCES || errno == EISDIR)
+				print_error_filename(redirect->filename, "Permission denied");
+			else
+				print_error_filename(redirect->filename, "No such file or directory");
 			return (FAILURE);
 		}
 		if (dup2(fd, target_fd) == -1)
 		{
-			saved_errno = errno;
 			close(fd);
-			print_error_filename(redirect->filename, strerror(saved_errno));
+			print_error_filename(redirect->filename, "Redirection error");
 			return (FAILURE);
 		}
 		close(fd);
@@ -100,8 +101,16 @@ void execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
 		shell->exit_code = 1;
 		_exit(shell->exit_code);
 	}
-	if (run_builtin(current, shell) != FAILURE) // Builtins like echo, pwd, etc. are executed directly. If a builtin was run, you exit the child process immediately with the builtin’s exit code.
-		_exit(shell->exit_code);
+	{
+		int	status;
+
+		status = run_builtin(current, shell);
+		if (status != FAILURE)
+		{
+			shell->exit_code = status;
+			_exit(status);
+		}
+	}
 	cmd_path = find_cmd_path(current->args, shell->envp); // If it’s not a builtin, you look for an executable in $PATH
 	if (!cmd_path)
 	{
