@@ -110,7 +110,6 @@ int main(int argc, char **argv, char **envp)
 		{
 			free_tokens(tokens);
 			free(input);
-			shell.exit_code = 0; // NIEUW
 			continue ;
 		}
 		free_tokens(tokens);

@@ -24,7 +24,7 @@ int	child_redirects(t_cmd *cmd, t_minishell *shell, int result)
 	{
 		setup_child_signals();
 		if (handle_redirects(cmd) == FAILURE)
-			exit(EXIT_FAILURE);
+			_exit(EXIT_FAILURE);
 		result = execute_builtin(cmd, shell);
 		exit(result);
 	}
@@ -34,19 +34,6 @@ int	child_redirects(t_cmd *cmd, t_minishell *shell, int result)
 
 int	check_redirects(t_cmd *cmd, int s_stdin, int s_stdout)
 {
-	if (cmd->redir)
-	{
-		s_stdout = dup2(s_stdout, STDOUT_FILENO);
-		s_stdin = dup2(s_stdin, STDIN_FILENO);
-		if (s_stdout < 0 || s_stdin < 0)
-		{
-			if (s_stdout >= 0)
-				close(s_stdout);
-			if (s_stdin >= 0)
-				close(s_stdin);
-			return (FAILURE);
-		}
-	}
 	if (handle_redirects(cmd) == FAILURE)
 	{
 		if (s_stdout >= 0)
@@ -71,8 +58,37 @@ int	run_builtin(t_cmd *cmd, t_minishell *shell)
 		return (FAILURE);
 	if (is_parent_builtin(cmd) == SUCCESS)
 	{
-		check_redirects(cmd, saved_stdin, saved_stdout);
+		if (cmd->redir)
+		{
+			saved_stdout = dup(STDOUT_FILENO);
+			saved_stdin = dup(STDIN_FILENO);
+			if (saved_stdout == -1 || saved_stdin == -1)
+			{
+				if (saved_stdout != -1)
+					close(saved_stdout);
+				if (saved_stdin != -1)
+					close(saved_stdin);
+				return (FAILURE);
+			}
+		}
+		if (check_redirects(cmd, saved_stdin, saved_stdout) == FAILURE)
+			return (FAILURE);
 		result = execute_builtin(cmd, shell);
+		if (cmd->redir)
+		{
+			if (saved_stdout != -1)
+			{
+				if (dup2(saved_stdout, STDOUT_FILENO) == -1)
+					result = FAILURE;
+				close(saved_stdout);
+			}
+			if (saved_stdin != -1)
+			{
+				if (dup2(saved_stdin, STDIN_FILENO) == -1)
+					result = FAILURE;
+				close(saved_stdin);
+			}
+		}
 		return (result);
 	}
 	else
@@ -121,10 +137,11 @@ int	cmd_fork(t_cmd *cmd, t_minishell *shell, char *ext_cmd)
 	if (pid == 0)
 	{
 		setup_child_signals();
-		handle_redirects(cmd);
+		if (handle_redirects(cmd) == FAILURE)
+			_exit(1);
 		execve(ext_cmd, cmd->args, shell->envp);
 		perror("execve failed");
-		exit(126);
+		_exit(126);
 	}
 	g_minishell_is_executing = pid;
 	shell->exit_code = wait_for_child(pid);

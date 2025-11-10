@@ -37,7 +37,7 @@ pid_t fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, in
 	{
 		setup_child_signals();
 		execute_child(shell, current, prev_fd, fd); // In the child -> run execute_child() to set up FDs and run the command.
-		exit(EXIT_FAILURE);
+		_exit(EXIT_FAILURE);
 	}
 	if (pid > 0)
 	{

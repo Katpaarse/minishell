@@ -16,7 +16,7 @@ void	print_syntax_error(t_minishell *shell, char const *token)
 {
 	if (!shell)
 		return;
-	write(2, "minishell: unexpected token ", 46);
+	write(2, "minishell: unexpected token ", 29);
 	if (token == NULL)
 		write(2, "`newline'", 9);
 	else
