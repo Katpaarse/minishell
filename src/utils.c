@@ -27,55 +27,48 @@ int	is_whitespace_only(char *str)
 
 void	copy_envp(t_minishell *shell, char **envp)
 {
-	int i;
+	int	i;
 
 	if (!envp || !shell)
-		return;
-	// Count the number of environment variables
+		return ;
 	i = 0;
 	while (envp[i] != NULL)
 		i++;
 	shell->exp_list = malloc(sizeof(char *) * (i + 1));
 	if (!shell->exp_list)
-	{
-		print_error(shell, "exp_list malloc failed");
 		return ;
-	}
 	shell->envp = malloc(sizeof(char *) * (i + 1));
 	if (!shell->envp)
 	{
-		print_error(shell,"envp malloc failed");
 		free(shell->exp_list);
 		shell->exp_list = NULL;
 		return ;
-			// Free previously allocated strings
-			// Stop execution
 	}
 	i = 0;
 	while (envp[i] != NULL)
 	{
 		shell->exp_list[i] = ft_strdup(envp[i]);
+		shell->exp_list[i + 1] = NULL;
 		if (!shell->exp_list[i])
 		{
-			print_error(shell, "ft_strdup failed, exp_list");
 			free_args(shell->exp_list);
 			free_args(shell->envp);
+			shell->exp_list = NULL;
+			shell->envp = NULL;
 			return ;
-			// Free previously allocated strings
-			// Stop execution
 		}
 		shell->envp[i] = ft_strdup(envp[i]);
+		shell->envp[i + 1] = NULL;
 		if (!shell->envp[i])
 		{
-			print_error(shell, "ft_strdup failed, envp");
 			free_args(shell->exp_list);
 			free_args(shell->envp);
+			shell->exp_list = NULL;
+			shell->envp = NULL;
 			return ;
 		}
 		i++;
 	}
-	shell->envp[i] = NULL; // Null-terminate the array
-	shell->exp_list[i] = NULL; // Null-terminate the array
 }
 
 char    *ft_strjoin_and_free(char *s1, char *s2)

@@ -46,48 +46,45 @@ if (!p->current->args)
     return (-1);
 }---
 
-### **3. Medium: `add_redirect` unnecessary duplicate**
+### **3. ✅ FIXED: `add_redirect` unnecessary duplicate**
 **Location:** `redirects.c:38–44`
 
-dup = ft_strdup(filename);
-if (!dup)
-{
-    free(filename);
-    return NULL;
-}
-free(filename);**Problem:** You duplicate `filename` then immediately free the original. The callers already pass a freshly allocated string, so this extra `strdup` is redundant.
+**Original Problem:** The function duplicated `filename` with `ft_strdup()`, then immediately freed the original:
+```c
+dup = ft_strdup(filename);  // Duplicate
+free(filename);              // Free original
+new_redirect->filename = dup;
+```
 
-**Better approach:** Either take ownership of `filename` without duplicating, or make callers pass `const char *` if you want to always duplicate. Current design is confusing.
+This was wasteful because both callers (`parser_helpers.c:48` and `heredoc.c:165`) already passed freshly allocated strings via `ft_strdup()` or `make_tmp_heredoc_filename()`.
+
+**The Fix:** Removed the extra duplication. Now `add_redirect` simply takes ownership of the passed string:
+```c
+// Just use the string directly - no duplicate needed
+new_redirect->filename = filename;
+```
+
+**Why This is Better:**
+- **Before:** Caller allocates → `add_redirect` duplicates → frees original (wasted allocation)
+- **After:** Caller allocates → `add_redirect` takes ownership (efficient)
+
+Added a comment clarifying the ownership contract: `// Takes ownership of filename (caller must pass malloc'd string)`
 
 ---
 
-### **4. Medium: `copy_envp` partial-failure handling is broken**
-**Location:** `utils.c:58–73`
+### **4. ✅ FIXED: `copy_envp` partial-failure handling**
+**Location:** `utils.c:48–71`
 
-shell->exp_list[i] = ft_strdup(envp[i]);
-if (!shell->exp_list[i])
-{
-    print_error(shell, "ft_strdup failed, exp_list");
-    free_args(shell->exp_list);  // Tries to free partially filled array
-    free_args(shell->envp);
-    return ;
-}**Problem:** If `ft_strdup` fails midway, you call `free_args` on a partially filled array. Since you haven't NULL-terminated it yet, `free_args` walks off the end or frees garbage pointers.
+**Problem:** If `ft_strdup` failed midway, `free_args` was called on a partially filled array that wasn't NULL-terminated, causing potential crashes.
 
-**Fix:** NULL-terminate incrementally:
-i = 0;
-while (envp[i] != NULL)
-{
-    shell->exp_list[i] = ft_strdup(envp[i]);
-    shell->exp_list[i + 1] = NULL;  // Always keep it terminated
-    if (!shell->exp_list[i])
-    {
-        free_args(shell->exp_list);
-        free_args(shell->envp);
-        return;
-    }
-    // Same for shell->envp[i]
-    ...
-}---
+**Fix Applied:**
+- NULL-terminate incrementally: `shell->exp_list[i + 1] = NULL;` after each strdup
+- Removed redundant final NULL-termination (already handled in loop)
+- Removed redundant comments and print_error calls
+- Set pointers to NULL after freeing on error paths
+- Cleaner, more robust error handling
+
+---
 
 ### **5. Minor: `expand_variables` leaks on error path**
 **Location:** `expand_variables.c:78–79, 88`

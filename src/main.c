@@ -86,21 +86,22 @@ int main(int argc, char **argv, char **envp)
 			shell.exit_code = 258;
 			continue;
 		}
-		i = 0;
-		while (tokens[i]) // loop through each token
+	i = 0;
+	while (tokens[i]) // loop through each token
+	{
+		// Skip processing heredoc delimiters - they need quotes preserved
+		if (i > 0 && tokens[i - 1][0] == '<' && tokens[i - 1][1] == '<' 
+			&& tokens[i - 1][2] == '\0')
 		{
-			// skip expanding the token after << (heredoc delimiter)
-			// if (tokens[i][0] == '<' && tokens[i][1] == '<' && tokens[i][2] == '\0')
-			// {
-			// 	i = i + 2; // advance past << and its delimiter
-			// 	continue ;
-			// }
-			// normal variable expansion and quote removal for other tokens
-			expanded = process_token(tokens[i], &shell); // removes quotes from token input and calls variable expension
-			free(tokens[i]);
-			tokens[i] = expanded;
 			i++;
+			continue ;
 		}
+		// Normal variable expansion and quote removal for other tokens
+		expanded = process_token(tokens[i], &shell);
+		free(tokens[i]);
+		tokens[i] = expanded;
+		i++;
+	}
 		g_minishell_is_executing = 1;
 		clear_shell_cmds(&shell);
 		shell.cmds = tokens_into_cmds(tokens, &shell);

@@ -26,29 +26,22 @@ int	count_redirects(t_redirect *list)
 	return (len);
 }
 
-// // add a new redirect to the list of redirects
+// add a new redirect to the list of redirects
+// Takes ownership of filename (caller must pass malloc'd string)
 t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type, int expand)
 {
 	t_redirect	*new_redirect;
 	t_redirect	*current;
-	char		*dup;
 
 	if (!filename)
 		return (list);
-	dup = ft_strdup(filename);
-	if (!dup)
-	{
-		free(filename);
-		return NULL;
-	}
-	free(filename);
 	new_redirect = malloc(sizeof(t_redirect));
 	if (!new_redirect)
 	{
-		free(dup);
+		free(filename);
 		return (NULL);
 	}
-	new_redirect->filename = dup;
+	new_redirect->filename = filename;
 	new_redirect->type = type;
 	new_redirect->expand = expand;
 	new_redirect->next = NULL;

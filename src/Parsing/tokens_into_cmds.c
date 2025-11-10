@@ -31,7 +31,8 @@ static int	is_redirect_token(char *str)
 
 static int	handle_token(t_parsing *p)
 {
-	char *token;
+	char	*token;
+	char	*token_copy;
 
 	token = p->tokens[p->i];
 	if (is_pipe_token(token))
@@ -42,7 +43,15 @@ static int	handle_token(t_parsing *p)
 		return (handle_redirect_token(p));
 	if (token[0] == '\0' && !(p->current)->args)
 		return (0);
-	p->current->args = add_argument(p->current->args, ft_strdup(token));
+	token_copy = ft_strdup(token);
+	if (!token_copy)
+		return (-1);
+	p->current->args = add_argument(p->current->args, token_copy);
+	if (!p->current->args)
+	{
+		free(token_copy);
+		return (-1);
+	}
 	return (0);
 }
 
@@ -54,6 +63,8 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 	if (!tokens || !*tokens)
 		return (NULL);
 	head = cmd_into_new_node();
+	if (!head)
+		return (NULL);
 	p.current = head;
 	p.tokens = tokens;
 	p.i = 0;
