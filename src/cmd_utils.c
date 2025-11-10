@@ -6,23 +6,22 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 19:19:42 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/05 17:53:13 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/10 16:38:07 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// creates a new t_cmd node and initializes all its fields to default values
 t_cmd	*cmd_into_new_node(void)
 {
 	t_cmd	*cmd;
-	
+
 	cmd = malloc(sizeof(t_cmd));
 	if (cmd == NULL)
 		return (NULL);
-	cmd->args = NULL; // no argument yet and sets it to NULL
-	cmd->redir = NULL; // no redirects yet
-	cmd->next = NULL; // no next command yet
+	cmd->args = NULL;
+	cmd->redir = NULL;
+	cmd->next = NULL;
 	return (cmd);
 }
 
@@ -33,7 +32,7 @@ char	**add_argument(char **args, char *new_arg)
 	char	**new_args;
 
 	if (!new_arg)
-		return args;
+		return (args);
 	count = 0;
 	while (args && args[count])
 		count++;
@@ -46,12 +45,11 @@ char	**add_argument(char **args, char *new_arg)
 	i = 0;
 	while (i < count)
 	{
-		new_args[i] = args[i]; // reuse old pointers
+		new_args[i] = args[i];
 		i++;
 	}
 	new_args[count] = new_arg;
 	new_args[count + 1] = NULL;
-
-	free(args); // free old array (not the strings)
+	free(args);
 	return (new_args);
 }
