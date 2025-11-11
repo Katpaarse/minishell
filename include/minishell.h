@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/06 13:34:07 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/11 13:49:02 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ char    	*get_var_name_end(char *ptr);
 char		*expand_exit_code(char *result, int exit_code);
 char		*expand_variable(char const *input, int *i, char **envp, char *result);
 char		*expand_normal_char(char const *input, int *i, char *result);
-char    	*expand_variables(const char *input, t_minishell *shell);
+char    	*variable_expansion(const char *input, t_minishell *shell);
 char		*remove_quotes(char const *token);
 void		print_syntax_error(t_minishell *shell, char const *token);
 void		print_error(t_minishell *shell, char const *message);

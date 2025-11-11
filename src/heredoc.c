@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/05 17:36:16 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/11 13:48:51 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	handle_heredoc(char const *delimiter, char	*tmpfile, t_minishell *shell, in
 		to_write = line;
 		if (expand)
 		{
-			to_write = expand_variables(line, shell);
+			to_write = variable_expansion(line, shell);
 			free(line);
 		}
 		write(fd, to_write, ft_strlen(to_write));
