@@ -25,9 +25,8 @@ static int	is_within_long_range(const char *str)
 	sign = 1;
 	if (str[i] == '+' || str[i] == '-')
 	{
-		if (str[i] == '-')
+		if (str[i++] == '-')
 			sign = -1;
-		i++;
 	}
 	value = 0;
 	if (sign == 1)
