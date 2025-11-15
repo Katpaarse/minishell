@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/06 13:37:20 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:07:14 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 	p.i = 0;
 	p.hi = 1;
 	p.shell = shell;
-
 	while (p.tokens[p.i])
 	{
 		if (handle_token(&p) != 0)

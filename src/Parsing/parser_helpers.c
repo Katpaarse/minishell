@@ -6,11 +6,29 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 14:03:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/06 13:38:48 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:04:18 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int	get_redirect_type(char *token)
+{
+	if (token[0] == '<')
+		return (RED_INPUT);
+	else if (token[0] == '>' && token[1] == '\0')
+		return (RED_OUTPUT);
+	else
+		return (RED_APPEND);
+}
+
+void	update_quotes(char c, int *in_single, int *in_double)
+{
+	if (c == '\'' && !(*in_double))
+		*in_single = !(*in_single);
+	else if (c == '"' && !(*in_single))
+		*in_double = !(*in_double);
+}
 
 int	handle_pipe_token(t_parsing *p)
 {
@@ -31,24 +49,18 @@ int	handle_pipe_token(t_parsing *p)
 
 int	handle_redirect_token(t_parsing *p)
 {
-	int	type;
-	char	*token;
-	char	*filename;
+	int			type;
+	char		*token;
+	char		*filename;
 	t_redirect	*new_list;
 
 	token = p->tokens[p->i];
-
 	if (!token)
 	{
 		print_syntax_error(p->shell, NULL);
 		return (-1);
 	}
-	if (token[0] == '<')
-		type = RED_INPUT;
-	else if (token[0] == '>' && token[1] == '\0')
-		type = RED_OUTPUT;
-	else
-		type = RED_APPEND;
+	type = get_redirect_type(token);
 	(p->i)++;
 	if (!p->tokens[p->i])
 		return (print_syntax_error(p->shell, NULL), -1);
@@ -68,7 +80,8 @@ int	handle_heredoc_wrapper(t_parsing *p)
 	char	*delimiter;
 
 	delimiter = p->tokens[p->i + 1];
-	result = handle_heredoc_token(p->current, p->tokens[p->i + 1], p->hi, p->shell);
+	result = handle_heredoc_token(p->current,
+			p->tokens[p->i + 1], p->hi, p->shell);
 	if (result == -2)
 	{
 		p->shell->exit_code = 130;
