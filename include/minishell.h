@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/15 16:28:32 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:47:29 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,19 +77,19 @@ typedef struct s_parsing
 	t_minishell	*shell;
 }	t_parsing;
 
-// Free functions
+/* Free functions */
 void	free_redirects(t_redirect *redirect);
 void	free_args(char **args);
 void	free_cmds(t_cmd *cmd);
 void	free_minishell(t_minishell *shell);
 
-// Signal handling functions
+/* Signal handling functions */
 void	setup_signal_handlers(void);
 void	setup_child_signals(void);
 void	handle_sigint(int signum);
 void	setup_heredoc_signal_handlers(void);
 
-// Executor functions
+/* Executor functions */
 int 	wait_for_child(pid_t pid);
 int		run_external(t_cmd *cmd, t_minishell *shell);
 char	*find_cmd_path(char **argv, char **envp);
@@ -99,43 +99,41 @@ int 	execute_command(t_minishell *shell);
 int		execute_path_cmd(t_cmd *cmd, t_minishell *shell);
 int		cmd_fork(t_cmd *cmd, t_minishell *shell, char *cmd_path);
 
-// functions for handling pipes
+/* functions for handling pipes */
 int 	wait_all_children(t_minishell *shell, pid_t *child_pids, int count);
 pid_t 	fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd);
 void	execute_pipeline(t_minishell *shell, t_cmd *cmds);
 void 	execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd);
+int		handle_redirects(t_cmd *cmd);
 
-// Builtin cd
+/* Builtin cd */
 int		builtin_cd(t_cmd *cmd, t_minishell *shell);
 int		new_old_pwd(t_cmd *cmd, t_minishell *shell);
 char	*change_dir(t_cmd *cmd, t_minishell *shell, char *old_pwd);
 void	set_pwd_env(t_cmd *cmd, t_minishell *shell, char *n_p, char *o_p);
 
-// Builtin echo
+/* Builtin echo */
 int		builtin_echo(t_cmd *cmd);
 int 	skip_nl(t_cmd *cmd, int i);
 void	write_echo(t_cmd *cmd, int i);
 
-// Builtin env
+/* Builtin env */
 int		builtin_env(t_minishell *shell);
 
-// Builtin exit
+/* Builtin exit */
 int		builtin_exit(t_cmd *cmd, t_minishell *shell);
 
-// Builtin export
+/* Builtin export */
 int 	builtin_export(t_cmd *cmd, t_minishell *shell);
 void	write_export(t_minishell *shell);
 
-// Builtin pwd
+/* Builtin pwd */
 int		builtin_pwd(void);
 
-// Builtin unset
+/* Builtin unset */
 int		builtin_unset(t_cmd *cmd, t_minishell *shell);
 
-//
-int		handle_redirects(t_cmd *cmd);
-
-// Builtin helper functions
+/* Builtin helper functions */
 int 	execute_builtin(t_cmd *cmd, t_minishell *shell);
 int		is_builtin(t_cmd *cmd);
 int		run_builtin(t_cmd *cmd, t_minishell *shell);
@@ -144,7 +142,7 @@ int		is_parent_builtin(t_cmd *cmd);
 void	add_or_update_exp(t_minishell *shell, char *var);
 void	add_or_update_env(t_minishell *shell, char *var);
 
-//parsing functions
+/* Parsing functions */
 char		**tokenize_input(char *input);
 int			handle_pipe_token(t_parsing *p);
 int			handle_redirect_token(t_parsing *p);
