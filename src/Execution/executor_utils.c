@@ -45,68 +45,83 @@ int	check_redirects(t_cmd *cmd, int s_stdin, int s_stdout)
 	return (SUCCESS);
 }
 
+static int	setup_parent_redirects(t_cmd *cmd, int *saved_in, int *saved_out)
+{
+	*saved_in = -1;
+	*saved_out = -1;
+	if (!cmd->redir)
+		return (SUCCESS);
+	*saved_out = dup(STDOUT_FILENO);
+	*saved_in = dup(STDIN_FILENO);
+	if (*saved_out == -1 || *saved_in == -1)
+	{
+		if (*saved_out != -1) 
+			close(*saved_out);
+		if (*saved_in != -1) 
+			close(*saved_in);
+		*saved_out = -1;
+		*saved_in = -1;
+		return (FAILURE);
+	}
+	if (check_redirects(cmd, *saved_in, *saved_out) == FAILURE)
+	{
+		close(*saved_out);
+		close(*saved_in);
+		*saved_out = -1;
+		*saved_in = -1;
+		return (FAILURE);
+	}
+	return (SUCCESS);
+}
+
+static int	restore_parent_redirects(int saved_in, int saved_out, int result)
+{
+	int	status;
+
+	status = result;
+	if (saved_out != -1 && dup2(saved_out, STDOUT_FILENO) == -1)
+		status = FAILURE;
+	if (saved_in != -1 && dup2(saved_in, STDIN_FILENO) == -1)
+		status = FAILURE;
+	if (saved_out != -1) 
+		result = close(saved_out);
+	if (saved_in != -1) 
+		result = close(saved_in);
+	return (status);
+}
+
+static int	run_parent_builtin(t_cmd *cmd, t_minishell *shell)
+{
+	int	saved_in;
+	int	saved_out;
+	int	result;
+
+	if (setup_parent_redirects(cmd, &saved_in, &saved_out) == FAILURE)
+		return (FAILURE);
+	result = execute_builtin(cmd, shell);
+	shell->exit_code = result;
+	return (restore_parent_redirects(saved_in, saved_out, result));
+}
+
+static int	run_child_builtin(t_cmd *cmd, t_minishell *shell)
+{
+	int	result;
+
+	if (cmd->redir)
+		result = child_redirects(cmd, shell, 0);
+	else
+		result = execute_builtin(cmd, shell);
+	shell->exit_code = result;
+	return (result);
+}
+
 int	run_builtin(t_cmd *cmd, t_minishell *shell)
 {
-	int		saved_stdout;
-	int		saved_stdin;
-	int		result;
-
-	saved_stdout = -1;
-	saved_stdin = -1;
-	result = 0;
-	if (!cmd->args[0])
+	if (!cmd || !cmd->args || !cmd->args[0])
 		return (FAILURE);
 	if (is_parent_builtin(cmd) == SUCCESS)
-	{
-		if (cmd->redir)
-		{
-			saved_stdout = dup(STDOUT_FILENO);
-			saved_stdin = dup(STDIN_FILENO);
-			if (saved_stdout == -1 || saved_stdin == -1)
-			{
-				if (saved_stdout != -1)
-					close(saved_stdout);
-				if (saved_stdin != -1)
-					close(saved_stdin);
-				return (FAILURE);
-			}
-		}
-		if (check_redirects(cmd, saved_stdin, saved_stdout) == FAILURE)
-			return (FAILURE);
-		result = execute_builtin(cmd, shell);
-		shell->exit_code = result;
-		if (cmd->redir)
-		{
-			if (saved_stdout != -1)
-			{
-				if (dup2(saved_stdout, STDOUT_FILENO) == -1)
-					result = FAILURE;
-				close(saved_stdout);
-			}
-			if (saved_stdin != -1)
-			{
-				if (dup2(saved_stdin, STDIN_FILENO) == -1)
-					result = FAILURE;
-				close(saved_stdin);
-			}
-		}
-		return (result);
-	}
-	else
-	{
-		if (cmd->redir)
-		{
-			result = child_redirects(cmd, shell, result);
-			shell->exit_code = result;
-			return (result);
-		}
-		else
-		{
-			result = execute_builtin(cmd, shell);
-			shell->exit_code = result;
-			return (result);
-		}
-	}
+		return (run_parent_builtin(cmd, shell));
+	return (run_child_builtin(cmd, shell));
 }
 
 int	run_external(t_cmd *cmd, t_minishell *shell)
