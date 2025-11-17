@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/15 17:47:29 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/17 16:12:26 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,5 +180,8 @@ int			is_space(char c);
 int			is_whitespace_only(char *str);
 int			is_special_op(char c);
 void		update_quotes(char c, int *in_single, int *in_double);
+int			skip_quoted_input(char *input, int i);
+int			skip_special_operator(char *input, int i);
+int			skip_spaces(char *input, int i);
 
 # endif

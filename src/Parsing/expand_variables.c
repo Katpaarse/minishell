@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 15:27:24 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/15 16:39:41 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:50:38 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,19 +93,19 @@ char	*variable_expansion(char const *input, t_minishell *shell)
 {
 	char	*result;
 	int		i;
-	int		q_single;
-	int		q_double;
+	int		in_single;
+	int		in_double;
 
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
-	q_single = 0;
-	q_double = 0;
+	in_single = 0;
+	in_double = 0;
 	i = 0;
 	while (input[i])
 	{
-		update_quotes(input[i], &q_single, &q_double);
-		if (input[i] == '$' && !q_single)
+		update_quotes(input[i], &in_single, &in_double);
+		if (input[i] == '$' && !in_single)
 		{
 			i++;
 			result = handle_dollar(input, &i, shell, result);

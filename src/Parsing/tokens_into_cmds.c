@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/15 17:07:14 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/17 16:19:01 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ static int	is_heredoc_token(char *str)
 
 static int	is_redirect_token(char *str)
 {
-	return ((str[0] == '<' && str[1] == '\0') ||
-		(str[0] == '>' && str[1] == '\0') ||
-		(str[0] == '>' && str[1] == '>' && str[2] == '\0'));
+	return ((str[0] == '<' && str[1] == '\0')
+		|| (str[0] == '>' && str[1] == '\0')
+		|| (str[0] == '>' && str[1] == '>' && str[2] == '\0'));
 }
 
 static int	handle_token(t_parsing *p)
