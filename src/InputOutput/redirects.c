@@ -6,13 +6,12 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 16:04:35 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/24 17:38:50 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/17 17:31:53 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// count the amount of redirects found from input > < >>
 int	count_redirects(t_redirect *list)
 {
 	int	len;
@@ -26,9 +25,8 @@ int	count_redirects(t_redirect *list)
 	return (len);
 }
 
-// add a new redirect to the list of redirects
-// Takes ownership of filename (caller must pass malloc'd string)
-t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type, int expand)
+t_redirect	*add_redirect(t_redirect *list, char *filename,
+	t_redirect_type type, int expand)
 {
 	t_redirect	*new_redirect;
 	t_redirect	*current;

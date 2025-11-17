@@ -6,51 +6,57 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 14:36:06 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/10/23 15:58:57 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/17 17:26:19 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Fork and execute child, setup pipes
-pid_t fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
+static int	create_pipe_if_needed(t_minishell *shell, t_cmd *current, int *fd)
 {
-	pid_t	pid;
-
-	if (current->next != NULL && pipe(fd) == -1) // If not the last command -> create a new pipe for communication with the next child
+	if (current->next != NULL && pipe(fd) == -1)
 	{
 		print_error(shell, "pipe failed");
 		return (-1);
 	}
-	pid = fork(); // clone process for child process
-	if (pid < 0)
+	return (0);
+}
+
+static pid_t	handle_fork_error(t_minishell *shell, t_cmd *current, int *fd)
+{
+	print_error(shell, "fork failed");
+	if (current->next != NULL)
 	{
-		print_error(shell, "fork failed");
-		if (current->next != NULL)
-		{
-			close(fd[0]);
-			close(fd[1]);
-		}
-		return (-1);
+		close(fd[0]);
+		close(fd[1]);
 	}
-	if (pid == 0) // if pid is 0. Its a child process. Parent process has a original procces id
+	return (-1);
+}
+
+pid_t	fork_and_execute_child(t_minishell *shell, t_cmd *current,
+	int prev_fd, int *fd)
+{
+	pid_t	pid;
+
+	if (create_pipe_if_needed(shell, current, fd) == -1)
+		return (-1);
+	pid = fork();
+	if (pid < 0)
+		return (handle_fork_error(shell, current, fd));
+	if (pid == 0)
 	{
 		setup_child_signals();
-		execute_child(shell, current, prev_fd, fd); // In the child -> run execute_child() to set up FDs and run the command.
-		_exit(EXIT_FAILURE);
+		execute_child(shell, current, prev_fd, fd);
+		exit(EXIT_FAILURE);
 	}
-	if (pid > 0)
-	{
-		if (prev_fd != -1) // -1 is sentinal. So there was no previous fd used.
-			close(prev_fd);
-		if (current->next != NULL)
-			close(fd[1]);
-	}
+	if (prev_fd != -1)
+		close(prev_fd);
+	if (current->next != NULL)
+		close(fd[1]);
 	return (pid);
 }
 
-// used for pipelines, wait for all, track last status
-int wait_all_children(t_minishell *shell, pid_t *child_pids, int count)
+int	wait_all_children(t_minishell *shell, pid_t *child_pids, int count)
 {
 	int	i;
 	int	status;
@@ -67,9 +73,8 @@ int wait_all_children(t_minishell *shell, pid_t *child_pids, int count)
 			exit_code = 128 + WTERMSIG(status);
 		i++;
 	}
-		if (WTERMSIG(status) == SIGQUIT)
-			write(1, "Quit (core dumped)\n", 19);
-
+	if (WTERMSIG(status) == SIGQUIT)
+		write(1, "Quit (core dumped)\n", 19);
 	shell->exit_code = exit_code;
 	return (exit_code);
 }

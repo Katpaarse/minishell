@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 14:27:51 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/13 14:33:21 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/17 17:27:08 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ static int	is_delimiter(char *line, const char *delimiter)
 	return (0);
 }
 
-static void	write_heredoc_line(int fd, char *line, t_minishell *shell, int expand)
+static void	write_heredoc_line(int fd, char *line, t_minishell *shell,
+	int expand)
 {
 	char	*to_write;
 
@@ -51,7 +52,8 @@ static void	write_heredoc_line(int fd, char *line, t_minishell *shell, int expan
 		free(to_write);
 }
 
-void	handle_heredoc(const char *delimiter, char *tmpfile, t_minishell *shell, int expand)
+void	handle_heredoc(const char *delimiter, char *tmpfile, t_minishell *shell,
+	int expand)
 {
 	char	*line;
 	int		fd;
