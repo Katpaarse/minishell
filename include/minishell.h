@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/18 13:57:35 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:54:11 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,5 +183,13 @@ void		update_quotes(char c, int *in_single, int *in_double);
 int			skip_quoted_input(char *input, int i);
 int			skip_special_operator(char *input, int i);
 int			skip_spaces(char *input, int i);
+
+void		run_minishell_loop(t_minishell *shell);
+void		execute_and_free(t_minishell *shell, char **tokens, char *input);
+void		shell_init(t_minishell *shell, char **envp);
+void		cleanup_all(t_minishell *shell);
+int			check_eof_or_signal(t_minishell *shell, char **input);
+void		handle_empty_input(t_minishell *shell, char *input);
+char		**process_input_line(t_minishell *shell, char *input);
 
 # endif

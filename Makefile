@@ -9,13 +9,13 @@ OBJ_DIR     = obj
 
 LIBFT_A     = $(LIBFT_DIR)/libft.a
 
-SRC_FILES   = main.c \
+SRC_FILES   = main.c shell_loop.c \
 			Commands/Builtins/builtin_cd.c Commands/Builtins/builtin_echo.c Commands/Builtins/builtin_env.c Commands/Builtins/builtin_exit.c Commands/Builtins/builtin_pwd.c Commands/Builtins/builtin_export.c Commands/Builtins/builtin_unset.c Commands/Builtins/builtin_utils.c \
 			Commands/Externals/external_cmd.c Commands/Externals/external_utils.c \
 			Execution/executor.c Execution/executor_utils.c \
 			InputOutput/pipeline_exec.c InputOutput/pipeline_helpers.c InputOutput/heredoc_exec.c InputOutput/heredoc_utils.c InputOutput/heredoc_io.c InputOutput/redirects.c InputOutput/redirects_exec.c InputOutput/child_exec.c \
 			Parsing/tokens_into_cmds.c Parsing/parser_helpers.c Parsing/process_token.c Parsing/tokenizer.c Parsing/tokenizer_utils.c Parsing/expand_variables.c \
-			Utils/cmd_utils.c Utils/env_utils.c Utils/error_messages.c Utils/free.c Utils/signals.c Utils/utils.c Utils/utils2.c \
+			Utils/cmd_utils.c Utils/env_utils.c Utils/shell_utils.c Utils/error_messages.c Utils/free.c Utils/signals.c Utils/utils.c Utils/utils2.c \
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
