@@ -6,20 +6,20 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 16:55:01 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/17 17:02:25 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:05:58 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	setup_child_io(t_cmd *cur, int prev_fd, int *fd)
+static void	setup_child_io(t_cmd *current, int prev_fd, int *fd)
 {
 	if (prev_fd != -1)
 	{
 		dup2(prev_fd, STDIN_FILENO);
 		close(prev_fd);
 	}
-	if (cur->next)
+	if (current->next)
 	{
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[0]);

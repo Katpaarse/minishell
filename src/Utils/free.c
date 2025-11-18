@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 14:08:07 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/11/11 13:31:49 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 11:50:46 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,11 @@ void free_cmds(t_cmd *cmd)
 
 	while (cmd)
 	{
-		tmp = cmd->next; // save next node
-		free_args(cmd->args); // free arguments array
-		free_redirects(cmd->redir); // free redirects list
-		free(cmd); // free command node
-		cmd = tmp; // move to next node
+		tmp = cmd->next;
+		free_args(cmd->args);
+		free_redirects(cmd->redir);
+		free(cmd);
+		cmd = tmp;
 	}
 }
 

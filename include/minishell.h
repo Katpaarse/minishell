@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/17 16:12:26 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:40:04 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,25 +47,24 @@ typedef enum e_redirect_type
 
 typedef struct s_redirect
 {
-	char 					*filename;		// name of the file for redirection
-	t_redirect_type 		type;			// type of redirection
-	int						expand;			// 1 if variable expansion is allowed, 0 if quoted delimiter
+	char 					*filename;
+	t_redirect_type 		type;
 	struct s_redirect		*next;
 }	t_redirect;
 
 typedef struct s_cmd
 {
-	char			**args; //command and arguments
-	t_redirect		*redir; // array of redirections
-	struct s_cmd	*next; //linked list to next command
+	char			**args;
+	t_redirect		*redir;
+	struct s_cmd	*next;
 }	t_cmd;
 
 typedef struct s_minishell
 {
-	t_cmd	*cmds; // linked list of parsed commands
-	char	**envp; // environments variables
-	char	**exp_list; // exported variables list
-	int		exit_code; // last command exit code
+	t_cmd	*cmds;
+	char	**envp;
+	char	**exp_list;
+	int		exit_code;
 }	t_minishell;
 
 typedef struct s_parsing
@@ -99,7 +98,7 @@ int 	execute_command(t_minishell *shell);
 int		execute_path_cmd(t_cmd *cmd, t_minishell *shell);
 int		cmd_fork(t_cmd *cmd, t_minishell *shell, char *cmd_path);
 
-/* functions for handling pipes */
+/* Functions for handling pipes */
 int 	wait_all_children(t_minishell *shell, pid_t *child_pids, int count);
 pid_t 	fork_and_execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd);
 void	execute_pipeline(t_minishell *shell, t_cmd *cmds);
@@ -167,7 +166,7 @@ void		print_syntax_error(t_minishell *shell, char const *token);
 void		print_error(t_minishell *shell, char const *message);
 void		print_error_filename(char const	*filename, char	const *message);
 int			count_redirects(t_redirect *list);
-t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type, int expand);
+t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type);
 void		free_redirects(t_redirect *list);
 void		free_args(char **args);
 void		free_cmds(t_cmd *cmd);

@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 14:03:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/15 17:04:18 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:39:45 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	handle_redirect_token(t_parsing *p)
 	filename = ft_strdup(p->tokens[p->i]);
 	if (!filename)
 		return (-1);
-	new_list = add_redirect(p->current->redir, filename, type, 0);
+	new_list = add_redirect(p->current->redir, filename, type);
 	if (!new_list)
 		return (-1);
 	p->current->redir = new_list;

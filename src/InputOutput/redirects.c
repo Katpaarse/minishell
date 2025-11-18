@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 16:04:35 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/17 17:31:53 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:39:01 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ int	count_redirects(t_redirect *list)
 	return (len);
 }
 
-t_redirect	*add_redirect(t_redirect *list, char *filename,
-	t_redirect_type type, int expand)
+t_redirect	*add_redirect(t_redirect *list, char *filename, t_redirect_type type)
 {
 	t_redirect	*new_redirect;
 	t_redirect	*current;
@@ -41,7 +40,6 @@ t_redirect	*add_redirect(t_redirect *list, char *filename,
 	}
 	new_redirect->filename = filename;
 	new_redirect->type = type;
-	new_redirect->expand = expand;
 	new_redirect->next = NULL;
 	if (!list)
 		return (new_redirect);

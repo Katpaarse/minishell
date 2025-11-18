@@ -93,7 +93,7 @@ Example for external commands:
 pid_t pid = fork();
 if (pid == 0)
 {
-    execve(args[0], args, envp);
+    execve([args0], args, envp);
     perror("execve");
     exit(1);
 }

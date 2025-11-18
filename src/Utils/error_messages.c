@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 18:28:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/10/01 15:03:58 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 11:50:05 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	print_syntax_error(t_minishell *shell, char const *token)
 {
 	if (!shell)
-		return;
+		return ;
 	write(2, "minishell: unexpected token ", 29);
 	if (token == NULL)
 		write(2, "`newline'", 9);
