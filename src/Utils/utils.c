@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:58:19 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/11/17 16:12:21 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:46:27 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,64 +19,18 @@ int	is_whitespace_only(char *str)
 	while (*str)
 	{
 		if (!is_space(*str))
-			return (FALSE);	
+			return (FALSE);
 		str++;
 	}
 	return (TRUE);
 }
 
-void	copy_envp(t_minishell *shell, char **envp)
+char	*ft_strjoin_and_free(char *s1, char *s2)
 {
-	int	i;
+	size_t	len_s1;
+	size_t	len_s2;
+	char	*result;
 
-	if (!envp || !shell)
-		return ;
-	i = 0;
-	while (envp[i] != NULL)
-		i++;
-	shell->exp_list = malloc(sizeof(char *) * (i + 1));
-	if (!shell->exp_list)
-		return ;
-	shell->envp = malloc(sizeof(char *) * (i + 1));
-	if (!shell->envp)
-	{
-		free(shell->exp_list);
-		shell->exp_list = NULL;
-		return ;
-	}
-	i = 0;
-	while (envp[i] != NULL)
-	{
-		shell->exp_list[i] = ft_strdup(envp[i]);
-		shell->exp_list[i + 1] = NULL;
-		if (!shell->exp_list[i])
-		{
-			free_args(shell->exp_list);
-			free_args(shell->envp);
-			shell->exp_list = NULL;
-			shell->envp = NULL;
-			return ;
-		}
-		shell->envp[i] = ft_strdup(envp[i]);
-		shell->envp[i + 1] = NULL;
-		if (!shell->envp[i])
-		{
-			free_args(shell->exp_list);
-			free_args(shell->envp);
-			shell->exp_list = NULL;
-			shell->envp = NULL;
-			return ;
-		}
-		i++;
-	}
-}
-
-char    *ft_strjoin_and_free(char *s1, char *s2)
-{
-	size_t  len_s1;
-	size_t  len_s2;
-	char    *result;
-	
 	if (!s1 && !s2)
 		return (NULL);
 	if (!s1)
