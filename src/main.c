@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/11/05 18:36:22 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:20:34 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,21 +19,6 @@ static void	clear_shell_cmds(t_minishell *shell)
 	cleanup_heredoc_files(shell->cmds->redir);
 	free_cmds(shell->cmds);
 	shell->cmds = NULL;
-}
-
-static void	free_tokens(char **tokens)
-{
-	int	i;
-
-	if (!tokens)
-		return ;
-	i = 0;
-	while (tokens[i])
-	{
-		free(tokens[i]);
-		i++;
-	}
-	free(tokens);
 }
 
 int main(int argc, char **argv, char **envp)

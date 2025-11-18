@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 14:08:07 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/11/18 11:50:46 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:12:02 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,19 @@ void free_minishell(t_minishell *shell)
 	if (shell->exp_list != NULL)
 		free_args(shell->exp_list);
 	shell->exp_list = NULL;
+}
+
+void	free_tokens(char **tokens)
+{
+	int	i;
+
+	if (!tokens)
+		return ;
+	i = 0;
+	while (tokens[i])
+	{
+		free(tokens[i]);
+		i++;
+	}
+	free(tokens);
 }

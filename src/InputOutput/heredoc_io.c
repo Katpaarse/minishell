@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 14:27:51 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/17 17:27:08 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:00:27 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	open_heredoc_file(char *tmpfile)
 	return (fd);
 }
 
-static int	is_delimiter(char *line, const char *delimiter)
+static int	is_delimiter(char *line, char const *delimiter)
 {
 	if (ft_strcmp(line, delimiter) == 0)
 	{

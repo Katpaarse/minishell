@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/18 12:40:04 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:12:14 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ void	free_redirects(t_redirect *redirect);
 void	free_args(char **args);
 void	free_cmds(t_cmd *cmd);
 void	free_minishell(t_minishell *shell);
+void	free_tokens(char **tokens);	
 
 /* Signal handling functions */
 void	setup_signal_handlers(void);

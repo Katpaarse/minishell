@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 17:53:00 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/11/05 16:44:35 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:29:16 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ int	child_redirects(t_cmd *cmd, t_minishell *shell, int result)
 	{
 		setup_child_signals();
 		if (handle_redirects(cmd) == FAILURE)
-			_exit(EXIT_FAILURE);
+			exit(EXIT_FAILURE);
 		result = execute_builtin(cmd, shell);
-		_exit(result);
+		exit(result);
 	}
 	waitpid(pid, &status, 0);
 	return (status / 256);
@@ -162,10 +162,10 @@ int	cmd_fork(t_cmd *cmd, t_minishell *shell, char *ext_cmd)
 	{
 		setup_child_signals();
 		if (handle_redirects(cmd) == FAILURE)
-			_exit(1);
+			exit(1);
 		execve(ext_cmd, cmd->args, shell->envp);
 		perror("execve failed");
-		_exit(126);
+		exit(126);
 	}
 	g_minishell_is_executing = pid;
 	shell->exit_code = wait_for_child(pid);
