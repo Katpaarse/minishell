@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:23:25 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/11/18 13:30:53 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:58:58 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,16 @@ int main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	// initialize shell state
-	copy_envp(&shell, envp); // store environment pointer to the struct
-	setup_signal_handlers(); // setup signal handlers for SIGINT and SIGQUIT
-	shell.exit_code = 0; // set not 0. So the last exit code is succes
-	shell.cmds = NULL; // not parsed into commands yet
+	copy_envp(&shell, envp);
+	setup_signal_handlers();
+	shell.exit_code = 0;
+	shell.cmds = NULL;
 	
-	while (1) // infinite loop untill user presses cntrl + D(EOF) or "exit" or gets out manually
+	while (1)
 	{
-		g_minishell_is_executing = 0; // start in interactive mode
+		g_minishell_is_executing = 0;
 		tokens = NULL;
-		input = readline("minishell > "); // shows minishell > and waiting for input
+		input = readline("minishell > ");
 		if (!input)
 		{
 			clear_shell_cmds(&shell);

@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/18 13:31:18 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:57:35 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,15 @@
 # define TRUE 1
 # define FALSE 0
 
-extern volatile sig_atomic_t g_minishell_is_executing;		// 0 = waiting for user input (interactive mode)
-															// 1 = executing a command (child process)
-															// < 0 = signal received
+extern volatile sig_atomic_t g_minishell_is_executing;
+
 typedef enum e_redirect_type
 {
 	RED_NONE,
-	RED_INPUT,      // <
-	RED_OUTPUT,     // >
-	RED_APPEND,     // >>
-	RED_HEREDOC     // <<
+	RED_INPUT,
+	RED_OUTPUT,
+	RED_APPEND,
+	RED_HEREDOC
 }	t_redirect_type;
 
 typedef struct s_redirect
