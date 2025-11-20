@@ -6,12 +6,17 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 15:27:24 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/17 14:50:38 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/20 17:00:05 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Handles $ expansion:
+   - "$?" → expands exit code
+   - "$VAR" → expands environment variable
+   - "$<invalid>" → treated as literal '$'
+   Advances index accordingly and appends result. */
 static char	*handle_dollar(char const *input, int *i,
 	t_minishell *shell, char *result)
 {
@@ -39,6 +44,7 @@ static char	*handle_dollar(char const *input, int *i,
 	}
 }
 
+/* Appends the shell's exit code (converted to a string) to the result */
 char	*expand_exit_code(char *result, int exit_code)
 {
 	char	*code;
@@ -51,6 +57,9 @@ char	*expand_exit_code(char *result, int exit_code)
 	return (result);
 }
 
+/* Extracts the variable name after '$', looks it up in envp, and appends
+its value to result.
+Advances *i past the variable name. Returns the updated result string. */
 char	*expand_variable(char const *input, int *i, char **envp, char *result)
 {
 	int		start;
@@ -75,6 +84,7 @@ char	*expand_variable(char const *input, int *i, char **envp, char *result)
 	return (joined);
 }
 
+/* Appends a single non-special character to the result and moves to the next */
 char	*expand_normal_char(char const *input, int *i, char *result)
 {
 	char	buffer[2];
@@ -89,6 +99,8 @@ char	*expand_normal_char(char const *input, int *i, char *result)
 	return (result);
 }
 
+/* Expands all "$VAR" and "$?" occurrences in the input,
+respecting quote rules (no expansion inside single quotes) */
 char	*variable_expansion(char const *input, t_minishell *shell)
 {
 	char	*result;

@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 14:06:47 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/15 18:07:28 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/20 15:23:48 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ static void	copy_without_quotes(const char *token, char *result)
 	result[j] = '\0';
 }
 
+/* Removes the outer quote characters (' or ") from a token.
+Preserves inner quotes and returns a new cleaned string */
 char	*remove_quotes(const char *token)
 {
 	size_t	len;
@@ -54,6 +56,8 @@ char	*remove_quotes(const char *token)
 	return (result);
 }
 
+/* Processes a token by applying variable expansion (unless single-quoted).
+Then strips the outer quote characters and returns the cleaned result */
 char	*process_token(char *token, t_minishell *shell)
 {
 	size_t	len;

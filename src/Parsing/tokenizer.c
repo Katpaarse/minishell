@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 16:19:46 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/17 16:18:28 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/20 15:20:02 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ static char	*extract_token(char *input, int *i)
 	return (ft_strndup(input + start, *i - start));
 }
 
+/* Splits the input line into an array of tokens for the parser. */
 char	**tokenize_input(char *input)
 {
 	int		i;

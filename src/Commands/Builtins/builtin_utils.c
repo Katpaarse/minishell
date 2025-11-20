@@ -6,13 +6,12 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 18:21:49 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/09/30 18:30:03 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/20 13:42:31 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Must run in parent: cd, export, unset, exit
 int	is_parent_builtin(t_cmd *cmd)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])

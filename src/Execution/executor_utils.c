@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 17:53:00 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/11/18 13:29:16 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/20 17:04:56 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	check_redirects(t_cmd *cmd, int s_stdin, int s_stdout)
 	return (SUCCESS);
 }
 
-static int	setup_parent_redirects(t_cmd *cmd, int *saved_in, int *saved_out)
+int	setup_parent_redirects(t_cmd *cmd, int *saved_in, int *saved_out)
 {
 	*saved_in = -1;
 	*saved_out = -1;
@@ -74,7 +74,7 @@ static int	setup_parent_redirects(t_cmd *cmd, int *saved_in, int *saved_out)
 	return (SUCCESS);
 }
 
-static int	restore_parent_redirects(int saved_in, int saved_out, int result)
+int	restore_parent_redirects(int saved_in, int saved_out, int result)
 {
 	int	status;
 

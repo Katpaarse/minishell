@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 14:03:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/18 12:39:45 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/20 16:55:55 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ static int	get_redirect_type(char *token)
 		return (RED_APPEND);
 }
 
+/* Toggles single/double quote states while scanning a string.
+Used to track whether the parser is inside quotes. */
 void	update_quotes(char c, int *in_single, int *in_double)
 {
 	if (c == '\'' && !(*in_double))
@@ -30,6 +32,8 @@ void	update_quotes(char c, int *in_single, int *in_double)
 		*in_double = !(*in_double);
 }
 
+/* function to see if a '|' char is encountered and 
+creates a new command node */
 int	handle_pipe_token(t_parsing *p)
 {
 	t_cmd	*next_node;
@@ -47,6 +51,9 @@ int	handle_pipe_token(t_parsing *p)
 	return (0);
 }
 
+/* Handles <, >, and >> tokens: determines redirect type,
+fetches the filename, and appends a redirect node
+to the current command.*/
 int	handle_redirect_token(t_parsing *p)
 {
 	int			type;
@@ -74,6 +81,8 @@ int	handle_redirect_token(t_parsing *p)
 	return (0);
 }
 
+/* Process a << heredoc: create tmpfile, handle errors, and
+update parser indexes (i and hi) */
 int	handle_heredoc_wrapper(t_parsing *p)
 {
 	int		result;
