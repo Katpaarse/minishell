@@ -21,6 +21,7 @@ static int	create_pipe_if_needed(t_minishell *shell, t_cmd *current, int *fd)
 	}
 	return (0);
 }
+
 /* Prints an error message and closes any pipe fd's if they were created */
 static pid_t	handle_fork_error(t_minishell *shell, t_cmd *current, int *fd)
 {
