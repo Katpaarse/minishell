@@ -47,7 +47,7 @@ int	new_old_pwd(t_cmd *cmd, t_minishell *shell)
 		}
 	}
 	else if (!old_pwd && !new_pwd)
-		new_pwd = path;
+		new_pwd = ft_strdup(path);
 	set_pwd_env(cmd, shell, new_pwd, old_pwd);
 	free(new_pwd);
 	return (SUCCESS);
