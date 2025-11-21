@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 15:27:40 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/21 10:19:15 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/21 14:01:36 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,6 @@ void		print_error_filename(char const *filename, char const *message);
 int			is_space(char c);
 int			is_whitespace_only(char *str);
 int			is_special_op(char c);
-int			count_redirects(t_redirect *list);
 t_redirect	*add_redirect(t_redirect *list, char *filename,
 				t_redirect_type type);
 
