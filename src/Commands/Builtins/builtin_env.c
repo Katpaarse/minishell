@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* Prints all environment variables to stdout. Iterates through the environment
+array and writes each 'KEY=VALUE' pair on a new line */
 int	builtin_env(t_minishell *shell)
 {
 	int	i;

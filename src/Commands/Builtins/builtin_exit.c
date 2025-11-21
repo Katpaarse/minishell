@@ -12,7 +12,9 @@
 
 #include "minishell.h"
 
-static void	check_exit(t_cmd *cmd, t_minishell *shell)
+/* Validates exit argument is numeric. Ensures the argument contains only digits
+(optional +/-) and prints an error if not */
+void	check_exit(t_cmd *cmd, t_minishell *shell)
 {
 	int		i;
 
@@ -41,6 +43,8 @@ static void	check_exit(t_cmd *cmd, t_minishell *shell)
 	}
 }
 
+/* Checks if the numeric argument fits within a long long range. Prevents
+overflow by verifying the number string against LONG_MAX/LONG_MIN limits */
 static int	is_within_long_range(char *str)
 {
 	unsigned long long	value;
@@ -66,6 +70,8 @@ static int	is_within_long_range(char *str)
 	return (TRUE);
 }
 
+/* Exits the shell with specified status code. Handles exit code parsing,
+cleanup of resources, and exiting with correct status */
 int	builtin_exit(t_cmd *cmd, t_minishell *shell)
 {
 	long	exit_code;

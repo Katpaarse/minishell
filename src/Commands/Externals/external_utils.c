@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* Locates the executable path for a command using PATH or absolute path
+Decides to use absolute path resolution or search in PATH directories. */
 char	*find_cmd_path(char **argv, char **envp)
 {
 	char	*path;
@@ -31,6 +33,8 @@ char	*find_cmd_path(char **argv, char **envp)
 	return (NULL);
 }
 
+/* Verifies and returns a duplicate of a valid absolute path
+Checks if an absolute path exists and returns a copy of it */
 char	*find_absolute_path(char **argv)
 {
 	if (!argv || !argv[0] || argv[0][0] == '\0')
@@ -41,6 +45,8 @@ char	*find_absolute_path(char **argv)
 		return (ft_strdup(argv[0]));
 }
 
+/* Extracts and splits the PATH environment variable into an array.
+Parses envp to find 'PATH=' and splits the value by ':' into a string array */
 char	**find_path(char **envp, char **paths)
 {
 	int		i;
@@ -65,6 +71,8 @@ char	**find_path(char **envp, char **paths)
 	return (paths);
 }
 
+/* Searches for a command in the directories listed in PATH. Iterates
+through PATH directories, joining them with command name to find executable */
 char	*find_relative_path(char *cmd, char **envp)
 {
 	char	**paths;
@@ -91,6 +99,8 @@ char	*find_relative_path(char *cmd, char **envp)
 	return (NULL);
 }
 
+/* Waits for child process completion and extracts exit code. Blocks
+until child process finishes, then interprets status (exit code or signal) */
 int	wait_for_child(pid_t pid)
 {
 	int	status;

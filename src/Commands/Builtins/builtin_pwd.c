@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* Prints the current working directory. Retrieves CWD using getcwd and prints
+it followed by a newline */
 int	builtin_pwd(void)
 {
 	char	*cwd;

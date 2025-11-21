@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* If command is a builtin that affects parent process. Identifies builtins 
+that must run in the main shell process to persist changes */
 int	is_parent_builtin(t_cmd *cmd)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
@@ -28,6 +30,8 @@ int	is_parent_builtin(t_cmd *cmd)
 		return (FAILURE);
 }
 
+/* Checks if command is any supported builtin. Returns SUCCESS if the command 
+matches any of the implemented builtin names */
 int	is_builtin(t_cmd *cmd)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
@@ -50,6 +54,8 @@ int	is_builtin(t_cmd *cmd)
 		return (FAILURE);
 }
 
+/* Dispatches execution to the appropriate builtin function. Compares command 
+name and calls the corresponding builtin implementation */
 int	execute_builtin(t_cmd *cmd, t_minishell *shell)
 {
 	if (cmd->args[0])
@@ -75,6 +81,8 @@ int	execute_builtin(t_cmd *cmd, t_minishell *shell)
 		return (FAILURE);
 }
 
+/* Prints the list of exported variables with specific formatting. Displays 
+variables in 'declare -x KEY="VALUE"' format for 'export' with no args */
 void	write_export(t_minishell *shell)
 {
 	int		j;

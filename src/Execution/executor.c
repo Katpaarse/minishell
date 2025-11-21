@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* Main execution hub: delegates to builtins or external commands. Checks for
+single builtins (run in parent) or pipelines/externals (run in child) */
 int	execute_command(t_minishell *shell)
 {
 	if (!shell || !shell->cmds)
@@ -30,6 +32,8 @@ int	execute_command(t_minishell *shell)
 	return (SUCCESS);
 }
 
+/* Handles execution of external (non-builtin) commands. Resolves command path
+(absolute/relative/PATH) and handles execution errors like 127/126 */
 int	run_external(t_cmd *cmd, t_minishell *shell)
 {
 	char	*cmd_path;
@@ -53,6 +57,8 @@ int	run_external(t_cmd *cmd, t_minishell *shell)
 	return (shell->exit_code);
 }
 
+/* Routes execution to parent or child builtins based on type. Distinguishes
+between builtins that modify shell state (parent) vs those that don't (child) */
 int	run_builtin(t_cmd *cmd, t_minishell *shell)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
@@ -62,6 +68,8 @@ int	run_builtin(t_cmd *cmd, t_minishell *shell)
 	return (run_child_builtin(cmd, shell));
 }
 
+/* Executes builtins that must run in the parent process. Manages temporary
+redirects for the parent process to avoid permanent changes to FDs. */
 int	run_parent_builtin(t_cmd *cmd, t_minishell *shell)
 {
 	int	saved_in;
@@ -75,6 +83,8 @@ int	run_parent_builtin(t_cmd *cmd, t_minishell *shell)
 	return (restore_parent_redirects(saved_in, saved_out, result));
 }
 
+/* Executes builtins that can run in a child process. Forks a new process for
+redirects if needed, otherwise runs directly. */
 int	run_child_builtin(t_cmd *cmd, t_minishell *shell)
 {
 	int	result;

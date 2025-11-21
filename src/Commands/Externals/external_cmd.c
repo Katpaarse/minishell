@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* Validates and executes a command provided with an absolute/relative path.
+Checks file existence, directory status, and permissions before executing. */
 int	execute_path_cmd(t_cmd *cmd, t_minishell *shell)
 {
 	struct stat	st;

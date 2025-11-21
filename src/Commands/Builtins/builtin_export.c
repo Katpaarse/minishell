@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* Validates variable name format for export. Checks if the identifier starts
+with letter/_ and contains only alphanumeric chars or _ */
 int	check_input(t_cmd *cmd, int i)
 {
 	int	j;
@@ -41,6 +43,8 @@ int	check_input(t_cmd *cmd, int i)
 	return (check);
 }
 
+/* Checks if variable already exists in list to update it. Searches for a
+variable by name and replaces it if found, returning list size */
 int	check_list(char **list, char *var)
 {
 	int		i;
@@ -67,6 +71,8 @@ int	check_list(char **list, char *var)
 	return (size);
 }
 
+/* Adds or updates a variable in the environment list. Reallocates the
+environment array to include the new variable or updates existing one */
 void	add_or_update_env(t_minishell *shell, char *var)
 {
 	int		i;
@@ -91,6 +97,8 @@ void	add_or_update_env(t_minishell *shell, char *var)
 	shell->envp = new_env;
 }
 
+/* Adds or updates a variable in the export list. Maintains a separate list
+for exported variables including those without values */
 void	add_or_update_exp(t_minishell *shell, char *var)
 {
 	int		i;
@@ -115,6 +123,8 @@ void	add_or_update_exp(t_minishell *shell, char *var)
 	shell->exp_list = new_exp;
 }
 
+/* Exports variables to environment or prints exported variables. Processes
+arguments to add to env/export lists, or displays all if no args provided */
 int	builtin_export(t_cmd *cmd, t_minishell *shell)
 {
 	int	i;

@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* Forks and executes a builtin in a child process with redirects. When builtins
+need redirection, isolates file descriptor changes to a child process */
 int	child_redirects(t_cmd *cmd, t_minishell *shell, int result)
 {
 	pid_t	pid;
@@ -32,6 +34,8 @@ int	child_redirects(t_cmd *cmd, t_minishell *shell, int result)
 	return (status / 256);
 }
 
+/* Wrapper to handle redirects and clean up FDs on failure
+Attempts to set up redirects and closes any opened FDs if an error occurs */
 int	check_redirects(t_cmd *cmd, int s_stdin, int s_stdout)
 {
 	if (handle_redirects(cmd) == FAILURE)
@@ -45,6 +49,8 @@ int	check_redirects(t_cmd *cmd, int s_stdin, int s_stdout)
 	return (SUCCESS);
 }
 
+/* Saves stdin/stdout and applies redirects for parent builtins. Duplicates
+current std FDs so they can be restored after the builtin finishes */
 int	setup_parent_redirects(t_cmd *cmd, int *saved_in, int *saved_out)
 {
 	*saved_in = -1;
@@ -74,6 +80,8 @@ int	setup_parent_redirects(t_cmd *cmd, int *saved_in, int *saved_out)
 	return (SUCCESS);
 }
 
+/* Restores original stdin/stdout after parent builtin execution. Resets
+ FDs to their saved state using dup2 and closes the backups */
 int	restore_parent_redirects(int saved_in, int saved_out, int result)
 {
 	int	status;
@@ -90,6 +98,8 @@ int	restore_parent_redirects(int saved_in, int saved_out, int result)
 	return (status);
 }
 
+/* Forks and executes an external command. Creates a child process, 
+handles signals/redirects, and calls execve to run the program */
 int	cmd_fork(t_cmd *cmd, t_minishell *shell, char *ext_cmd)
 {
 	pid_t	pid;

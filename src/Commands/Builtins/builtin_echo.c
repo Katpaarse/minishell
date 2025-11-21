@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* Prints arguments to stdout, optionally suppressing trailing newline. 
+Handles the '-n' flag to control newline output */
 int	builtin_echo(t_cmd *cmd)
 {
 	int	i;
@@ -33,6 +35,8 @@ int	builtin_echo(t_cmd *cmd)
 	return (SUCCESS);
 }
 
+/* Skips '-n' flags to determine if newline should be suppressed.
+Iterates over arguments to check for valid '-n' flags (can handle '-nnnn') */
 int	skip_nl(t_cmd *cmd, int i)
 {
 	int	j;
@@ -50,6 +54,8 @@ int	skip_nl(t_cmd *cmd, int i)
 	return (i);
 }
 
+/* Writes arguments to stdout with space separation. Prints each argument
+followed by a space, except for the last one */
 void	write_echo(t_cmd *cmd, int i)
 {
 	int	first_word;

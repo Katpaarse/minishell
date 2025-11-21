@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* Removes an item from a string array by shifting subsequent items. Frees item
+at the index and moves all following pointers one step left to close the gap */
 void	shift_list(char **list, int index)
 {
 	free(list[index]);
@@ -23,6 +25,8 @@ void	shift_list(char **list, int index)
 	list[index] = NULL;
 }
 
+/* Finds and removes a variable from the environment list. Iterates through
+environment vars to find a match and removes it using shift_list */
 char	*check_env(t_cmd *cmd, t_minishell *shell, int var_len, int i)
 {
 	int		j;
@@ -45,6 +49,8 @@ char	*check_env(t_cmd *cmd, t_minishell *shell, int var_len, int i)
 	return (NULL);
 }
 
+/* Finds and removes a variable from the export list. Iterates through export
+list vars to find a match and removes it using shift_list */
 char	*check_exp(t_cmd *cmd, t_minishell *shell, int var_len, int i)
 {
 	int		j;
@@ -67,6 +73,8 @@ char	*check_exp(t_cmd *cmd, t_minishell *shell, int var_len, int i)
 	return (NULL);
 }
 
+/* Removes variables from environment and export lists. Loops through all
+arguments and removes them from both env and export arrays if found */
 int	builtin_unset(t_cmd *cmd, t_minishell *shell)
 {
 	int		i;

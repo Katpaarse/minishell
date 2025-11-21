@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+/* Changes current working directory and updates PWD/OLDPWD. Validates 
+arguments and updates environment variables if the change is successful */
 int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 {
 	if (cmd->args[1] && cmd->args[2])
@@ -24,6 +26,8 @@ int	builtin_cd(t_cmd *cmd, t_minishell *shell)
 	return (SUCCESS);
 }
 
+/* Updates PWD and OLDPWD environment variables after successful cd. Captures
+current PWD, attempts the change, and updates variables using getcwd */
 int	new_old_pwd(t_cmd *cmd, t_minishell *shell)
 {
 	char	*path;
@@ -41,18 +45,19 @@ int	new_old_pwd(t_cmd *cmd, t_minishell *shell)
 	{
 		new_pwd = getcwd(NULL, 0);
 		if (!new_pwd)
-		{
-			free(old_pwd);
-			return (FAILURE);
-		}
+			return (free(old_pwd), FAILURE);
 	}
 	else if (!old_pwd && !new_pwd)
 		new_pwd = ft_strdup(path);
 	set_pwd_env(cmd, shell, new_pwd, old_pwd);
 	free(new_pwd);
+	if (old_pwd)
+		free(old_pwd);
 	return (SUCCESS);
 }
 
+/* Determines target path and performs the actual directory change. Handles
+special cases like 'cd -' (OLDPWD) and 'cd' (HOME) before calling chdir */
 char	*change_dir(t_cmd *cmd, t_minishell *shell, char *old_pwd)
 {
 	char	*path;
@@ -78,6 +83,8 @@ char	*change_dir(t_cmd *cmd, t_minishell *shell, char *old_pwd)
 	return (path);
 }
 
+/* Helper to update specific environment variables for cd. Searches
+environment array for PWD/OLDPWD keys and replaces their values */
 void	set_pwd_env(t_cmd *cmd, t_minishell *shell, char *n_p, char *o_p)
 {
 	int	pwd_i;
