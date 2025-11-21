@@ -6,12 +6,14 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 15:36:19 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/17 17:16:30 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/21 12:39:15 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Counts how many command nodes are in the pipeline by iterating 
+through the linked list */
 static int	count_commands(t_cmd *cmd)
 {
 	int	count;
@@ -25,6 +27,10 @@ static int	count_commands(t_cmd *cmd)
 	return (count);
 }
 
+/* Creates the pipeline by forking one child process per command.
+Passes the correct pipe file descriptors to each child.
+Stores all child PIDs in the provided array.
+Waits for all children after forking */
 static int	fork_all_children(t_minishell *shell, t_cmd *cmd, pid_t *pids,
 	int *fd)
 {
@@ -53,6 +59,7 @@ static int	fork_all_children(t_minishell *shell, t_cmd *cmd, pid_t *pids,
 	return (SUCCESS);
 }
 
+/* Runs an entire pipeline of commands */
 void	execute_pipeline(t_minishell *shell, t_cmd *cmds)
 {
 	int		fd[2];

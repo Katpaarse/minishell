@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 14:36:06 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/11/17 17:26:19 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/21 12:59:55 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	create_pipe_if_needed(t_minishell *shell, t_cmd *current, int *fd)
 	}
 	return (0);
 }
-
+/* Prints an error message and closes any pipe fd's if they were created */
 static pid_t	handle_fork_error(t_minishell *shell, t_cmd *current, int *fd)
 {
 	print_error(shell, "fork failed");
@@ -56,6 +56,7 @@ pid_t	fork_and_execute_child(t_minishell *shell, t_cmd *current,
 	return (pid);
 }
 
+/* Waits for all child processes in the pipeline to finish */
 int	wait_all_children(t_minishell *shell, pid_t *child_pids, int count)
 {
 	int	i;

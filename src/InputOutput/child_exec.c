@@ -6,12 +6,14 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 16:55:01 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/18 12:05:58 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/21 11:13:16 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Configures the child's input/output file descriptors for a pipeline.
+If prev fd is valid it becomes the child stdin */
 static void	setup_child_io(t_cmd *current, int prev_fd, int *fd)
 {
 	if (prev_fd != -1)
@@ -27,6 +29,7 @@ static void	setup_child_io(t_cmd *current, int prev_fd, int *fd)
 	}
 }
 
+/* Executes a single command in the child process */
 static void	exec_command(t_minishell *shell, t_cmd *current)
 {
 	char	*path;
@@ -50,6 +53,7 @@ static void	exec_command(t_minishell *shell, t_cmd *current)
 	exit(126);
 }
 
+/* Entry point for child execution after fork() */
 void	execute_child(t_minishell *shell, t_cmd *current, int prev_fd, int *fd)
 {
 	setup_child_signals();

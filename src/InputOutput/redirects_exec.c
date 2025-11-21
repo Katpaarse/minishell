@@ -6,12 +6,13 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 16:46:54 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/17 17:31:23 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/21 13:16:07 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Finds and returns the last heredoc (<<) redirect to a redirect list */
 static t_redirect	*find_last_heredoc(t_redirect *redirect)
 {
 	t_redirect	*last;

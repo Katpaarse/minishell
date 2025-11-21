@@ -6,12 +6,13 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:46:17 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/18 12:40:33 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/21 12:18:29 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Temporarily disables SIGINT while preparing the heredoc */
 static void	setup_heredoc_signals(struct sigaction *new_sa,
 	struct sigaction *old_sa)
 {
@@ -21,6 +22,7 @@ static void	setup_heredoc_signals(struct sigaction *new_sa,
 	sigaction(SIGINT, new_sa, old_sa);
 }
 
+/* Checks the exit status of the heredoc child process */
 static int	handle_heredoc_status(int status, t_minishell *shell,
 	char *tmpfile)
 {
@@ -39,6 +41,7 @@ static int	handle_heredoc_status(int status, t_minishell *shell,
 	return (1);
 }
 
+/* Looking if the heredoc delimiter should allow variable expansion */
 static char	*get_heredoc_delimiter_info(char *raw_token, int *expand)
 {
 	size_t	len;
@@ -53,6 +56,7 @@ static char	*get_heredoc_delimiter_info(char *raw_token, int *expand)
 	return (clean_delim);
 }
 
+/* Creates and fills a temporary heredoc file */
 char	*process_heredoc(char const *delimiter, int i, t_minishell *shell,
 	int expand)
 {
@@ -81,6 +85,7 @@ char	*process_heredoc(char const *delimiter, int i, t_minishell *shell,
 	return (tmpfile);
 }
 
+/* Processes a heredoc token during parsing */
 int	handle_heredoc_token(t_cmd *current, char *raw_token, int heredoc_index,
 	t_minishell *shell)
 {
