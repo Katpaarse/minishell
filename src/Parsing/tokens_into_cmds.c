@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 16:31:15 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/20 16:41:10 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/22 14:59:20 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,7 @@ static int	handle_token(t_parsing *p)
 
 /* Convert a array of tokens into a linked list of command structures.
 Each command (t_cmd) gets its arguments, redirections, and pipe links set.
-Handles pipes, redirections, and heredocs using the parsing state (t_parsing).
-Returns the head of the command list on success, or NULL on any syntax error */
+Handles pipes, redirections, and heredocs using the parsing state (t_parsing) */
 t_cmd	*tokens_into_cmds(char **tokens, t_minishell *shell)
 {
 	t_cmd		*head;
