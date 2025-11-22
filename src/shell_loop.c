@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 14:46:25 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/22 14:11:30 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/22 14:46:15 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,7 @@ int	loop_iteration_logic(t_minishell *shell)
 	}
 	tokens = process_input_line(shell, input);
 	if (!tokens)
-	{
-		free(input);
-		return (1);
-	}
+		return (free(input), 1);
 	execute_and_free(shell, tokens, input);
 	return (2);
 }
