@@ -6,11 +6,20 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 14:46:25 by jukerste          #+#    #+#             */
-/*   Updated: 2025/11/18 15:06:08 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/22 14:11:30 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static void	ctrl_c_shell(t_minishell *shell)
+{
+	if (g_minishell_is_executing == -1)
+	{
+		shell->exit_code = 130;
+		g_minishell_is_executing = 0;
+	}
+}
 
 void	shell_init(t_minishell *shell, char **envp)
 {
@@ -45,6 +54,7 @@ int	loop_iteration_logic(t_minishell *shell)
 	g_minishell_is_executing = 0;
 	tokens = NULL;
 	input = readline("minishell > ");
+	ctrl_c_shell(shell);
 	status = check_eof_or_signal(shell, &input);
 	if (status == 0)
 		return (0);
