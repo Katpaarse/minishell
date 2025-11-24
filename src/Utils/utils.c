@@ -6,7 +6,7 @@
 /*   By: jukerste <jukerste@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 18:58:19 by lavan-de          #+#    #+#             */
-/*   Updated: 2025/11/18 13:46:27 by jukerste         ###   ########.fr       */
+/*   Updated: 2025/11/24 13:43:34 by jukerste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,30 +50,6 @@ char	*ft_strjoin_and_free(char *s1, char *s2)
 	result[len_s1 + len_s2] = '\0';
 	free(s1);
 	return (result);
-}
-
-char	**ft_arrayjoin_and_free(char **arr, char *str)
-{
-	int		i;
-	int		count;
-	char	**new_arr;
-
-	count = 0;
-	while (arr && arr[count])
-		count++;
-	new_arr = malloc(sizeof(char *) * (count + 2));
-	if (new_arr == NULL)
-		return (NULL);
-	i = 0;
-	while (i < count)
-	{
-		new_arr[i] = arr[i];
-		i++;
-	}
-	new_arr[i] = str;
-	new_arr [i + 1] = NULL;
-	free(arr);
-	return (new_arr);
 }
 
 int	is_space(char c)
